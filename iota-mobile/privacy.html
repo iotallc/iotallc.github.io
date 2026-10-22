@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IOTA Mobile Privacy Policy</title><style>body{background:#121212;color:#CBCBCB;font-family:'Segoe UI',Roboto,Arial,sans-serif;line-height:1.6;margin:0}
+main{max-width:760px;margin:0 auto;padding:40px 22px}h1{color:#E0E0E0;border-bottom:1px solid #2A2A2A;padding-bottom:10px}
+h2{color:#E0E0E0;margin-top:32px}strong{color:#E0E0E0}a{color:#C0C0C0}li{margin:4px 0}</style></head><body><main><h1>IOTA Mobile Privacy Policy</h1>
+<p>Effective October 21, 2026. Published by Iota LLC.</p>
+<h2>The short version</h2>
+<p>IOTA Mobile runs an AI model on your phone. There are no accounts, no ads, no analytics, no tracking, and no IOTA servers. Your chats and memory stay on your phone.</p>
+<h2>What stays on your phone</h2>
+<ul>
+<li><strong>Chats.</strong> Kept only while the chat is open, unless you turn on Memory and Save chats. Saved chats are stored in the app's private storage.</li>
+<li><strong>Permanent memory.</strong> Facts you choose to save. Stored in the app's private storage.</li>
+<li><strong>Settings.</strong> Stored in the app's private storage, including an optional search key you paste in Developer settings.</li>
+<li><strong>Response reports.</strong> If you report a reply, the report is saved in the app's private storage.</li>
+<li><strong>AI models.</strong> The model files you choose to download (0.7 to 2.8 GB each), stored in the app's private storage.</li>
+<li><strong>Skills.</strong> The skill files you choose to install (a few KB each) and which ones are on. Stored in the app's private storage. Skills run on the phone and never send your messages anywhere.</li>
+</ul>
+<p>None of this is sent to Iota LLC. Android backup is turned off for this app, so this data is not copied to cloud backups. Uninstalling the app deletes all of it. You can also delete chats, memory, and reports inside the app at any time.</p>
+<h2>When the app uses the network</h2>
+<p>IOTA Mobile only connects to the internet in these cases:</p>
+<ol>
+<li><strong>Model downloads.</strong> When you download a model, on first run or in Settings &gt; Models, the app fetches the file from Hugging Face (huggingface.co and its file delivery servers). Hugging Face receives a normal web request, which includes your IP address. No chat content is sent.</li>
+<li><strong>Web search, only when you turn on Online.</strong> Online is off by default. When you turn it on, IOTA can search the web and read pages to answer you:</li>
+<li>When a message needs current or specific facts, the app decides on the phone to search. Search queries, which the app writes from your message and the recent conversation (for example, a company name and city), are sent to <strong>DuckDuckGo</strong> (html.duckduckgo.com, with lite.duckduckgo.com as a backup). If DuckDuckGo returns nothing, the query is sent to <strong>Wikipedia</strong> search (en.wikipedia.org).</li>
+<li>If you paste your own <strong>Brave Search API</strong> key in Developer settings, searches go to Brave Search (api.search.brave.com) first. This is optional and off unless you add a key.</li>
+<li>IOTA reads the top two or three result pages, or a link in your message, to answer from them. Those websites receive a normal web request, including your IP address.</li>
+<li>Web content is never saved to memory automatically.</li>
+<li><strong>Pictures and videos.</strong> When you ask for pictures (or a picture would help), the app sends a short search query to <strong>Wikimedia Commons</strong> (commons.wikimedia.org) or Wikipedia, then loads the images from Wikimedia's image servers (upload.wikimedia.org and thumb.wikimedia.org). When you ask for videos, the app runs a normal web search limited to youtube.com, asks <strong>YouTube</strong> (www.youtube.com/oembed) for the video title, and loads the thumbnail from i.ytimg.com. Images are kept in memory only while the app runs and are not saved on the phone. Nothing loads while Online is off. Tapping a video opens it in the YouTube app or your browser, under YouTube's own privacy policy.</li>
+<li><strong>Skill library.</strong> When you open Skills or the skill library while Online is on, or tap <strong>Check for new skills</strong> or <strong>Download</strong>, the app fetches the skill list and skill files from the IOTA skill library (raw.githubusercontent.com, hosted by GitHub). GitHub receives a normal web request, which includes your IP address. No chat content is sent. Skills are data files only (text and settings), not code.</li>
+</ol>
+<p>When Online is off, the app makes no network calls for chat, and it fetches skills only when you tap a button in the skill library. Each search provider and website handles requests under its own privacy policy.</p>
+<h2>Things you choose to do</h2>
+<ul>
+<li><strong>Source links.</strong> Tapping a source link opens it in your browser.</li>
+<li><strong>Reporting a reply.</strong> Reports are saved on your phone. If you tap "Email report", your email app opens with a draft addressed to the developer. Nothing is sent unless you press Send in your email app.</li>
+</ul>
+<h2>What we do not do</h2>
+<ul>
+<li>No accounts or sign-in.</li>
+<li>No ads or ad SDKs.</li>
+<li>No analytics, crash reporting, or tracking SDKs.</li>
+<li>No selling or sharing of personal data.</li>
+<li>No IOTA servers. Iota LLC never receives your chats or memory.</li>
+</ul>
+<h2>Children</h2>
+<p>IOTA Mobile is not directed at children under 13.</p>
+<h2>Changes</h2>
+<p>If this policy changes, the new version will ship inside the app and on this page with a new effective date.</p>
+<h2>Contact</h2>
+<p>Iota LLC: IOTA.LLC.Business.Inquiries@gmail.com</p></main></body></html>
