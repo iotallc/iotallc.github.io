@@ -23,9 +23,9 @@ window.IOTA_CONFIG = {
     email: "IOTA.LLC.Business.Inquiries@gmail.com",
     mobileBeta: "https://play.google.com/apps/testing/iotaAi.mobile",
     talesBeta: "https://play.google.com/apps/testing/com.iotallc.iotatales",
-    // Joseph's LinkedIn profile URL. Not known yet, so it points at the RAG post for now.
-    // Replace with the profile URL; every LinkedIn link on the site reads this value.
-    linkedin: "https://lnkd.in/p/gVtDwH8E"
+    // Joseph's LinkedIn profile. Every general LinkedIn link on the site reads this value.
+    // The RAG post link in the IOTA RAG section is separate and stays https://lnkd.in/p/gVtDwH8E.
+    linkedin: "https://www.linkedin.com/in/josephbryant-pw"
   },
   // Title shown in About. Other options: "Founder and CEO", "Founder and Principal", "Founder and Managing Member".
   founderTitle: "Founder"
