@@ -45,6 +45,7 @@
       <li><a href="#rag">IOTA RAG</a></li>
       <li><a href="#tutorials">Tutorials</a></li>
       <li><a href="#downloads">Downloads</a></li>
+      <li><a class="li-ico" href="https://lnkd.in/p/gVtDwH8E" data-link="linkedin" target="_blank" rel="noopener" aria-label="IOTA on LinkedIn (opens in a new tab)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg><span class="li-txt">LinkedIn</span></a></li>
       <li><a class="cta" href="#contact">Contact</a></li>
     </ul>
   </div>
@@ -182,7 +183,7 @@
     <div class="section-head reveal">
       <p class="eyebrow"><span class="dot"></span>03 / IOTA for Windows</p>
       <h2 id="win-title">A desktop AI app <span class="chrome">built like a tree.</span></h2>
-      <p class="lead">IOTA for Windows is built for ease of use. Everything is arranged as one core with branches for models, skills, connectors, knowledge, and memory. It runs fully offline from a USB kit, and each branch is ready to connect to other tools and data. IOTA for Windows is under continuous improvement, so features on this page may change between versions.</p>
+      <p class="lead">IOTA for Windows is built for ease of use. Everything is arranged as one core with branches for models, skills, connectors, knowledge, and memory. It runs from a USB kit and comes in two editions: a PowerShell edition that is strictly offline, and an EXE edition that can also connect to cloud models. IOTA for Windows is under continuous improvement, so features on this page may change between versions.</p>
     </div>
     <div class="feat-strip reveal">
       <div><b>Offline from a USB kit</b><span>Plug in the kit and run. No internet needed to chat.</span></div>
@@ -191,7 +192,32 @@
       <div><b>Built-in skills</b><span><code>/chart</code> <code>/deck</code> <code>/pdf</code> <code>/ocr</code> <code>/transcribe</code> <code>/units</code> <code>/fin</code></span></div>
     </div>
 
-    <h3 class="reveal" id="showcase" style="font-size:26px;margin-bottom:8px">Explore how it works</h3>
+    <h3 class="reveal" id="editions" style="font-size:26px;margin-bottom:8px">Two editions</h3>
+    <p class="muted reveal" style="margin-bottom:22px">Choose the edition that fits how you work. Both run from the USB kit.</p>
+    <div class="grid g2 editions reveal">
+      <article class="card edition">
+        <span class="k">Strictly offline</span>
+        <h3>PowerShell edition</h3>
+        <p>Driven by PowerShell for increased security and easier updates.</p>
+        <ul class="points">
+          <li><span><b>Strictly offline.</b> It does not connect to the internet or to online services.</span></li>
+          <li><span><b>Local data only.</b> RAG uses local databases only.</span></li>
+          <li><span><b>Protects the model.</b> Staying offline is a security measure that protects the active model on the USB drive.</span></li>
+        </ul>
+      </article>
+      <article class="card edition">
+        <span class="k">Local or cloud</span>
+        <h3>EXE edition</h3>
+        <p>Faster, with enhanced animations.</p>
+        <ul class="points">
+          <li><span><b>Faster.</b> Built for speed, with enhanced animations.</span></li>
+          <li><span><b>Cloud models.</b> It can connect to cloud models.</span></li>
+          <li><span><b>One-click switch.</b> Switch between local and cloud hosting with one click.</span></li>
+        </ul>
+      </article>
+    </div>
+
+    <h3 class="reveal" id="showcase" style="font-size:26px;margin:56px 0 8px">Explore how it works</h3>
     <p class="muted reveal" style="margin-bottom:26px">Select any part of the tree to see what it is and how it works.</p>
 
     <div class="showcase reveal" data-showcase>
@@ -211,12 +237,21 @@
         <h4>How it works</h4>
         <p>Each branch plugs into the core. Adding a connector, a skill, or a knowledge base gives IOTA a new ability without changing how you use the app. You keep typing in the same chat, and IOTA decides which branch a request needs.</p>
       </article>
+      <article class="card" id="node-editions" data-node="editions" data-label="Editions" data-x="50" data-y="24" data-icon="layers">
+        <h3>Editions</h3>
+        <h4>What it is</h4>
+        <p>IOTA for Windows comes in two editions: PowerShell and EXE.</p>
+        <h4>How it works</h4>
+        <p>The PowerShell edition is driven by PowerShell for increased security and easier updates. It is strictly offline and uses RAG with local databases only. This is a security measure that protects the active model on the USB drive.</p>
+        <p>The EXE edition is faster, with enhanced animations. It can connect to cloud models and switch between local and cloud hosting with one click.</p>
+      </article>
       <article class="card" id="node-models" data-node="models" data-label="Local models" data-x="21" data-y="50" data-icon="chip">
         <h3>Local models</h3>
         <h4>What it is</h4>
         <p>The AI model runs on your own PC, not on a remote server.</p>
         <h4>How it works</h4>
         <p>IOTA loads open-weight models from the USB kit and runs them on your graphics card or your processor. You can switch models for speed or quality, and a CPU Only mode works on PCs without a supported graphics card. No internet connection is needed to chat, and your conversations stay on your computer.</p>
+        <p>In the EXE edition, you can also switch to a cloud-hosted model with one click and switch back to local the same way. The PowerShell edition runs local models only.</p>
       </article>
       <article class="card" id="node-mcp" data-node="mcp" data-label="MCP connectors" data-x="23" data-y="30" data-icon="plug">
         <h3>MCP connectors</h3>
@@ -224,8 +259,9 @@
         <p>MCP (Model Context Protocol) is an open standard that lets an AI app work with outside tools and data sources through small connector programs.</p>
         <h4>How it works</h4>
         <p>Each connector describes the actions it offers, such as reading a calendar, searching a drive, or querying a database. IOTA lists the connectors you have added, the model picks one when a request needs it, and IOTA shows you what it did. Connectors are optional, and you choose which ones to add.</p>
+        <p>Connectors that reach online services need the EXE edition. The PowerShell edition is strictly offline, so it does not reach online services.</p>
       </article>
-      <article class="card" id="node-skills" data-node="skills" data-label="Skills" data-x="29" data-y="10" data-icon="spark">
+      <article class="card" id="node-skills" data-node="skills" data-label="Skills" data-x="25" data-y="10" data-icon="spark">
         <h3>Skills</h3>
         <h4>What it is</h4>
         <p>Skills are focused add-ons for specific jobs. You start one with a slash command, or IOTA starts it when a request calls for it.</p>
@@ -241,12 +277,14 @@
           <li><code>/fin</code><span>Run finance calculations.</span></li>
         </ul>
       </article>
-      <article class="card" id="node-kb" data-node="kb" data-label="Knowledge bases" data-x="71" data-y="10" data-icon="book">
+      <article class="card" id="node-kb" data-node="kb" data-label="Knowledge bases" data-x="75" data-y="10" data-icon="book">
         <h3>Knowledge bases</h3>
         <h4>What it is</h4>
         <p>A knowledge base is a set of your own files, such as notes, manuals, or reports, that IOTA can search when it answers.</p>
         <h4>How it works</h4>
         <p>Add files to a knowledge base and IOTA indexes them on your PC. When you ask a question, IOTA searches all of your knowledge bases by meaning, pulls in the most relevant passages, and answers from them. Nothing is uploaded.</p>
+        <h4>IOTA Orchestrator</h4>
+        <p>Knowledge bases integrate with the IOTA Orchestrator, allowing local data parsing at speeds over 30 Gb/s when run on a workstation laptop with an NVIDIA RTX PRO 2000 Blackwell GPU.</p>
       </article>
       <article class="card" id="node-rag" data-node="rag" data-label="RAG pipeline" data-x="77" data-y="30" data-icon="flow">
         <h3>RAG pipeline</h3>
@@ -299,6 +337,7 @@
     </div>
     <div class="reveal" style="--d:.08s">
       <p class="eyebrow"><span class="dot"></span>04 / IOTA Mobile</p>
+      <span class="soon-badge">Coming soon to iOS</span>
       <h2 id="mob-title">Private AI that runs <span class="chrome">on your own phone.</span></h2>
       <p class="lead" style="margin-top:22px">IOTA Mobile is a free AI assistant for Android. There is no account, no subscription, no ads, and no fees. The model downloads to your phone once, and chat works offline after that. Your chats stay on the device.</p>
       <div class="grid g2 modes">
@@ -315,7 +354,7 @@
         <a class="btn primary" href="https://play.google.com/apps/testing/iotaAi.mobile" data-link="mobileBeta" rel="noopener">Join the beta</a>
         <a class="btn" href="iota-mobile/privacy.html">Privacy policy</a>
       </div>
-      <p class="muted small" style="margin-top:14px">IOTA Mobile is in testing on Google Play. The beta is open to invited testers. Email us to be added. Requires a 64-bit Android phone running Android 9 or later.</p>
+      <p class="muted small" style="margin-top:14px">IOTA Mobile is in testing on Google Play. The beta is open to invited testers. Email us to be added. Requires a 64-bit Android phone running Android 9 or later. An iOS version is coming soon.</p>
     </div>
   </div>
 </section>
@@ -341,6 +380,8 @@
             <span class="status">Closed beta</span>
             <h3 style="margin:8px 0 8px">Iota Tales, our first title</h3>
             <p class="muted">A this-or-that space story game. You are the new captain of a colony ship, making one-tap decisions for the crew while keeping Fuel, Food, Happiness, and Currency in balance. An AI on your phone adds detail to each card and writes your captain's log.</p>
+            <!-- TODO(play-as-ai): Joseph will send the description of the mode where you play as the AI. Put the text inside the paragraph below and remove the hidden attribute. -->
+            <p class="muted tales-ai-mode" data-todo="play-as-ai" hidden></p>
             <div class="btns" style="margin-top:16px"><a class="btn" href="https://play.google.com/apps/testing/com.iotallc.iotatales" data-link="talesBeta" rel="noopener">Join the closed beta</a><a class="btn" href="iota-tales/">Privacy policy</a></div>
           </div>
         </div>
@@ -387,16 +428,21 @@
       <h2 id="rag-title">Retrieval that lets <span class="chrome">smaller models do more.</span></h2>
       <p class="lead">IOTA RAG is our proprietary, expanded form of retrieval-augmented generation. We set it up on your documents and data and support it in use. It finds the right passages before the model answers, so a smaller model can give grounded answers with less computing power.</p>
     </div>
-    <div class="card reveal">
-      <ol class="rag-flow">
-        <li><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg></span><b>Ingest</b>Your files</li>
-        <li><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg></span><b>Chunk</b>Short passages</li>
-        <li><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="7" r="1.6"/><circle cx="17" cy="6" r="1.6"/><circle cx="12" cy="13" r="1.6"/><circle cx="7" cy="18" r="1.6"/><circle cx="18" cy="17" r="1.6"/></svg></span><b>Embed</b>Meaning as numbers</li>
-        <li><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span><b>Retrieve</b>Closest matches</li>
-        <li><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3v18M5 9l7-6 7 6"/></svg></span><b>Ground</b>Sources in context</li>
-        <li><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></span><b>Answer</b>Tied to sources</li>
+    <div class="card rag-pipe reveal" data-ragpipe>
+      <p class="rp-hint">Select a stage to see what it does.</p>
+      <ol class="rp-stages">
+        <li class="rp-item" data-rp="ingest"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg></span><span class="rp-n">01</span><b>Ingest</b><small>Your files</small></button><p class="rp-desc"><b>Ingest.</b> Files such as documents, notes, and reports are read and converted to plain text.</p></li>
+        <li class="rp-item" data-rp="chunk"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg></span><span class="rp-n">02</span><b>Chunk</b><small>Short passages</small></button><p class="rp-desc"><b>Chunk.</b> The text is split into short passages, each about one idea, so each can be found on its own.</p></li>
+        <li class="rp-item" data-rp="embed"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="7" r="1.6"/><circle cx="17" cy="6" r="1.6"/><circle cx="12" cy="13" r="1.6"/><circle cx="7" cy="18" r="1.6"/><circle cx="18" cy="17" r="1.6"/></svg></span><span class="rp-n">03</span><b>Embed</b><small>Meaning as numbers</small></button><p class="rp-desc"><b>Embed.</b> Each passage becomes a list of numbers called an embedding. Passages with similar meaning get similar numbers.</p></li>
+        <li class="rp-item" data-rp="retrieve"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span><span class="rp-n">04</span><b>Retrieve</b><small>Closest matches</small></button><p class="rp-desc"><b>Retrieve.</b> Your question is turned into numbers the same way, and the passages closest in meaning are found.</p></li>
+        <li class="rp-item" data-rp="ground"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3v18M5 9l7-6 7 6"/></svg></span><span class="rp-n">05</span><b>Ground</b><small>Sources in context</small></button><p class="rp-desc"><b>Ground.</b> The chosen passages are given to the model with instructions to answer from them.</p></li>
+        <li class="rp-item" data-rp="answer"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12.5 10 17l9-10"/></svg></span><span class="rp-n">06</span><b>Answer</b><small>Tied to sources</small></button><p class="rp-desc"><b>Answer.</b> The model writes its reply from those passages, which keeps the answer tied to your sources.</p></li>
       </ol>
+      <div class="rp-layer" data-rp="expanded"><button type="button" class="rp-stage rp-x" aria-pressed="false" aria-controls="rp-detail"><span class="rp-n">+</span><b>IOTA expanded</b><small>Layered over every stage</small></button><p class="rp-desc"><b>IOTA expanded.</b> IOTA RAG is our proprietary, expanded form of RAG. It searches all of your knowledge banks at once, lets you tune how many passages are used and how close a match must be, and runs on a single PC, your own servers, or the cloud.</p></div>
+      <div class="rp-detail" id="rp-detail" aria-live="polite"></div>
     </div>
+    <p class="rag-links reveal"><a href="https://lnkd.in/p/gVtDwH8E" target="_blank" rel="noopener">Read my LinkedIn post on how RAG works &rarr;</a></p>
+    <p class="muted reveal orch-line">Knowledge bases integrate with the IOTA Orchestrator, allowing local data parsing at speeds over 30 Gb/s when run on a workstation laptop with an NVIDIA RTX PRO 2000 Blackwell GPU.</p>
     <div class="grid g3" style="margin-top:18px">
       <div class="card reveal"><h3>Search across every source</h3><p class="muted">Retrieval runs by meaning across all of your knowledge banks at once, not one folder at a time.</p></div>
       <div class="card reveal" style="--d:.08s"><h3>Tunable retrieval</h3><p class="muted">Controls set how many passages are used and how close a match must be, so answers can favor precision or coverage.</p></div>
@@ -442,12 +488,13 @@
     <div class="grid g3">
       <article class="card dl reveal" style="--accent:var(--c-mob)">
         <div class="top"><img src="assets/img/apple-touch-icon.png" alt="" width="56" height="56" loading="lazy"><div><span class="st">Beta on Google Play</span><h3>IOTA Mobile</h3></div></div>
+        <span class="soon-badge">Coming soon to iOS</span>
         <p>Free private AI for Android. Invited testers can join the beta from this link.</p>
         <div class="btns"><a class="btn primary" href="https://play.google.com/apps/testing/iotaAi.mobile" data-link="mobileBeta" rel="noopener">Join the beta</a></div>
       </article>
       <article class="card dl reveal" style="--accent:var(--c-win);--d:.08s">
         <div class="top"><span class="ph-ico" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span><div><span class="st">Coming soon</span><h3>IOTA for Windows</h3></div></div>
-        <p>The desktop app and USB kit are not publicly available yet. Request early access by email.</p>
+        <p>The desktop app and USB kit are not publicly available yet. Two editions: PowerShell (strictly offline) and EXE (local or cloud). Request early access by email.</p>
         <div class="btns"><a class="btn" href="mailto:IOTA.LLC.Business.Inquiries@gmail.com?subject=IOTA%20for%20Windows%20access%20request" data-mail="IOTA for Windows access request">Request access</a></div>
       </article>
       <article class="card dl reveal" style="--accent:var(--c-game);--d:.16s">
@@ -469,8 +516,10 @@
       <div>
         <p class="eyebrow" style="margin-bottom:10px">About</p>
         <h2 id="about-title" style="font-size:clamp(28px,3.4vw,40px);margin-bottom:14px">Founded by Joseph Bryant</h2>
-        <p class="muted" style="max-width:720px">Joseph Bryant founded IOTA. He works as a production engineer in aerospace, is a graduate of the University of Oklahoma, and is pursuing an MBA in finance.</p>
-        <ul class="facts"><li>Production engineer, aerospace</li><li>University of Oklahoma graduate</li><li>Pursuing a finance MBA</li></ul>
+        <p class="role"><span data-cfg="founderTitle">Founder</span>, IOTA</p>
+        <p class="muted" style="max-width:720px">Joseph Bryant is the <span data-cfg="founderTitle">Founder</span> of IOTA. He works as a production engineer in aerospace, is a graduate of the University of Oklahoma, and is pursuing an MBA in finance.</p>
+        <ul class="facts"><li><span data-cfg="founderTitle">Founder</span>, IOTA</li><li>Production engineer, aerospace</li><li>University of Oklahoma graduate</li><li>Pursuing a finance MBA</li></ul>
+        <div class="btns" style="margin-top:20px"><a class="btn" href="https://lnkd.in/p/gVtDwH8E" data-link="linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>Joseph on LinkedIn</a></div>
       </div>
     </div>
   </div>
@@ -484,7 +533,7 @@
       <h2 id="contact-title">Talk with us.</h2>
       <p class="lead">For questions about enterprise AI platforms, model integration, IOTA RAG, our apps, or investment management, email us and we will reply.</p>
       <p class="email" style="margin-top:22px"><a href="mailto:IOTA.LLC.Business.Inquiries@gmail.com" data-mail="">IOTA.LLC.Business.Inquiries@gmail.com</a></p>
-      <div class="btns"><a class="btn primary" href="mailto:IOTA.LLC.Business.Inquiries@gmail.com" data-mail="">Send an email</a></div>
+      <div class="btns"><a class="btn primary" href="mailto:IOTA.LLC.Business.Inquiries@gmail.com" data-mail="">Send an email</a><a class="btn" href="https://lnkd.in/p/gVtDwH8E" data-link="linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>Connect on LinkedIn</a></div>
     </div>
   </div>
 </section>
@@ -497,6 +546,7 @@
       <div>
         <a class="brand" href="#top" aria-label="IOTA, back to top"><img src="assets/img/iota-chevron-sm.png" alt="" width="48" height="32"><span><b>IOTA</b></span></a>
         <p style="margin-top:16px">IOTA.LLC.Business.Inquiries@gmail.com</p>
+        <p><a class="foot-li" href="https://lnkd.in/p/gVtDwH8E" data-link="linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>LinkedIn</a></p>
       </div>
       <div class="grid g3">
         <div><h4>Offerings</h4><ul><li><a href="#investment">Investment Management</a></li><li><a href="#enterprise">Enterprise AI Platforms</a></li><li><a href="#models">Model Integration</a></li><li><a href="#rag">IOTA RAG</a></li></ul></div>

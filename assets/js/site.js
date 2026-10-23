@@ -28,6 +28,7 @@
       el.classList.toggle('unset', unset);
       if (unset) el.setAttribute('title', 'Placeholder: set ' + key + ' in assets/js/config.js');
     });
+    $$('[data-cfg]').forEach(function (el) { var v = CFG[el.getAttribute('data-cfg')]; if (typeof v === 'string' && v.trim()) el.textContent = v; });
     var y = $('[data-year]'); if (y) y.textContent = String(new Date().getFullYear());
   }
 
@@ -258,9 +259,10 @@
     flow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M7 6h10M6 8l5 8M18 8l-5 8"/></svg>',
     brain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 3 5 3 3 0 0 0 5 1V5a3 3 0 0 0-3-1zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-3 5 3 3 0 0 1-5 1"/></svg>',
     chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+    layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3 3 8l9 5 9-5z"/><path d="m3 13 9 5 9-5"/></svg>',
     face: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></svg>'
   };
-  var ORDER = ['core', 'chats', 'models', 'mcp', 'skills', 'kb', 'rag', 'memory', 'persona'];
+  var ORDER = ['core', 'editions', 'chats', 'models', 'mcp', 'skills', 'kb', 'rag', 'memory', 'persona'];
 
   function showcase() {
     var wrap = $('[data-showcase]'), stage = $('[data-stage]'), panel = $('[data-panel]'), src = $('[data-nodes]');
@@ -416,5 +418,44 @@
     } else select('rag', false, false);
   }
 
-  applyConfig(); nav(); spotlight(); reveals(); heroTree(); showcase();
+  /* ---------- IOTA RAG interactive pipeline ---------- */
+  function ragPipe() {
+    var box = $('[data-ragpipe]'); if (!box) return;
+    var items = $$('[data-rp]', box), detail = $('#rp-detail', box), cur = null, t = null;
+    box.classList.add('live');
+    function show(it, user) {
+      if (it === cur) return;
+      cur = it;
+      items.forEach(function (x) {
+        var on = x === it;
+        x.classList.toggle('on', on);
+        $('.rp-stage', x).setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      var idx = items.indexOf(it);
+      box.style.setProperty('--prog', it.getAttribute('data-rp') === 'expanded' ? 1 : idx / (items.length - 2));
+      box.classList.toggle('xon', it.getAttribute('data-rp') === 'expanded');
+      var html = $('.rp-desc', it).innerHTML;
+      clearTimeout(t);
+      if (reduce) { detail.innerHTML = html; return; }
+      detail.classList.add('out');
+      t = setTimeout(function () { detail.innerHTML = html; detail.classList.remove('out'); }, 160);
+    }
+    items.forEach(function (it, i) {
+      var b = $('.rp-stage', it);
+      b.addEventListener('click', function () { show(it, true); });
+      b.addEventListener('mouseenter', function () { if (window.matchMedia('(hover:hover)').matches) show(it); });
+      b.addEventListener('focus', function () { show(it); });
+      b.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = items[(i + 1) % items.length];
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = items[(i - 1 + items.length) % items.length];
+        if (e.key === 'Home') n = items[0];
+        if (e.key === 'End') n = items[items.length - 1];
+        if (n) { e.preventDefault(); $('.rp-stage', n).focus(); }
+      });
+    });
+    show(items[0]);
+  }
+
+  applyConfig(); nav(); spotlight(); reveals(); heroTree(); showcase(); ragPipe();
 })();
