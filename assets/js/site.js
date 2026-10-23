@@ -95,9 +95,9 @@
     var ctx = cv.getContext('2d');
     var css = getComputedStyle(document.documentElement);
     var BR = [
-      ['Investment', '--c-inv'], ['Enterprise AI', '--c-ent'], ['Windows', '--c-win'], ['Mobile', '--c-mob'],
-      ['Games', '--c-game'], ['Models', '--c-model'], ['IOTA RAG', '--c-rag']
-    ].map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0' }; });
+      ['Enterprise AI', '--c-ent'], ['Windows', '--c-win'], ['Mobile', '--c-mob'], ['Games', '--c-game'],
+      ['Models', '--c-model'], ['IOTA RAG', '--c-rag'], ['Investment', '--c-inv']
+    ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0' }; });
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
 
