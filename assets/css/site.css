@@ -291,6 +291,10 @@ html:not(.js) .showcase{display:none}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c-game);box-shadow:0 0 10px var(--c-game);animation:blink 2s ease-in-out infinite}
 @keyframes blink{50%{opacity:.35}}
 .tales-shot{border-radius:26px;overflow:hidden;border:1px solid var(--hair-2);box-shadow:0 30px 90px rgba(224,154,140,.12),0 30px 80px rgba(0,0,0,.5);max-width:330px;margin:0 auto}
+.tales-ai{margin-top:18px;padding:16px 18px;border-radius:14px;border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.tales-ai .k{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.tales-ai h4{margin:6px 0 6px;font-size:18px;color:var(--chrome)}
+.tales-ai p{margin:0;font-size:15.5px;color:var(--highlight)}
 @media (max-width:520px){.tales{grid-template-columns:1fr}}
 
 /* model tiers */

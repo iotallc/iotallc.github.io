@@ -1,0 +1,222 @@
+{
+ "format": 1,
+ "note": "Source for skills/skills.json. tools/build_skills.py adds status, file, size and sha256.",
+ "categories": {
+  "docs": "Documents and visuals",
+  "data": "Data and math",
+  "read": "Read and listen",
+  "files": "Files"
+ },
+ "skills": [
+  {
+   "id": "chart",
+   "name": "Chart",
+   "slash": "/chart",
+   "category": "docs",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "network": "offline",
+   "description": "Makes a bar, line, pie, or scatter chart from your data or from a dropped CSV or XLSX file. Saves a PNG in the IOTA theme.",
+   "example": "/chart bar of pump runtime by month",
+   "requires": [
+    "IOTA for Windows V1.2 or later",
+    "Python 3.12 with matplotlib, NumPy, and Pillow (included in the PowerShell edition kit)",
+    "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
+   ],
+   "status": "available",
+   "version": "1.2",
+   "file": "downloads/iota-skill-chart-1.2.zip",
+   "size": 16005,
+   "sha256": "357af7aedb39fd430dcdfda4376fbb594c5c4cfe8f428c8c25dd763775ecd5b9",
+   "files": 9
+  },
+  {
+   "id": "deck",
+   "name": "Slide deck",
+   "slash": "/deck",
+   "category": "docs",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "network": "offline",
+   "description": "Builds a 16:9 PowerPoint deck from your request. Layouts include title, bullets, chart, table, and two columns.",
+   "example": "/deck five slides on our Q3 results",
+   "requires": [
+    "IOTA for Windows V1.2 or later",
+    "Python 3.12 with python-pptx, matplotlib, and Pillow (included in the PowerShell edition kit)",
+    "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
+   ],
+   "status": "available",
+   "version": "1.2",
+   "file": "downloads/iota-skill-deck-1.2.zip",
+   "size": 18872,
+   "sha256": "9990e333b5f4508a666a440da5a3f39c27b7eb8067f1e106049e4595b0d4ba2c",
+   "files": 10
+  },
+  {
+   "id": "pdf",
+   "name": "PDF report",
+   "slash": "/pdf",
+   "category": "docs",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "network": "offline",
+   "description": "Writes a PDF report with headings, text, bullets, tables, and charts. Charcoal pages by default, or white pages for printing.",
+   "example": "/pdf printable summary of this chat",
+   "requires": [
+    "IOTA for Windows V1.2 or later",
+    "Python 3.12 with ReportLab, matplotlib, and Pillow (included in the PowerShell edition kit)",
+    "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
+   ],
+   "status": "available",
+   "version": "1.2",
+   "file": "downloads/iota-skill-pdf-1.2.zip",
+   "size": 18082,
+   "sha256": "2e8e47f4fd5839879c66d33d08e2b3422bd1b72834264228773fe24821bda615",
+   "files": 10
+  },
+  {
+   "id": "diagram",
+   "name": "Diagram",
+   "slash": "/diagram",
+   "category": "docs",
+   "editions": [],
+   "network": "offline",
+   "description": "Makes a flowchart or process map and saves it as a PNG.",
+   "requires": [],
+   "status": "soon"
+  },
+  {
+   "id": "units",
+   "name": "Units and engineering",
+   "slash": "/units",
+   "category": "data",
+   "editions": [
+    "powershell"
+   ],
+   "network": "offline",
+   "description": "Converts units and works quick engineering formulas. Code does the math, and the answer shows each step and the conversion factor used.",
+   "example": "/units 250 psi to kPa and bar",
+   "requires": [
+    "IOTA for Windows V1.2 or later, PowerShell edition",
+    "Python 3.12 with pint (included in the kit)"
+   ],
+   "status": "available",
+   "version": "1.2",
+   "file": "downloads/iota-skill-units-1.2.zip",
+   "size": 21380,
+   "sha256": "75051dbad7b8f21e57381f6219cbe3abd942da36d8888772d037270da1d83778",
+   "files": 9
+  },
+  {
+   "id": "fin",
+   "name": "Finance",
+   "slash": "/fin",
+   "category": "data",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "network": "offline",
+   "description": "Finance math: NPV, IRR, XIRR, payback, loan payments, amortization, CAGR, WACC, break-even, and a simple DCF. Tables save as Excel files with live formulas.",
+   "example": "/fin amortization 25000 at 7% for 5 years with a chart",
+   "requires": [
+    "IOTA for Windows V1.2 or later",
+    "Python 3.12 with XlsxWriter and matplotlib (included in the PowerShell edition kit)",
+    "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
+   ],
+   "status": "available",
+   "version": "1.2",
+   "file": "downloads/iota-skill-fin-1.2.zip",
+   "size": 25801,
+   "sha256": "7a07bc5296019bf4d6ef805ea2cee0d42bc8ee8073b4c967a56a744320710e81",
+   "files": 10
+  },
+  {
+   "id": "table",
+   "name": "Table",
+   "slash": "/table",
+   "category": "data",
+   "editions": [],
+   "network": "offline",
+   "description": "Pulls tables out of a PDF, DOCX, or XLSX file into CSV or XLSX.",
+   "requires": [],
+   "status": "soon"
+  },
+  {
+   "id": "ocr",
+   "name": "OCR",
+   "slash": "/ocr",
+   "category": "read",
+   "editions": [
+    "powershell"
+   ],
+   "network": "offline",
+   "description": "Reads the text in images, screenshots, and scanned PDFs. Can also save a searchable copy of a PDF or image.",
+   "example": "/ocr searchable",
+   "requires": [
+    "IOTA for Windows V1.2 or later, PowerShell edition",
+    "Python 3.12 with RapidOCR, ONNX Runtime, OpenCV, pypdfium2, pdfplumber, Pillow, and NumPy (included in the kit)",
+    "The English PP-OCRv3 OCR model in models\\ocr (in the kit, not in this download)"
+   ],
+   "status": "available",
+   "version": "1.2",
+   "file": "downloads/iota-skill-ocr-1.2.zip",
+   "size": 19236,
+   "sha256": "cfeedbe899f4ac672588c5a9cf708d1aba786b1cf899577c2d61d9d9ba106efc",
+   "files": 8
+  },
+  {
+   "id": "transcribe",
+   "name": "Transcribe",
+   "slash": "/transcribe",
+   "category": "read",
+   "editions": [
+    "powershell"
+   ],
+   "network": "offline",
+   "description": "Writes a transcript with timestamps from an audio or video file. Add \"notes\" for a summary, decisions, and action items.",
+   "example": "/transcribe notes",
+   "requires": [
+    "IOTA for Windows V1.2 or later, PowerShell edition",
+    "Python 3.12 with PyAV (included in the kit)",
+    "whisper-cli.exe from the kit",
+    "A whisper speech model, base.en or tiny.en, in models\\stt (in the kit, not in this download)"
+   ],
+   "status": "available",
+   "version": "1.2",
+   "file": "downloads/iota-skill-transcribe-1.2.zip",
+   "size": 19427,
+   "sha256": "b2426ed2ed9a41c685fbc4436d6612bf21158f6aad0a072f478be3236f3d79f8",
+   "files": 10
+  },
+  {
+   "id": "summarize",
+   "name": "Summarize",
+   "slash": "/summarize",
+   "category": "read",
+   "editions": [],
+   "network": "offline",
+   "description": "Summarizes a dropped PDF, DOCX, TXT, or MD file.",
+   "requires": [],
+   "status": "soon"
+  },
+  {
+   "id": "files",
+   "name": "Files",
+   "slash": "/files",
+   "category": "files",
+   "editions": [],
+   "network": "offline",
+   "description": "Works with the files in a folder you choose.",
+   "requires": [],
+   "status": "soon"
+  }
+ ],
+ "updated": "2026-10-23"
+}

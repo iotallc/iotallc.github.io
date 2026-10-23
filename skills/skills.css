@@ -1,0 +1,48 @@
+/* Skills Library page. Lives in skills/ so it stays out of the published site until approved. */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sk-hero{padding:80px 0 10px}
+.sk-hero h1{font-size:clamp(40px,5vw,64px);letter-spacing:-.03em}
+.sk-hero .lead{margin-top:18px;max-width:760px}
+.skills-page section{border-bottom:1px solid var(--hair)}
+.skills-page #library{padding-top:30px}
+.sk-filters{display:none}
+.js .sk-filters{display:grid;grid-template-columns:minmax(220px,1.6fr) repeat(3,minmax(150px,1fr));gap:12px;align-items:end;margin:0 0 22px;
+  padding:16px;border:1px solid var(--hair);border-radius:16px;background:rgba(255,255,255,.02)}
+.sk-filters label{display:grid;gap:6px;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.sk-filters input,.sk-filters select{width:100%;font:400 15px var(--font);color:var(--chrome);background:var(--input);border:1px solid var(--border);border-radius:10px;padding:11px 12px;letter-spacing:0;text-transform:none}
+.sk-filters select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--silver) 50%),linear-gradient(135deg,var(--silver) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+.sk-filters input:focus,.sk-filters select:focus{outline:2px solid var(--sky);outline-offset:1px}
+.sk-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+.skill{display:flex;flex-direction:column;padding:24px;gap:0}
+.skill[hidden]{display:none}
+.sk-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.sk-top .slash{font:500 15px var(--mono);color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);padding:3px 10px;border-radius:8px}
+.sk-top .ver{font:12px var(--mono);color:var(--dim)}
+.skill h3{font-size:21px;margin:0 0 8px}
+.skill p{font-size:15.5px}
+.sk-eg{color:var(--dim);font-size:14px!important}
+.sk-eg code{overflow-wrap:anywhere}
+.sk-tags{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:4px 0 14px}
+.sk-tags li{font:11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--highlight);border:1px solid var(--hair-2);padding:3px 9px;border-radius:99px}
+.sk-tags li.off{color:var(--c-mob);border-color:color-mix(in srgb,var(--c-mob) 40%,transparent)}
+.sk-tags li.soon{color:var(--c-inv);border-color:color-mix(in srgb,var(--c-inv) 45%,transparent)}
+.sk-req{margin:0 0 16px}
+.sk-req b{display:block;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.sk-req ul{margin:0;padding-left:18px;font-size:14px;color:var(--highlight)}
+.sk-req li{margin:3px 0;overflow-wrap:anywhere}
+.sk-dl{margin-top:auto;padding-top:14px;border-top:1px solid var(--hair)}
+.sk-dl .btn{padding:11px 18px;font-size:15px}
+.sk-dl .btn small{font:12px var(--mono);opacity:.7}
+.sk-dl .btn.off{opacity:.55;cursor:default;pointer-events:none}
+.sk-hash{margin:10px 0 0;font-size:12px!important;color:var(--dim);overflow-wrap:anywhere}
+.sk-hash code{font-size:11.5px;color:var(--silver)}
+.skill.is-soon{opacity:.82}
+.sk-empty{padding:30px;border:1px dashed var(--hair-2);border-radius:16px;text-align:center}
+/* wider than .doc so three cards fit per row; filters on two rows so labels never cut off */
+.doc.skills-page{max-width:var(--max)}
+.skills-page .sk-hero,.skills-page #install{max-width:860px}
+.js .sk-filters{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sk-search{grid-column:1/-1}
+@media (max-width:900px){.js .sk-filters{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.js .sk-filters{grid-template-columns:1fr}.sk-grid{grid-template-columns:1fr}.skill{padding:20px}.sk-hero{padding-top:56px}}

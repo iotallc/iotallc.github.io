@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skills Library | IOTA</title>
+<meta name="description" content="Download skills for IOTA for Windows: charts, slide decks, PDF reports, units, finance, OCR, and transcription. Every skill runs offline.">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="website">
+<meta property="og:title" content="IOTA Skills Library">
+<meta property="og:description" content="Skills for IOTA for Windows. Each one starts with a slash command and runs offline.">
+<meta property="og:url" content="https://iotallc.github.io/skills/">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../assets/img/favicon.png">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../" aria-label="IOTA home">
+      <img src="../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="#library">Skills</a></li>
+      <li><a href="#install">Install a skill</a></li>
+      <li><a href="../#windows">IOTA for Windows</a></li>
+      <li><a href="../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc skills-page" style="--accent:var(--c-win)">
+  <div class="sk-hero">
+    <p class="eyebrow"><span class="dot"></span>IOTA for Windows</p>
+    <h1><span class="chrome">Skills Library</span></h1>
+    <p class="lead">Skills are add-ons for specific jobs. You start one by typing its slash command in a chat, for example <code>/chart</code>. The skill does the work with tested code, and IOTA writes the reply around the result. Every skill here runs offline.</p>
+    <p class="muted small">Version 1.2. Updated October 23, 2026.</p>
+  </div>
+
+  <section id="library" aria-label="Skills">
+    <form class="sk-filters" role="search" onsubmit="return false">
+      <label class="sk-search"><span class="vh">Search skills</span>
+        <input id="sk-q" type="search" placeholder="Search skills, for example pdf or finance" autocomplete="off"></label>
+      <label><span>Category</span>
+        <select id="sk-cat"><option value="">All categories</option><option value="docs">Documents and visuals</option><option value="data">Data and math</option><option value="read">Read and listen</option><option value="files">Files</option></select></label>
+      <label><span>Edition</span>
+        <select id="sk-ed"><option value="">Both editions</option><option value="powershell">PowerShell edition (offline)</option><option value="exe">EXE edition</option></select></label>
+      <label><span>Network</span>
+        <select id="sk-net"><option value="">Offline and online</option><option value="offline">Offline</option><option value="online">Online</option></select></label>
+    </form>
+    <div class="grid sk-grid" id="sk-grid">
+      <article class="card skill" id="skill-chart" data-cat="docs" data-ed="powershell exe" data-net="offline" data-status="available" data-q="chart /chart makes a bar, line, pie, or scatter chart from your data or from a dropped csv or xlsx file. saves a png in the iota theme. documents and visuals powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/chart</code><span class="ver">Version 1.2</span></div>
+        <h3>Chart</h3>
+        <p>Makes a bar, line, pie, or scatter chart from your data or from a dropped CSV or XLSX file. Saves a PNG in the IOTA theme.</p>
+        <p class="sk-eg">Example: <code>/chart bar of pump runtime by month</code></p>
+        <ul class="sk-tags"><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with matplotlib, NumPy, and Pillow (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
+        <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-chart-1.2.zip" download>Download <small>zip, 16 KB</small></a><p class="sk-hash">SHA-256 <code>357af7aedb39fd430dcdfda4376fbb594c5c4cfe8f428c8c25dd763775ecd5b9</code></p></div>
+      </article>
+      <article class="card skill" id="skill-deck" data-cat="docs" data-ed="powershell exe" data-net="offline" data-status="available" data-q="slide deck /deck builds a 16:9 powerpoint deck from your request. layouts include title, bullets, chart, table, and two columns. documents and visuals powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/deck</code><span class="ver">Version 1.2</span></div>
+        <h3>Slide deck</h3>
+        <p>Builds a 16:9 PowerPoint deck from your request. Layouts include title, bullets, chart, table, and two columns.</p>
+        <p class="sk-eg">Example: <code>/deck five slides on our Q3 results</code></p>
+        <ul class="sk-tags"><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with python-pptx, matplotlib, and Pillow (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
+        <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-deck-1.2.zip" download>Download <small>zip, 18 KB</small></a><p class="sk-hash">SHA-256 <code>9990e333b5f4508a666a440da5a3f39c27b7eb8067f1e106049e4595b0d4ba2c</code></p></div>
+      </article>
+      <article class="card skill" id="skill-pdf" data-cat="docs" data-ed="powershell exe" data-net="offline" data-status="available" data-q="pdf report /pdf writes a pdf report with headings, text, bullets, tables, and charts. charcoal pages by default, or white pages for printing. documents and visuals powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/pdf</code><span class="ver">Version 1.2</span></div>
+        <h3>PDF report</h3>
+        <p>Writes a PDF report with headings, text, bullets, tables, and charts. Charcoal pages by default, or white pages for printing.</p>
+        <p class="sk-eg">Example: <code>/pdf printable summary of this chat</code></p>
+        <ul class="sk-tags"><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with ReportLab, matplotlib, and Pillow (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
+        <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-pdf-1.2.zip" download>Download <small>zip, 18 KB</small></a><p class="sk-hash">SHA-256 <code>2e8e47f4fd5839879c66d33d08e2b3422bd1b72834264228773fe24821bda615</code></p></div>
+      </article>
+      <article class="card skill" id="skill-units" data-cat="data" data-ed="powershell" data-net="offline" data-status="available" data-q="units and engineering /units converts units and works quick engineering formulas. code does the math, and the answer shows each step and the conversion factor used. data and math powershell edition offline ">
+        <div class="sk-top"><code class="slash">/units</code><span class="ver">Version 1.2</span></div>
+        <h3>Units and engineering</h3>
+        <p>Converts units and works quick engineering formulas. Code does the math, and the answer shows each step and the conversion factor used.</p>
+        <p class="sk-eg">Example: <code>/units 250 psi to kPa and bar</code></p>
+        <ul class="sk-tags"><li>Data and math</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
+        <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later, PowerShell edition</li><li>Python 3.12 with pint (included in the kit)</li></ul></div>
+        <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-units-1.2.zip" download>Download <small>zip, 21 KB</small></a><p class="sk-hash">SHA-256 <code>75051dbad7b8f21e57381f6219cbe3abd942da36d8888772d037270da1d83778</code></p></div>
+      </article>
+      <article class="card skill" id="skill-fin" data-cat="data" data-ed="powershell exe" data-net="offline" data-status="available" data-q="finance /fin finance math: npv, irr, xirr, payback, loan payments, amortization, cagr, wacc, break-even, and a simple dcf. tables save as excel files with live formulas. data and math powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/fin</code><span class="ver">Version 1.2</span></div>
+        <h3>Finance</h3>
+        <p>Finance math: NPV, IRR, XIRR, payback, loan payments, amortization, CAGR, WACC, break-even, and a simple DCF. Tables save as Excel files with live formulas.</p>
+        <p class="sk-eg">Example: <code>/fin amortization 25000 at 7% for 5 years with a chart</code></p>
+        <ul class="sk-tags"><li>Data and math</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with XlsxWriter and matplotlib (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
+        <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-fin-1.2.zip" download>Download <small>zip, 25 KB</small></a><p class="sk-hash">SHA-256 <code>7a07bc5296019bf4d6ef805ea2cee0d42bc8ee8073b4c967a56a744320710e81</code></p></div>
+      </article>
+      <article class="card skill" id="skill-ocr" data-cat="read" data-ed="powershell" data-net="offline" data-status="available" data-q="ocr /ocr reads the text in images, screenshots, and scanned pdfs. can also save a searchable copy of a pdf or image. read and listen powershell edition offline ">
+        <div class="sk-top"><code class="slash">/ocr</code><span class="ver">Version 1.2</span></div>
+        <h3>OCR</h3>
+        <p>Reads the text in images, screenshots, and scanned PDFs. Can also save a searchable copy of a PDF or image.</p>
+        <p class="sk-eg">Example: <code>/ocr searchable</code></p>
+        <ul class="sk-tags"><li>Read and listen</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
+        <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later, PowerShell edition</li><li>Python 3.12 with RapidOCR, ONNX Runtime, OpenCV, pypdfium2, pdfplumber, Pillow, and NumPy (included in the kit)</li><li>The English PP-OCRv3 OCR model in models\ocr (in the kit, not in this download)</li></ul></div>
+        <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-ocr-1.2.zip" download>Download <small>zip, 19 KB</small></a><p class="sk-hash">SHA-256 <code>cfeedbe899f4ac672588c5a9cf708d1aba786b1cf899577c2d61d9d9ba106efc</code></p></div>
+      </article>
+      <article class="card skill" id="skill-transcribe" data-cat="read" data-ed="powershell" data-net="offline" data-status="available" data-q="transcribe /transcribe writes a transcript with timestamps from an audio or video file. add &quot;notes&quot; for a summary, decisions, and action items. read and listen powershell edition offline ">
+        <div class="sk-top"><code class="slash">/transcribe</code><span class="ver">Version 1.2</span></div>
+        <h3>Transcribe</h3>
+        <p>Writes a transcript with timestamps from an audio or video file. Add &quot;notes&quot; for a summary, decisions, and action items.</p>
+        <p class="sk-eg">Example: <code>/transcribe notes</code></p>
+        <ul class="sk-tags"><li>Read and listen</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
+        <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later, PowerShell edition</li><li>Python 3.12 with PyAV (included in the kit)</li><li>whisper-cli.exe from the kit</li><li>A whisper speech model, base.en or tiny.en, in models\stt (in the kit, not in this download)</li></ul></div>
+        <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-transcribe-1.2.zip" download>Download <small>zip, 19 KB</small></a><p class="sk-hash">SHA-256 <code>b2426ed2ed9a41c685fbc4436d6612bf21158f6aad0a072f478be3236f3d79f8</code></p></div>
+      </article>
+      <article class="card skill is-soon" id="skill-diagram" data-cat="docs" data-ed="" data-net="offline" data-status="soon" data-q="diagram /diagram makes a flowchart or process map and saves it as a png. documents and visuals  offline coming soon">
+        <div class="sk-top"><code class="slash">/diagram</code><span class="ver">Planned</span></div>
+        <h3>Diagram</h3>
+        <p>Makes a flowchart or process map and saves it as a PNG.</p>
+        <ul class="sk-tags"><li>Documents and visuals</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
+      </article>
+      <article class="card skill is-soon" id="skill-table" data-cat="data" data-ed="" data-net="offline" data-status="soon" data-q="table /table pulls tables out of a pdf, docx, or xlsx file into csv or xlsx. data and math  offline coming soon">
+        <div class="sk-top"><code class="slash">/table</code><span class="ver">Planned</span></div>
+        <h3>Table</h3>
+        <p>Pulls tables out of a PDF, DOCX, or XLSX file into CSV or XLSX.</p>
+        <ul class="sk-tags"><li>Data and math</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
+      </article>
+      <article class="card skill is-soon" id="skill-summarize" data-cat="read" data-ed="" data-net="offline" data-status="soon" data-q="summarize /summarize summarizes a dropped pdf, docx, txt, or md file. read and listen  offline coming soon">
+        <div class="sk-top"><code class="slash">/summarize</code><span class="ver">Planned</span></div>
+        <h3>Summarize</h3>
+        <p>Summarizes a dropped PDF, DOCX, TXT, or MD file.</p>
+        <ul class="sk-tags"><li>Read and listen</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
+      </article>
+      <article class="card skill is-soon" id="skill-files" data-cat="files" data-ed="" data-net="offline" data-status="soon" data-q="files /files works with the files in a folder you choose. files  offline coming soon">
+        <div class="sk-top"><code class="slash">/files</code><span class="ver">Planned</span></div>
+        <h3>Files</h3>
+        <p>Works with the files in a folder you choose.</p>
+        <ul class="sk-tags"><li>Files</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
+      </article>
+    </div>
+    <p class="sk-empty muted" id="sk-empty" hidden>No skills match these filters. Every skill available today runs offline. Clear the search or pick another filter.</p>
+  </section>
+
+  <section id="install">
+    <p class="eyebrow"><span class="dot"></span>How to</p>
+    <h2>How to install a skill</h2>
+    <p class="muted">Each download is a small zip with the skill's Python files, a <code>skill.json</code> file that describes it, and an <code>INSTALL.txt</code> file with these steps. Model files are not included. The skills in this library are the same files that ship with the V1.2 kit, so you can also use a download to restore or update a skill.</p>
+    <ol class="steps-list">
+      <li>Download the skill. To check the file, open PowerShell in your Downloads folder and run <code>Get-FileHash .\iota-skill-chart-1.2.zip -Algorithm SHA256</code> with the file name of your download. The result should match the SHA-256 on the skill's card.</li>
+      <li>Close IOTA.</li>
+      <li>Back up your skills folder. In the PowerShell edition it is <code>scripts\skills</code> inside the IOTA kit. In the EXE edition it is <code>skills-py</code> next to <code>IOTA.exe</code>.</li>
+      <li>Open the zip and copy everything inside its <code>files</code> folder into that skills folder. Replace files when Windows asks.</li>
+      <li>Start IOTA. Open the Developer rail, then <b>Skills</b>, then <b>Check libraries</b>, to confirm the skill's libraries are ready.</li>
+      <li>Type the slash command in a chat, for example <code>/chart bar of sales by month</code>.</li>
+    </ol>
+    <p class="muted small" style="margin-top:22px">Skills marked PowerShell edition only use tools and model files from the USB kit, such as the OCR and speech models. Replies from AI can be wrong. Check the results before you rely on them.</p>
+  </section>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../">Home</a> &middot; <a href="../tutorials/">Tutorials</a> &middot; <a href="../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});
+Array.prototype.forEach.call(document.querySelectorAll('#nav-links a'),function(a){a.addEventListener('click',function(){n.classList.remove('open');b.textContent='Menu';b.setAttribute('aria-expanded','false');});});})();
+</script>
+<script src="skills.js"></script>
+</body>
+</html>
