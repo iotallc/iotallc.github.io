@@ -43,7 +43,7 @@
       <li><a href="skills/">Skills</a></li>
       <li><a href="#mobile">IOTA Mobile</a></li>
       <li><a href="#rag">IOTA Orchestration</a></li>
-      <li><a href="#investment">Investment</a></li>
+      <li><a href="investment.html">Investment</a></li>
       <li><a href="#tutorials">Tutorials</a></li>
       <li><a href="#downloads">Downloads</a></li>
       <li><a class="li-ico" href="https://www.linkedin.com/in/josephbryant-pw" data-link="linkedin" target="_blank" rel="noopener" aria-label="Joseph Bryant on LinkedIn (opens in a new tab)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg><span class="li-txt">LinkedIn</span></a></li>
@@ -73,7 +73,7 @@
       <li><a href="#games" style="--c:var(--c-game)"><i></i>AI for Games</a></li>
       <li><a href="#models" style="--c:var(--c-model)"><i></i>Model Integration</a></li>
       <li><a href="#rag" style="--c:var(--c-rag)"><i></i>IOTA Orchestration</a></li>
-      <li><a href="#investment" style="--c:var(--c-inv)"><i></i>Investment Management</a></li>
+      <li><a href="investment.html" style="--c:var(--c-inv)"><i></i>Investment Management</a></li>
     </ul>
   </div>
   <a class="scroll-hint" href="#offerings">Scroll</a>
@@ -106,7 +106,7 @@
       <a class="card offer wide reveal" href="#rag" style="--accent:var(--c-rag)"><span class="bar"></span>
         <span class="idx">06 / RETRIEVAL<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
         <h3>IOTA Orchestration</h3><p>Our proprietary RAG approach, set up on your own documents and data.</p></a>
-      <a class="card offer wide reveal" href="#investment" style="--accent:var(--c-inv);--d:.08s"><span class="bar"></span>
+      <a class="card offer wide reveal" href="investment.html" style="--accent:var(--c-inv);--d:.08s"><span class="bar"></span>
         <span class="idx">07 / INVESTMENT<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
         <h3>Investment Management</h3><p>Private investment strategies that allocate across market sectors using proprietary algorithms.</p></a>
     </div>
@@ -258,17 +258,8 @@
       </article>
       <article class="card" id="node-rag" data-node="rag" data-label="RAG pipeline" data-x="77" data-y="30" data-icon="flow">
         <h3>RAG pipeline</h3>
-        <h4>What it is</h4>
-        <p>RAG (retrieval-augmented generation) means the model looks up relevant passages in your files before it answers, instead of relying only on what it learned in training.</p>
-        <h4>How it works</h4>
-        <ol class="pipe">
-          <li><b>Ingest.</b>Files are read and converted to plain text.</li>
-          <li><b>Chunk.</b>The text is split into short passages, each about one idea.</li>
-          <li><b>Embed.</b>Each passage becomes a list of numbers (an embedding) from the embeddinggemma-2 (Q8_0) model, so passages with similar meaning sit close together.</li>
-          <li><b>Retrieve.</b>Your question is embedded the same way and the closest passages are found. Retrieval controls set how many passages are used and how close a match must be.</li>
-          <li><b>Ground.</b>The chosen passages go into the model's context with instructions to answer from them.</li>
-          <li><b>Answer.</b>The model writes a reply based on those passages, which keeps it tied to your sources.</li>
-        </ol>
+        <p>The Knowledge branch uses IOTA Orchestration, our proprietary RAG approach.</p>
+        <p><a href="#rag">See the IOTA Orchestration section</a></p>
       </article>
       <article class="card" id="node-memory" data-node="memory" data-label="Memory" data-x="79" data-y="50" data-icon="brain">
         <h3>Memory</h3>
@@ -434,12 +425,10 @@
         <li class="read-row">
           <div class="read-top"><b class="read-name">Gemini Argon 4 (cloud, reading raw corpus)</b><span class="read-rate">29,710 tok/min (~495 tok/s)</span></div>
           <div class="track" aria-hidden="true"><div class="fill" style="--w:19.5%"></div></div>
-          <p class="muted">Owner-measured.</p>
         </li>
         <li class="read-row">
           <div class="read-top"><b class="read-name">Gemini Flash 3.8 (cloud, reading raw corpus)</b><span class="read-rate">65,720 tok/min (~1,095 tok/s)</span></div>
           <div class="track" aria-hidden="true"><div class="fill" style="--w:36.6%"></div></div>
-          <p class="muted">Owner-measured.</p>
         </li>
         <li class="read-row">
           <div class="read-top"><b class="read-name">Embedding speed (IOTA EXE default GPU embedding, 1 parallel slot)</b><span class="read-rate">~9,700 tok/s (~584,000 tok/min)</span></div>
@@ -453,37 +442,7 @@
         </li>
       </ul>
       <p class="muted read-sum">Tuned IOTA Orchestration reads about 42x faster than Gemini Argon 4, about 19x faster than Gemini Flash 3.8, about 2.1x faster than the default EXE embedding, and about 38x faster than the pre-orchestration CPU path.</p>
-      <p class="footnote">Bar length uses a log scale of tokens per second, so the slower rows stay visible. The list order is the comparison order. Pre IOTA Orchestration reads at 551 tok/s. Gemini Argon 4 reads at 495 tok/s. NVIDIA RTX 3060 Ti 8 GB on a Windows desktop. Engine: llama.cpp b11800 CUDA 12. Embedder: embeddinggemma-2 Q8_0, 768-dim, chunks up to about 490 tokens. The tuned setting is 8 parallel embedding slots. Cloud figures were measured by the owner in the provider's interface reading the same corpus. Date: Oct 23, 2026.</p>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- 07 INVESTMENT -->
-<section class="section" id="investment" style="--accent:var(--c-inv)" aria-labelledby="inv-title">
-  <div class="wrap split">
-    <div class="reveal">
-      <p class="eyebrow"><span class="dot"></span>07 / Investment Management</p>
-      <h2 id="inv-title">Sector allocation <span class="chrome">strategies</span></h2>
-      <p class="lead" style="margin-top:22px">IOTA Investment Management LLC develops private investment strategies centered on sector allocation. Our algorithms evaluate market sectors and set how a portfolio is weighted across them.</p>
-      <ul class="points">
-        <li><span><b>Sector-level view.</b> The strategies work at the level of market sectors and decide how much weight each sector receives.</span></li>
-        <li><span><b>Rules-based process.</b> Allocation decisions come from defined algorithms, so the same inputs lead to the same decisions.</span></li>
-        <li><span><b>Ongoing review.</b> Models, data sources, and rules are reviewed and updated as markets and data change.</span></li>
-      </ul>
-      <p class="notice">This section describes our approach only. It is not an offer to sell, or a solicitation of an offer to buy, any security or investment service. For questions about this work, email <a href="mailto:IOTA.LLC.Business.Inquiries@gmail.com?subject=Investment%20management%20inquiry">IOTA.LLC.Business.Inquiries@gmail.com</a>.</p>
-    </div>
-    <div class="card alloc reveal" style="--d:.1s" aria-hidden="true">
-      <div class="cap"><span>Sector weights</span><span>Illustration</span></div>
-      <div class="row" style="--i:0"><span>Technology</span><div class="track"><div class="fill" style="--w:78%;--s1:.86;--s2:1.04"></div></div></div>
-      <div class="row" style="--i:1"><span>Health care</span><div class="track"><div class="fill" style="--w:56%;--s1:1.1;--s2:.9"></div></div></div>
-      <div class="row" style="--i:2"><span>Financials</span><div class="track"><div class="fill" style="--w:62%;--s1:.9;--s2:1.12"></div></div></div>
-      <div class="row" style="--i:3"><span>Industrials</span><div class="track"><div class="fill" style="--w:44%;--s1:1.16;--s2:.92"></div></div></div>
-      <div class="row" style="--i:4"><span>Energy</span><div class="track"><div class="fill" style="--w:30%;--s1:.8;--s2:1.2"></div></div></div>
-      <div class="row" style="--i:5"><span>Consumer</span><div class="track"><div class="fill" style="--w:50%;--s1:1.08;--s2:.86"></div></div></div>
-      <div class="row" style="--i:6"><span>Utilities</span><div class="track"><div class="fill" style="--w:24%;--s1:1.2;--s2:.9"></div></div></div>
-      <p class="foot">Illustration of the idea of sector weighting. It does not show any real portfolio, holding, or result.</p>
+      <p class="footnote">Bar length uses a log scale of tokens per second, so the slower rows stay visible. NVIDIA RTX 3060 Ti 8 GB on a Windows desktop. Engine: llama.cpp b11800 CUDA 12. Embedder: embeddinggemma-2 Q8_0, 768-dim, chunks up to about 490 tokens. The tuned setting is 8 parallel embedding slots. Cloud speeds were measured in each provider's web interface reading the same corpus. Date: Oct 23, 2026.</p>
     </div>
   </div>
 </section>
@@ -579,7 +538,7 @@
         <p><a class="foot-li" href="https://www.linkedin.com/in/josephbryant-pw" data-link="linkedin" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>LinkedIn</a></p>
       </div>
       <div class="grid g3">
-        <div><h4>Offerings</h4><ul><li><a href="#enterprise">Enterprise AI Platforms</a></li><li><a href="#models">Model Integration</a></li><li><a href="#rag">IOTA Orchestration</a></li><li><a href="#investment">Investment Management</a></li></ul></div>
+        <div><h4>Offerings</h4><ul><li><a href="#enterprise">Enterprise AI Platforms</a></li><li><a href="#models">Model Integration</a></li><li><a href="#rag">IOTA Orchestration</a></li><li><a href="investment.html">Investment Management</a></li></ul></div>
         <div><h4>Products</h4><ul><li><a href="#windows">IOTA for Windows</a></li><li><a href="#mobile">IOTA Mobile</a></li><li><a href="#games">Iota Tales</a></li><li><a href="skills/">Skills Library</a></li><li><a href="tutorials/">Tutorials</a></li></ul></div>
         <div><h4>Legal</h4><ul><li><a href="iota-mobile/privacy.html">IOTA Mobile privacy policy</a></li><li><a href="iota-tales/">Iota Tales privacy policy</a></li>
 <li><a href="iota-station/">Iota Station privacy policy</a></li></ul></div>
