@@ -10,7 +10,7 @@ Static site for IOTA. Plain HTML, CSS, and JavaScript. No build step.
 - `iota-tales/index.html` Iota Tales privacy policy (unchanged copy of the live page)
 - `404.html` not found page
 - `assets/css/site.css` all styles
-- `assets/js/config.js` editable values: RAG metrics, comparison model names, links
+- `assets/js/config.js` editable values: links and the founder title
 - `assets/js/site.js` animations, the interactive tree showcase, and placeholders
 - `assets/img/` logo, icons, screenshots, `og-image.png` (1200x627 link preview)
 - `assets/fonts/` Geist and Geist Mono (SIL Open Font License)
@@ -18,11 +18,9 @@ Static site for IOTA. Plain HTML, CSS, and JavaScript. No build step.
 
 Helper scripts (`tools/apply-config.py`, screenshot and og-image tools) are kept in the local working copy and are not published here.
 
-## Setting the RAG numbers
+## Corpus reading speed
 
-1. Open `assets/js/config.js` and replace each `"X"` and each `[...]` value.
-2. Run `python3 tools/apply-config.py` from the local working copy so the HTML fallback text matches.
-3. Values still set to `X` or `[...]` show with an amber dashed outline on the page.
+The IOTA Orchestration section on the home page includes the corpus reading-speed comparison. The figures are in `index.html`.
 
 ## Publishing
 
