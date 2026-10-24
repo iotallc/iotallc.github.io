@@ -96,7 +96,7 @@
     var css = getComputedStyle(document.documentElement);
     var BR = [
       ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
-      ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment']
+      ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment.html']
     ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0', id: b[2] }; });
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
@@ -237,9 +237,11 @@
       tips.forEach(function (t, i) {
         var a = hits.children[i];
         a.className = 'tree-hit';
-        a.href = '#' + t.b.id;
+        var dest = t.b.id;
+        var pageLink = dest.charAt(0) !== '#' && (dest.indexOf('.') !== -1 || dest.indexOf('/') !== -1);
+        a.href = pageLink ? dest : '#' + dest;
         a.setAttribute('data-i', String(i));
-        a.setAttribute('aria-label', 'Scroll to ' + t.b.label);
+        a.setAttribute('aria-label', pageLink ? 'Open ' + t.b.label : 'Scroll to ' + t.b.label);
         var left = t.x - 18, right = t.x + 18, top = t.y - 18, bottom = t.y + 18;
         if (showLabels) {
           var lay = labelLayout(t);
