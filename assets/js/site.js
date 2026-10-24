@@ -565,5 +565,356 @@
     show(items[0]);
   }
 
-  applyConfig(); nav(); spotlight(); reveals(); heroTree(); showcase(); ragPipe();
+  /* ---------- duration labels from measured tok/s ---------- */
+  function formatDuration(sec) {
+    if (!isFinite(sec) || sec < 0) return '';
+    if (sec === 0) return '0 ms';
+    if (sec < 0.001) return 'under 1 ms';
+    if (sec < 1) {
+      var ms = sec * 1000;
+      if (ms < 10) return (Math.round(ms * 10) / 10).toFixed(1) + ' ms';
+      return Math.round(ms) + ' ms';
+    }
+    if (sec < 10) return (Math.round(sec * 100) / 100).toFixed(2) + ' s';
+    if (sec < 60) return (Math.round(sec * 10) / 10).toFixed(1) + ' s';
+    if (sec < 3600) {
+      var m = Math.floor(sec / 60);
+      var s = Math.round(sec - m * 60);
+      if (s === 60) { m += 1; s = 0; }
+      return m + ' min' + (s ? ' ' + s + ' s' : '');
+    }
+    var h = Math.floor(sec / 3600);
+    var min = Math.round((sec - h * 3600) / 60);
+    if (min === 60) { h += 1; min = 0; }
+    return h + ' h' + (min ? ' ' + min + ' min' : '');
+  }
+  function formatCount(n) {
+    if (!isFinite(n)) return '';
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toLocaleString('en-US');
+    var digits = Math.abs(n) < 1 ? 3 : 2;
+    return n.toLocaleString('en-US', { maximumFractionDigits: digits });
+  }
+
+  /* ---------- live corpus reading race ---------- */
+  function speedRace() {
+    var root = $('[data-race]');
+    if (!root) return;
+    var corpus = parseFloat(root.getAttribute('data-corpus'));
+    if (!isFinite(corpus) || corpus <= 0) return;
+    var CAP = 10;
+    var rows = $$('[data-race-row]', root).map(function (el) {
+      return {
+        tps: parseFloat(el.getAttribute('data-tps')),
+        fill: $('.fill', el),
+        read: $('[data-read]', el),
+        proj: $('[data-proj]', el),
+        shown: ''
+      };
+    }).filter(function (row) { return isFinite(row.tps) && row.tps > 0 && row.fill && row.read && row.proj; });
+    if (!rows.length) return;
+    var clock = $('[data-race-clock]', root);
+    var mode = $('[data-race-mode]', root);
+    var btn = $('[data-race-btn]', root);
+    var elapsed = 0, last = 0, raf = 0, running = false, started = false, onScreen = false;
+
+    function paint(t) {
+      if (clock) clock.textContent = 'Elapsed ' + (Math.round(Math.min(CAP, t) * 10) / 10).toFixed(1) + ' s';
+      rows.forEach(function (row) {
+        var doneAt = corpus / row.tps;
+        var done = t + 1e-9 >= doneAt;
+        var readN = done ? corpus : Math.min(corpus, Math.floor(row.tps * t + 1e-6));
+        var stamp = (done ? 'd' : 'p') + readN;
+        if (stamp !== row.shown) {
+          row.shown = stamp;
+          row.read.textContent = readN.toLocaleString('en-US') + ' tokens read';
+          row.proj.textContent = done ? ('Finished in ' + formatDuration(doneAt)) : ('Projected ' + formatDuration(doneAt));
+        }
+        row.fill.style.width = Math.min(100, (readN / corpus) * 100) + '%';
+      });
+    }
+    function halt() {
+      cancelAnimationFrame(raf);
+      running = false;
+      last = 0;
+    }
+    function frame(now) {
+      if (!running) return;
+      if (!last) last = now;
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      elapsed = Math.min(CAP, elapsed + dt);
+      paint(elapsed);
+      if (elapsed >= CAP) { halt(); if (btn) btn.textContent = 'Replay'; return; }
+      raf = requestAnimationFrame(frame);
+    }
+    function start() {
+      started = true;
+      halt();
+      elapsed = 0;
+      rows.forEach(function (row) { row.shown = ''; });
+      if (reduce) {
+        if (mode) mode.textContent = '10 second result';
+        paint(CAP);
+        if (btn) btn.textContent = 'Replay';
+        return;
+      }
+      if (mode) mode.textContent = 'Shown at real speed';
+      paint(0);
+      if (btn) btn.textContent = 'Replay';
+      running = true;
+      raf = requestAnimationFrame(frame);
+    }
+    function resume() {
+      if (reduce || !started || elapsed >= CAP || !onScreen || document.hidden || running) return;
+      running = true;
+      last = 0;
+      raf = requestAnimationFrame(frame);
+    }
+    if (btn) btn.addEventListener('click', start);
+    paint(0);
+    if (reduce) {
+      if (mode) mode.textContent = '10 second result';
+      rows.forEach(function (row) { row.shown = ''; });
+      paint(CAP);
+      if (btn) btn.textContent = 'Replay';
+      return;
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (ents) {
+        onScreen = !!ents[0].isIntersecting;
+        if (onScreen && !started) start();
+        else if (!onScreen) halt();
+        else resume();
+      }, { threshold: 0.15 }).observe(root);
+    } else {
+      onScreen = true;
+      start();
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) halt();
+      else resume();
+    });
+  }
+
+  /* ---------- document reading-time calculator ---------- */
+  function speedCalc() {
+    var root = $('[data-calc]');
+    if (!root) return;
+    var per = parseFloat(root.getAttribute('data-per-page'));
+    if (!isFinite(per) || per <= 0) per = 500;
+    var input = $('[data-calc-input]', root);
+    var echo = $('[data-calc-echo]', root);
+    var msg = $('[data-calc-msg]', root);
+    var buttons = $$('[data-unit]', root);
+    var rows = $$('[data-calc-row]', root);
+    if (!input || !rows.length) return;
+    var unit = 'pages';
+    buttons.forEach(function (b) { if (b.getAttribute('aria-pressed') === 'true') unit = b.getAttribute('data-unit'); });
+
+    function setPressed() {
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-pressed', b.getAttribute('data-unit') === unit ? 'true' : 'false');
+      });
+    }
+    function word(n, one, many) { return Math.abs(n - 1) < 1e-9 ? one : many; }
+    function render() {
+      var raw = input.value.trim();
+      var n = raw === '' ? NaN : Number(raw);
+      if (raw === '' || !isFinite(n) || n < 0) {
+        if (msg) msg.hidden = false;
+        if (echo) echo.textContent = '';
+        rows.forEach(function (row) { var t = $('[data-time]', row); if (t) t.textContent = ''; });
+        return;
+      }
+      if (msg) msg.hidden = true;
+      var tokens = unit === 'pages' ? n * per : n;
+      var pages = tokens / per;
+      if (echo) {
+        echo.textContent = unit === 'pages'
+          ? formatCount(n) + ' ' + word(n, 'page', 'pages') + ' ' + word(n, 'equals', 'equal') + ' ' + formatCount(tokens) + ' tokens.'
+          : formatCount(n) + ' ' + word(n, 'token', 'tokens') + ' ' + word(n, 'equals', 'equal') + ' ' + formatCount(pages) + ' ' + word(pages, 'page', 'pages') + '.';
+      }
+      rows.forEach(function (row) {
+        var tps = parseFloat(row.getAttribute('data-tps'));
+        var slot = $('[data-time]', row);
+        if (slot) slot.textContent = isFinite(tps) && tps > 0 ? formatDuration(tokens / tps) : '';
+      });
+    }
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var next = b.getAttribute('data-unit');
+        if (!next || next === unit) return;
+        var n = Number(input.value);
+        if (isFinite(n) && n >= 0) {
+          if (unit === 'pages' && next === 'tokens') input.value = String(Math.round(n * per));
+          if (unit === 'tokens' && next === 'pages') {
+            var pages = Math.round((n / per) * 100) / 100;
+            input.value = String(pages);
+          }
+        }
+        unit = next;
+        setPressed();
+        render();
+      });
+    });
+    input.addEventListener('input', render);
+    setPressed();
+    render();
+  }
+
+  /* ---------- faint neuron field behind the hero headline ---------- */
+  function heroNeurons() {
+    var cv = $('#neurons');
+    if (!cv || !cv.getContext) return;
+    var hero = cv.parentNode;
+    var ctx = cv.getContext('2d');
+    var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var fine = !!(fineMq && fineMq.matches);
+    var nodes, edges, pulses, W, H, DPR, raf, running = false, onScreen = true;
+    var mouse = { x: -9999, y: -9999, on: false };
+
+    function rand(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+    function build() {
+      var rect = cv.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      if (W < 2 || H < 2) return;
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      var R = rand(11);
+      var narrow = W < 820;
+      var cols = narrow ? 5 : 6;
+      var rowsN = narrow ? 4 : 5;
+      var x0 = W * (narrow ? 0.05 : 0.02);
+      var x1 = W * (narrow ? 0.95 : 0.56);
+      var y0 = H * (narrow ? 0.05 : 0.08);
+      var y1 = H * (narrow ? 0.48 : 0.78);
+      nodes = [];
+      var c, r;
+      for (r = 0; r < rowsN; r++) {
+        for (c = 0; c < cols; c++) {
+          var cw = (x1 - x0) / cols, rh = (y1 - y0) / rowsN;
+          nodes.push({
+            bx: x0 + (c + 0.5) * cw + (R() - 0.5) * cw * 0.7,
+            by: y0 + (r + 0.5) * rh + (R() - 0.5) * rh * 0.7,
+            x: 0, y: 0, near: 0, ph: R() * 6.28
+          });
+        }
+      }
+      var cell = Math.hypot((x1 - x0) / cols, (y1 - y0) / rowsN);
+      var maxD = cell * 1.45;
+      edges = [];
+      for (var a = 0; a < nodes.length; a++) {
+        for (var b = a + 1; b < nodes.length; b++) {
+          var dx = nodes[a].bx - nodes[b].bx, dy = nodes[a].by - nodes[b].by;
+          if (dx * dx + dy * dy < maxD * maxD) edges.push({ a: a, b: b });
+        }
+      }
+      pulses = [];
+    }
+    function frame(now) {
+      if (!nodes) return;
+      ctx.clearRect(0, 0, W, H);
+      ctx.lineCap = 'round';
+      nodes.forEach(function (n) {
+        var bob = reduce ? 0 : Math.sin(now / 1800 + n.ph) * 1.4;
+        var ox = 0, oy = 0, near = 0;
+        if (fine && mouse.on && !reduce) {
+          var dx = n.bx - mouse.x, dy = (n.by + bob) - mouse.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            near = 1 - dist / 150;
+            var push = near * 7;
+            var inv = dist < 0.001 ? 0 : push / dist;
+            ox = dx * inv;
+            oy = dy * inv;
+          }
+        }
+        n.x = n.bx + ox;
+        n.y = n.by + bob + oy;
+        n.near = near;
+      });
+      edges.forEach(function (e) {
+        var na = nodes[e.a], nb = nodes[e.b];
+        var near = Math.max(na.near, nb.near);
+        ctx.beginPath();
+        ctx.moveTo(na.x, na.y);
+        ctx.lineTo(nb.x, nb.y);
+        ctx.strokeStyle = 'rgba(192,192,192,' + (0.2 + near * 0.36) + ')';
+        ctx.lineWidth = 1.15;
+        ctx.stroke();
+      });
+      nodes.forEach(function (n) {
+        if (n.near > 0.04) {
+          var g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, 18);
+          g.addColorStop(0, 'rgba(224,224,224,' + (0.34 * n.near) + ')');
+          g.addColorStop(1, 'rgba(224,224,224,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 18, 0, 6.2832); ctx.fill();
+        }
+        ctx.strokeStyle = 'rgba(192,192,192,' + (0.38 + n.near * 0.4) + ')';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(n.x, n.y, 6 + n.near * 2.2, 0, 6.2832); ctx.stroke();
+        ctx.fillStyle = 'rgba(224,224,224,' + (0.72 + n.near * 0.28) + ')';
+        ctx.beginPath(); ctx.arc(n.x, n.y, 2.3 + n.near * 1.1, 0, 6.2832); ctx.fill();
+      });
+      if (!reduce && edges.length) {
+        if (pulses.length < 6 && Math.random() < 0.045) {
+          pulses.push({ e: edges[(Math.random() * edges.length) | 0], t: 0, speed: 0.0035 + Math.random() * 0.005 });
+        }
+        pulses = pulses.filter(function (p) {
+          p.t += p.speed;
+          if (p.t >= 1) return false;
+          var na = nodes[p.e.a], nb = nodes[p.e.b];
+          var x = na.x + (nb.x - na.x) * p.t;
+          var y = na.y + (nb.y - na.y) * p.t;
+          var gl = ctx.createRadialGradient(x, y, 0, x, y, 8);
+          gl.addColorStop(0, 'rgba(224,224,224,0.8)');
+          gl.addColorStop(1, 'rgba(224,224,224,0)');
+          ctx.fillStyle = gl;
+          ctx.beginPath(); ctx.arc(x, y, 8, 0, 6.2832); ctx.fill();
+          return true;
+        });
+      }
+      if (running && !reduce) raf = requestAnimationFrame(frame);
+    }
+    function play() {
+      if (reduce || !onScreen || document.hidden) { running = false; return; }
+      if (running) return;
+      running = true;
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() { running = false; cancelAnimationFrame(raf); }
+    if (fine) {
+      hero.addEventListener('pointermove', function (e) {
+        var r = cv.getBoundingClientRect();
+        mouse.x = e.clientX - r.left;
+        mouse.y = e.clientY - r.top;
+        mouse.on = true;
+      }, { passive: true });
+      hero.addEventListener('pointerleave', function () { mouse.on = false; });
+      if (fineMq.addEventListener) fineMq.addEventListener('change', function () { fine = !!fineMq.matches; if (!fine) mouse.on = false; });
+    }
+    var rt;
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () { build(); frame(performance.now()); if (!reduce) play(); }, 120);
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (ents) {
+        onScreen = !!ents[0].isIntersecting;
+        if (onScreen && !document.hidden) play();
+        else stop();
+      }).observe(hero);
+    } else onScreen = true;
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop();
+      else if (onScreen) play();
+    });
+    build();
+    frame(performance.now());
+    play();
+  }
+
+  applyConfig(); nav(); spotlight(); reveals(); heroTree(); heroNeurons(); showcase(); ragPipe(); speedRace(); speedCalc();
 })();

@@ -56,6 +56,7 @@
 
 <!-- HERO -->
 <section class="hero" aria-labelledby="hero-title">
+  <canvas id="neurons" aria-hidden="true"></canvas>
   <canvas id="tree" aria-hidden="true"></canvas>
   <div class="wrap">
     <p class="eyebrow"><span class="dot" style="--accent:var(--line)"></span>IOTA</p>
@@ -443,6 +444,70 @@
       </ul>
       <p class="muted read-sum">Tuned IOTA Orchestration reads about 42x faster than Gemini Argon 4, about 19x faster than Gemini Flash 3.8, about 2.1x faster than the default EXE embedding, and about 38x faster than the pre-orchestration CPU path.</p>
       <p class="footnote">Bar length uses a log scale of tokens per second, so the slower rows stay visible. NVIDIA RTX 3060 Ti 8 GB on a Windows desktop. Engine: llama.cpp b11800 CUDA 12. Embedder: embeddinggemma-2 Q8_0, 768-dim, chunks up to about 490 tokens. The tuned setting is 8 parallel embedding slots. Cloud speeds were measured in each provider's web interface reading the same corpus. Date: Oct 23, 2026.</p>
+    </div>
+
+    <div class="speed-tools">
+      <div class="card read-race reveal" data-race data-corpus="112377">
+        <div class="race-head">
+          <h3>Live speed race</h3>
+          <button type="button" class="btn" data-race-btn aria-describedby="race-note">Start</button>
+        </div>
+        <p class="muted">Each row reads the same 112,377 token corpus at its measured speed.</p>
+        <div class="cap"><span data-race-clock>Elapsed 0.0 s</span><span data-race-mode>Shown at real speed</span></div>
+        <ul class="read-rows">
+          <li class="read-row" data-race-row data-tps="551">
+            <div class="read-top"><b class="read-name">Pre IOTA Orchestration (Slowest)</b><span class="read-rate">551 tok/s (~33,060 tok/min)</span></div>
+            <div class="track" aria-hidden="true"><div class="fill" style="width:0%"></div></div>
+            <p class="race-meta"><span data-read>0 tokens read</span><span data-proj>Projected</span></p>
+          </li>
+          <li class="read-row" data-race-row data-tps="495">
+            <div class="read-top"><b class="read-name">Gemini Argon 4 (cloud, reading raw corpus)</b><span class="read-rate">29,710 tok/min (~495 tok/s)</span></div>
+            <div class="track" aria-hidden="true"><div class="fill" style="width:0%"></div></div>
+            <p class="race-meta"><span data-read>0 tokens read</span><span data-proj>Projected</span></p>
+          </li>
+          <li class="read-row" data-race-row data-tps="1095">
+            <div class="read-top"><b class="read-name">Gemini Flash 3.8 (cloud, reading raw corpus)</b><span class="read-rate">65,720 tok/min (~1,095 tok/s)</span></div>
+            <div class="track" aria-hidden="true"><div class="fill" style="width:0%"></div></div>
+            <p class="race-meta"><span data-read>0 tokens read</span><span data-proj>Projected</span></p>
+          </li>
+          <li class="read-row" data-race-row data-tps="9700">
+            <div class="read-top"><b class="read-name">Embedding speed (IOTA EXE default GPU embedding, 1 parallel slot)</b><span class="read-rate">~9,700 tok/s (~584,000 tok/min)</span></div>
+            <div class="track" aria-hidden="true"><div class="fill" style="width:0%"></div></div>
+            <p class="race-meta"><span data-read>0 tokens read</span><span data-proj>Projected</span></p>
+          </li>
+          <li class="read-row is-tuned" data-race-row data-tps="20783">
+            <div class="read-top"><b class="read-name chrome">IOTA Orchestration (Embedding tuned)</b><span class="read-rate">20,783 tok/s (~1,247,000 tok/min)</span></div>
+            <div class="track" aria-hidden="true"><div class="fill" style="width:0%"></div></div>
+            <p class="race-meta"><span data-read>0 tokens read</span><span data-proj>Projected</span></p>
+          </li>
+        </ul>
+        <p class="footnote" id="race-note">The race is shown at real speed and stops at 10 seconds. Projected time is how long that row would take to read the full corpus. If motion is reduced, the 10 second result is shown right away.</p>
+      </div>
+
+      <div class="card read-calc reveal" data-calc data-per-page="500">
+        <h3>Reading time calculator</h3>
+        <p class="muted">Enter a document size to see how long each setup takes to read it.</p>
+        <div class="calc-bar">
+          <label class="calc-size" for="doc-size">Document size
+            <input id="doc-size" type="number" min="0" step="any" value="20" inputmode="decimal" autocomplete="off" data-calc-input>
+          </label>
+          <div class="unit-toggle" role="group" aria-label="Size unit">
+            <button type="button" data-unit="tokens" aria-pressed="false">Tokens</button>
+            <button type="button" data-unit="pages" aria-pressed="true">Pages</button>
+          </div>
+        </div>
+        <p class="muted calc-echo" data-calc-echo></p>
+        <p class="footnote calc-msg" data-calc-msg hidden>Enter a size of zero or more.</p>
+        <p class="footnote">One page is about 500 tokens.</p>
+        <ul class="calc-rows">
+          <li data-calc-row data-tps="551"><b>Pre IOTA Orchestration (Slowest)</b><span data-time></span></li>
+          <li data-calc-row data-tps="495"><b>Gemini Argon 4 (cloud)</b><span data-time></span></li>
+          <li data-calc-row data-tps="1095"><b>Gemini Flash 3.8 (cloud)</b><span data-time></span></li>
+          <li data-calc-row data-tps="9700"><b>Embedding speed</b><span data-time></span></li>
+          <li class="is-tuned" data-calc-row data-tps="20783"><b class="chrome">IOTA Orchestration (Embedding tuned)</b><span data-time></span></li>
+        </ul>
+        <p class="footnote">Local rows were measured on an NVIDIA RTX 3060 Ti 8 GB. Cloud rows were measured in each provider's web interface.</p>
+      </div>
     </div>
   </div>
 </section>
