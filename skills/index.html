@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Skills Library | IOTA</title>
-<meta name="description" content="Download skills for IOTA for Windows: charts, slide decks, PDF reports, units, finance, OCR, and transcription. Every skill runs offline.">
+<meta name="description" content="Skills for IOTA for Windows: skill packages for charts, decks, PDF reports, units, finance, OCR, and transcription, plus detailed .md skill guides for building apps, engineering, IOTA tools, and finance. Most run offline.">
 <meta name="theme-color" content="#050506">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IOTA Skills Library">
-<meta property="og:description" content="Skills for IOTA for Windows. Each one starts with a slash command and runs offline.">
+<meta property="og:description" content="Skill packages and .md skill guides for IOTA for Windows, grouped by type. Each one starts with a slash command.">
 <meta property="og:url" content="https://iotallc.github.io/skills/">
 <meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -27,6 +27,7 @@
     </a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
     <ul id="nav-links">
+      <li><a href="#types">Skill types</a></li>
       <li><a href="#library">Skills</a></li>
       <li><a href="#install">Install a skill</a></li>
       <li><a href="../#windows">IOTA for Windows</a></li>
@@ -39,120 +40,319 @@
   <div class="sk-hero">
     <p class="eyebrow"><span class="dot"></span>IOTA for Windows</p>
     <h1><span class="chrome">Skills Library</span></h1>
-    <p class="lead">Skills are add-ons for specific jobs. You start one by typing its slash command in a chat, for example <code>/chart</code>. The skill does the work with tested code, and IOTA writes the reply around the result. Every skill here runs offline.</p>
+    <p class="lead">Skills are add-ons for specific jobs. You start one by typing its slash command in a chat, for example <code>/chart</code>. The skill does the work with tested code, and IOTA writes the reply around the result.</p>
+    <p class="lead sk-lead2">There are two kinds. <b>Skill packages</b> are zips with the skill files that ship with IOTA for Windows, ready to install. <b>.md skill guides</b> are detailed written instructions, by IOTA - Joseph Bryant, that you paste into an IOTA chat or follow yourself. Guides do not install anything. Most skills run offline; the cards say which ones need the internet.</p>
     <p class="muted small">Version 1.2. Updated October 23, 2026.</p>
   </div>
+
+  <section id="types" class="sk-tree-sec" aria-labelledby="tree-h">
+    <p class="eyebrow"><span class="dot"></span>Browse by type</p>
+    <h2 id="tree-h">Skill types</h2>
+    <p class="muted sk-tree-help"><span class="js-only">Pick a branch to zoom in and show only those skills below. Pick a skill to jump to its card. Arrow keys move between branches, Down opens a branch's skills, and Esc shows the full tree.</span><span class="nojs-only">Skills grouped by type. Pick one to go to its card.</span></p>
+    <div class="card sk-stage-card" data-sktree hidden>
+      <div class="sk-stage" data-skstage role="group" aria-label="Skill types tree"></div>
+    </div>
+    <ul class="sk-tree-list" id="sk-tree-list">
+      <li data-branch="everyday"><a class="tb" href="?category=everyday#library">Everyday</a><ul>
+        <li data-leaf="chart" data-soon="0" data-kind="package"><a href="#skill-chart"><code>/chart</code> Chart</a> <span class="muted small">package</span></li>
+        <li data-leaf="deck" data-soon="0" data-kind="package"><a href="#skill-deck"><code>/deck</code> Slide deck</a> <span class="muted small">package</span></li>
+        <li data-leaf="pdf" data-soon="0" data-kind="package"><a href="#skill-pdf"><code>/pdf</code> PDF report</a> <span class="muted small">package</span></li>
+        <li data-leaf="units" data-soon="0" data-kind="package"><a href="#skill-units"><code>/units</code> Units and engineering</a> <span class="muted small">package</span></li>
+        <li data-leaf="fin" data-soon="0" data-kind="package"><a href="#skill-fin"><code>/fin</code> Finance</a> <span class="muted small">package</span></li>
+        <li data-leaf="ocr" data-soon="0" data-kind="package"><a href="#skill-ocr"><code>/ocr</code> OCR</a> <span class="muted small">package</span></li>
+        <li data-leaf="transcribe" data-soon="0" data-kind="package"><a href="#skill-transcribe"><code>/transcribe</code> Transcribe</a> <span class="muted small">package</span></li>
+        <li data-leaf="diagram" data-soon="1" data-kind="package"><a href="#skill-diagram"><code>/diagram</code> Diagram</a> <span class="muted small">coming soon</span></li>
+        <li data-leaf="table" data-soon="1" data-kind="package"><a href="#skill-table"><code>/table</code> Table</a> <span class="muted small">coming soon</span></li>
+        <li data-leaf="summarize" data-soon="1" data-kind="package"><a href="#skill-summarize"><code>/summarize</code> Summarize</a> <span class="muted small">coming soon</span></li>
+        <li data-leaf="files" data-soon="1" data-kind="package"><a href="#skill-files"><code>/files</code> Files</a> <span class="muted small">coming soon</span></li>
+      </ul></li>
+      <li data-branch="apps"><a class="tb" href="?category=apps#library">Building apps</a><ul>
+        <li data-leaf="wpf" data-soon="0" data-kind="guide"><a href="#skill-wpf"><code>/wpf</code> WPF Window Builder</a> <span class="muted small">guide</span></li>
+        <li data-leaf="sketch-to-ui" data-soon="0" data-kind="guide"><a href="#skill-sketch-to-ui"><code>/sketch-to-ui</code> Sketch to UI</a> <span class="muted small">guide</span></li>
+        <li data-leaf="scaffold" data-soon="0" data-kind="guide"><a href="#skill-scaffold"><code>/scaffold</code> Project Scaffolder</a> <span class="muted small">guide</span></li>
+        <li data-leaf="fix-build" data-soon="0" data-kind="guide"><a href="#skill-fix-build"><code>/fix-build</code> Fix the Build</a> <span class="muted small">guide</span></li>
+        <li data-leaf="ps-gui" data-soon="0" data-kind="guide"><a href="#skill-ps-gui"><code>/ps-gui</code> PowerShell Script GUI</a> <span class="muted small">guide</span></li>
+        <li data-leaf="package" data-soon="0" data-kind="guide"><a href="#skill-package"><code>/package</code> Windows Installer Packager</a> <span class="muted small">guide</span></li>
+        <li data-leaf="repo-map" data-soon="0" data-kind="guide"><a href="#skill-repo-map"><code>/repo-map</code> Repository Map</a> <span class="muted small">guide</span></li>
+      </ul></li>
+      <li data-branch="eng"><a class="tb" href="?category=eng#library">Engineering</a><ul>
+        <li data-leaf="spc" data-soon="0" data-kind="guide"><a href="#skill-spc"><code>/spc</code> SPC Charts and Capability</a> <span class="muted small">guide</span></li>
+        <li data-leaf="fmea" data-soon="0" data-kind="guide"><a href="#skill-fmea"><code>/fmea</code> FMEA Builder</a> <span class="muted small">guide</span></li>
+        <li data-leaf="rca" data-soon="0" data-kind="guide"><a href="#skill-rca"><code>/rca</code> Root Cause Analysis and 8D</a> <span class="muted small">guide</span></li>
+        <li data-leaf="work-instruction" data-soon="0" data-kind="guide"><a href="#skill-work-instruction"><code>/work-instruction</code> Work Instruction Writer</a> <span class="muted small">guide</span></li>
+      </ul></li>
+      <li data-branch="tools"><a class="tb" href="?category=tools#library">IOTA tools</a><ul>
+        <li data-leaf="skill-maker" data-soon="0" data-kind="guide"><a href="#skill-skill-maker"><code>/skill-maker</code> Skill Maker</a> <span class="muted small">guide</span></li>
+        <li data-leaf="bench" data-soon="0" data-kind="guide"><a href="#skill-bench"><code>/bench</code> Local Model Benchmark</a> <span class="muted small">guide</span></li>
+        <li data-leaf="story-tree" data-soon="0" data-kind="guide"><a href="#skill-story-tree"><code>/story-tree</code> Story Tree Builder</a> <span class="muted small">guide</span></li>
+      </ul></li>
+      <li data-branch="finance"><a class="tb" href="?category=finance#library">Finance</a><ul>
+        <li data-leaf="sec-diff" data-soon="0" data-kind="guide"><a href="#skill-sec-diff"><code>/sec-diff</code> SEC Filing Diff</a> <span class="muted small">guide</span></li>
+        <li data-leaf="dcf" data-soon="0" data-kind="guide"><a href="#skill-dcf"><code>/dcf</code> DCF Model Builder</a> <span class="muted small">guide</span></li>
+      </ul></li>
+    </ul>
+  </section>
 
   <section id="library" aria-label="Skills">
     <form class="sk-filters" role="search" onsubmit="return false">
       <label class="sk-search"><span class="vh">Search skills</span>
         <input id="sk-q" type="search" placeholder="Search skills, for example pdf or finance" autocomplete="off"></label>
-      <label><span>Category</span>
-        <select id="sk-cat"><option value="">All categories</option><option value="docs">Documents and visuals</option><option value="data">Data and math</option><option value="read">Read and listen</option><option value="files">Files</option></select></label>
+      <label><span>Type</span>
+        <select id="sk-cat"><option value="">All types</option><option value="everyday">Everyday</option><option value="apps">Building apps</option><option value="eng">Engineering</option><option value="tools">IOTA tools</option><option value="finance">Finance</option></select></label>
       <label><span>Edition</span>
         <select id="sk-ed"><option value="">Both editions</option><option value="powershell">PowerShell edition (offline)</option><option value="exe">EXE edition</option></select></label>
       <label><span>Network</span>
         <select id="sk-net"><option value="">Offline and online</option><option value="offline">Offline</option><option value="online">Online</option></select></label>
     </form>
     <div class="grid sk-grid" id="sk-grid">
-      <article class="card skill" id="skill-chart" data-cat="docs" data-ed="powershell exe" data-net="offline" data-status="available" data-q="chart /chart makes a bar, line, pie, or scatter chart from your data or from a dropped csv or xlsx file. saves a png in the iota theme. documents and visuals powershell edition exe edition offline ">
+      <article class="card skill" id="skill-chart" data-cat="everyday" data-kind="package" data-ed="powershell exe" data-net="offline" data-status="available" data-q="chart /chart makes a bar, line, pie, or scatter chart from your data or from a dropped csv or xlsx file. saves a png in the iota theme. everyday documents and visuals powershell edition exe edition offline ">
         <div class="sk-top"><code class="slash">/chart</code><span class="ver">Version 1.2</span></div>
         <h3>Chart</h3>
         <p>Makes a bar, line, pie, or scatter chart from your data or from a dropped CSV or XLSX file. Saves a PNG in the IOTA theme.</p>
         <p class="sk-eg">Example: <code>/chart bar of pump runtime by month</code></p>
-        <ul class="sk-tags"><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
         <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with matplotlib, NumPy, and Pillow (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
         <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-chart-1.2.zip" download>Download <small>zip, 16 KB</small></a><p class="sk-hash">SHA-256 <code>357af7aedb39fd430dcdfda4376fbb594c5c4cfe8f428c8c25dd763775ecd5b9</code></p></div>
       </article>
-      <article class="card skill" id="skill-deck" data-cat="docs" data-ed="powershell exe" data-net="offline" data-status="available" data-q="slide deck /deck builds a 16:9 powerpoint deck from your request. layouts include title, bullets, chart, table, and two columns. documents and visuals powershell edition exe edition offline ">
+      <article class="card skill" id="skill-deck" data-cat="everyday" data-kind="package" data-ed="powershell exe" data-net="offline" data-status="available" data-q="slide deck /deck builds a 16:9 powerpoint deck from your request. layouts include title, bullets, chart, table, and two columns. everyday documents and visuals powershell edition exe edition offline ">
         <div class="sk-top"><code class="slash">/deck</code><span class="ver">Version 1.2</span></div>
         <h3>Slide deck</h3>
         <p>Builds a 16:9 PowerPoint deck from your request. Layouts include title, bullets, chart, table, and two columns.</p>
         <p class="sk-eg">Example: <code>/deck five slides on our Q3 results</code></p>
-        <ul class="sk-tags"><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
         <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with python-pptx, matplotlib, and Pillow (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
         <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-deck-1.2.zip" download>Download <small>zip, 18 KB</small></a><p class="sk-hash">SHA-256 <code>9990e333b5f4508a666a440da5a3f39c27b7eb8067f1e106049e4595b0d4ba2c</code></p></div>
       </article>
-      <article class="card skill" id="skill-pdf" data-cat="docs" data-ed="powershell exe" data-net="offline" data-status="available" data-q="pdf report /pdf writes a pdf report with headings, text, bullets, tables, and charts. charcoal pages by default, or white pages for printing. documents and visuals powershell edition exe edition offline ">
+      <article class="card skill" id="skill-pdf" data-cat="everyday" data-kind="package" data-ed="powershell exe" data-net="offline" data-status="available" data-q="pdf report /pdf writes a pdf report with headings, text, bullets, tables, and charts. charcoal pages by default, or white pages for printing. everyday documents and visuals powershell edition exe edition offline ">
         <div class="sk-top"><code class="slash">/pdf</code><span class="ver">Version 1.2</span></div>
         <h3>PDF report</h3>
         <p>Writes a PDF report with headings, text, bullets, tables, and charts. Charcoal pages by default, or white pages for printing.</p>
         <p class="sk-eg">Example: <code>/pdf printable summary of this chat</code></p>
-        <ul class="sk-tags"><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Documents and visuals</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
         <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with ReportLab, matplotlib, and Pillow (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
         <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-pdf-1.2.zip" download>Download <small>zip, 18 KB</small></a><p class="sk-hash">SHA-256 <code>2e8e47f4fd5839879c66d33d08e2b3422bd1b72834264228773fe24821bda615</code></p></div>
       </article>
-      <article class="card skill" id="skill-units" data-cat="data" data-ed="powershell" data-net="offline" data-status="available" data-q="units and engineering /units converts units and works quick engineering formulas. code does the math, and the answer shows each step and the conversion factor used. data and math powershell edition offline ">
+      <article class="card skill" id="skill-units" data-cat="everyday" data-kind="package" data-ed="powershell" data-net="offline" data-status="available" data-q="units and engineering /units converts units and works quick engineering formulas. code does the math, and the answer shows each step and the conversion factor used. everyday data and math powershell edition offline ">
         <div class="sk-top"><code class="slash">/units</code><span class="ver">Version 1.2</span></div>
         <h3>Units and engineering</h3>
         <p>Converts units and works quick engineering formulas. Code does the math, and the answer shows each step and the conversion factor used.</p>
         <p class="sk-eg">Example: <code>/units 250 psi to kPa and bar</code></p>
-        <ul class="sk-tags"><li>Data and math</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Data and math</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
         <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later, PowerShell edition</li><li>Python 3.12 with pint (included in the kit)</li></ul></div>
         <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-units-1.2.zip" download>Download <small>zip, 21 KB</small></a><p class="sk-hash">SHA-256 <code>75051dbad7b8f21e57381f6219cbe3abd942da36d8888772d037270da1d83778</code></p></div>
       </article>
-      <article class="card skill" id="skill-fin" data-cat="data" data-ed="powershell exe" data-net="offline" data-status="available" data-q="finance /fin finance math: npv, irr, xirr, payback, loan payments, amortization, cagr, wacc, break-even, and a simple dcf. tables save as excel files with live formulas. data and math powershell edition exe edition offline ">
+      <article class="card skill" id="skill-fin" data-cat="everyday" data-kind="package" data-ed="powershell exe" data-net="offline" data-status="available" data-q="finance /fin finance math: npv, irr, xirr, payback, loan payments, amortization, cagr, wacc, break-even, and a simple dcf. tables save as excel files with live formulas. everyday data and math powershell edition exe edition offline ">
         <div class="sk-top"><code class="slash">/fin</code><span class="ver">Version 1.2</span></div>
         <h3>Finance</h3>
         <p>Finance math: NPV, IRR, XIRR, payback, loan payments, amortization, CAGR, WACC, break-even, and a simple DCF. Tables save as Excel files with live formulas.</p>
         <p class="sk-eg">Example: <code>/fin amortization 25000 at 7% for 5 years with a chart</code></p>
-        <ul class="sk-tags"><li>Data and math</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Data and math</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
         <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later</li><li>Python 3.12 with XlsxWriter and matplotlib (included in the PowerShell edition kit)</li><li>EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH</li></ul></div>
         <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-fin-1.2.zip" download>Download <small>zip, 25 KB</small></a><p class="sk-hash">SHA-256 <code>7a07bc5296019bf4d6ef805ea2cee0d42bc8ee8073b4c967a56a744320710e81</code></p></div>
       </article>
-      <article class="card skill" id="skill-ocr" data-cat="read" data-ed="powershell" data-net="offline" data-status="available" data-q="ocr /ocr reads the text in images, screenshots, and scanned pdfs. can also save a searchable copy of a pdf or image. read and listen powershell edition offline ">
+      <article class="card skill" id="skill-ocr" data-cat="everyday" data-kind="package" data-ed="powershell" data-net="offline" data-status="available" data-q="ocr /ocr reads the text in images, screenshots, and scanned pdfs. can also save a searchable copy of a pdf or image. everyday read and listen powershell edition offline ">
         <div class="sk-top"><code class="slash">/ocr</code><span class="ver">Version 1.2</span></div>
         <h3>OCR</h3>
         <p>Reads the text in images, screenshots, and scanned PDFs. Can also save a searchable copy of a PDF or image.</p>
         <p class="sk-eg">Example: <code>/ocr searchable</code></p>
-        <ul class="sk-tags"><li>Read and listen</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Read and listen</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
         <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later, PowerShell edition</li><li>Python 3.12 with RapidOCR, ONNX Runtime, OpenCV, pypdfium2, pdfplumber, Pillow, and NumPy (included in the kit)</li><li>The English PP-OCRv3 OCR model in models\ocr (in the kit, not in this download)</li></ul></div>
         <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-ocr-1.2.zip" download>Download <small>zip, 19 KB</small></a><p class="sk-hash">SHA-256 <code>cfeedbe899f4ac672588c5a9cf708d1aba786b1cf899577c2d61d9d9ba106efc</code></p></div>
       </article>
-      <article class="card skill" id="skill-transcribe" data-cat="read" data-ed="powershell" data-net="offline" data-status="available" data-q="transcribe /transcribe writes a transcript with timestamps from an audio or video file. add &quot;notes&quot; for a summary, decisions, and action items. read and listen powershell edition offline ">
+      <article class="card skill" id="skill-transcribe" data-cat="everyday" data-kind="package" data-ed="powershell" data-net="offline" data-status="available" data-q="transcribe /transcribe writes a transcript with timestamps from an audio or video file. add &quot;notes&quot; for a summary, decisions, and action items. everyday read and listen powershell edition offline ">
         <div class="sk-top"><code class="slash">/transcribe</code><span class="ver">Version 1.2</span></div>
         <h3>Transcribe</h3>
         <p>Writes a transcript with timestamps from an audio or video file. Add &quot;notes&quot; for a summary, decisions, and action items.</p>
         <p class="sk-eg">Example: <code>/transcribe notes</code></p>
-        <ul class="sk-tags"><li>Read and listen</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Read and listen</li><li>PowerShell edition only</li><li class="off">Offline</li></ul>
         <div class="sk-req"><b>Requirements</b><ul><li>IOTA for Windows V1.2 or later, PowerShell edition</li><li>Python 3.12 with PyAV (included in the kit)</li><li>whisper-cli.exe from the kit</li><li>A whisper speech model, base.en or tiny.en, in models\stt (in the kit, not in this download)</li></ul></div>
         <div class="sk-dl"><a class="btn primary" href="downloads/iota-skill-transcribe-1.2.zip" download>Download <small>zip, 19 KB</small></a><p class="sk-hash">SHA-256 <code>b2426ed2ed9a41c685fbc4436d6612bf21158f6aad0a072f478be3236f3d79f8</code></p></div>
       </article>
-      <article class="card skill is-soon" id="skill-diagram" data-cat="docs" data-ed="" data-net="offline" data-status="soon" data-q="diagram /diagram makes a flowchart or process map and saves it as a png. documents and visuals  offline coming soon">
+      <article class="card skill is-soon" id="skill-diagram" data-cat="everyday" data-kind="package" data-ed="" data-net="offline" data-status="soon" data-q="diagram /diagram makes a flowchart or process map and saves it as a png. everyday documents and visuals  offline coming soon">
         <div class="sk-top"><code class="slash">/diagram</code><span class="ver">Planned</span></div>
         <h3>Diagram</h3>
         <p>Makes a flowchart or process map and saves it as a PNG.</p>
-        <ul class="sk-tags"><li>Documents and visuals</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Documents and visuals</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
         <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
       </article>
-      <article class="card skill is-soon" id="skill-table" data-cat="data" data-ed="" data-net="offline" data-status="soon" data-q="table /table pulls tables out of a pdf, docx, or xlsx file into csv or xlsx. data and math  offline coming soon">
+      <article class="card skill is-soon" id="skill-table" data-cat="everyday" data-kind="package" data-ed="" data-net="offline" data-status="soon" data-q="table /table pulls tables out of a pdf, docx, or xlsx file into csv or xlsx. everyday data and math  offline coming soon">
         <div class="sk-top"><code class="slash">/table</code><span class="ver">Planned</span></div>
         <h3>Table</h3>
         <p>Pulls tables out of a PDF, DOCX, or XLSX file into CSV or XLSX.</p>
-        <ul class="sk-tags"><li>Data and math</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Data and math</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
         <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
       </article>
-      <article class="card skill is-soon" id="skill-summarize" data-cat="read" data-ed="" data-net="offline" data-status="soon" data-q="summarize /summarize summarizes a dropped pdf, docx, txt, or md file. read and listen  offline coming soon">
+      <article class="card skill is-soon" id="skill-summarize" data-cat="everyday" data-kind="package" data-ed="" data-net="offline" data-status="soon" data-q="summarize /summarize summarizes a dropped pdf, docx, txt, or md file. everyday read and listen  offline coming soon">
         <div class="sk-top"><code class="slash">/summarize</code><span class="ver">Planned</span></div>
         <h3>Summarize</h3>
         <p>Summarizes a dropped PDF, DOCX, TXT, or MD file.</p>
-        <ul class="sk-tags"><li>Read and listen</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Read and listen</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
         <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
       </article>
-      <article class="card skill is-soon" id="skill-files" data-cat="files" data-ed="" data-net="offline" data-status="soon" data-q="files /files works with the files in a folder you choose. files  offline coming soon">
+      <article class="card skill is-soon" id="skill-files" data-cat="everyday" data-kind="package" data-ed="" data-net="offline" data-status="soon" data-q="files /files works with the files in a folder you choose. everyday files  offline coming soon">
         <div class="sk-top"><code class="slash">/files</code><span class="ver">Planned</span></div>
         <h3>Files</h3>
         <p>Works with the files in a folder you choose.</p>
-        <ul class="sk-tags"><li>Files</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
+        <ul class="sk-tags"><li>Everyday</li><li>Files</li><li class="off">Offline</li><li class="soon">Coming soon</li></ul>
         <div class="sk-dl"><span class="btn off" aria-disabled="true">Coming soon</span><p class="sk-hash">Not available to download yet.</p></div>
       </article>
+      <article class="card skill is-guide" id="skill-wpf" data-cat="apps" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="wpf window builder /wpf turn a plain description of a desktop window into a working wpf project: xaml for the layout, c# code-behind or an mvvm view model for the behavior, the iota color palette applied, a local build with `dotnet`, a screenshot of the result, and a loop for change requests. building apps md skill guide markdown building apps powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/wpf</code><span class="ver">Guide 1.0</span></div>
+        <h3>WPF Window Builder</h3>
+        <p>Turn a plain description of a desktop window into a working WPF project: XAML for the layout, C# code-behind or an MVVM view model for the behavior, the IOTA color palette applied, a local build with <code>dotnet</code>, a screenshot of the result, and a loop for change requests.</p>
+        <p class="sk-eg">Example: <code>/wpf a settings window with a theme toggle and a save button</code></p>
+        <ul class="sk-tags"><li>Building apps</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/wpf.md" download="iota-skill-wpf.md">Download .md <small>15 KB</small></a><a class="btn ghost" href="view/wpf.html">View</a></div><p class="sk-hash">SHA-256 <code>f0d326325373b962aea3492a4c6a30e8f25ca04701cc2d66023fcc6f72955f5d</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-sketch-to-ui" data-cat="apps" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="sketch to ui /sketch-to-ui turn a photo of a paper sketch, a whiteboard drawing, or a screenshot of another app into a working layout. the skill reads the image, lists every region it found, confirms that list with you, and then writes wpf xaml or a single html page in the iota palette. building apps md skill guide markdown building apps powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/sketch-to-ui</code><span class="ver">Guide 1.0</span></div>
+        <h3>Sketch to UI</h3>
+        <p>Turn a photo of a paper sketch, a whiteboard drawing, or a screenshot of another app into a working layout. The skill reads the image, lists every region it found, confirms that list with you, and then writes WPF XAML or a single HTML page in the IOTA palette.</p>
+        <p class="sk-eg">Example: <code>/sketch-to-ui whiteboard.jpg as WPF</code></p>
+        <ul class="sk-tags"><li>Building apps</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/sketch-to-ui.md" download="iota-skill-sketch-to-ui.md">Download .md <small>11 KB</small></a><a class="btn ghost" href="view/sketch-to-ui.html">View</a></div><p class="sk-hash">SHA-256 <code>0d5c7513c64871babef4c4313d239f3d662aa81cc086acbda8520255fb5ab0d5</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-scaffold" data-cat="apps" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="project scaffolder /scaffold create a new project that builds and passes its tests on the first try. three templates are covered: a wpf mvvm desktop app, an android app with jetpack compose, and a python command line tool. each comes with a test project, a readme, and a `.gitignore`. building apps md skill guide markdown building apps powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/scaffold</code><span class="ver">Guide 1.0</span></div>
+        <h3>Project Scaffolder</h3>
+        <p>Create a new project that builds and passes its tests on the first try. Three templates are covered: a WPF MVVM desktop app, an Android app with Jetpack Compose, and a Python command line tool. Each comes with a test project, a README, and a <code>.gitignore</code>.</p>
+        <p class="sk-eg">Example: <code>/scaffold python-cli csvtool</code></p>
+        <ul class="sk-tags"><li>Building apps</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-note"><b>Network</b> Offline once packages are cached. The xunit test project restores NuGet packages and Android needs one online build to fill the Gradle cache. The Python template works fully offline if pytest is installed.</p>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/scaffold.md" download="iota-skill-scaffold.md">Download .md <small>14 KB</small></a><a class="btn ghost" href="view/scaffold.html">View</a></div><p class="sk-hash">SHA-256 <code>80059f785ad85a5f7084e53cb08dcbd53038af4dedfbf6387f6456cd63b61829</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-fix-build" data-cat="apps" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="fix the build /fix-build run a build or test command, read the errors, make the smallest fix, show the diff, and run it again. the loop stops when the build is green, when the iteration limit is reached, or when a fix would need a decision from you. building apps md skill guide markdown building apps powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/fix-build</code><span class="ver">Guide 1.0</span></div>
+        <h3>Fix the Build</h3>
+        <p>Run a build or test command, read the errors, make the smallest fix, show the diff, and run it again. The loop stops when the build is green, when the iteration limit is reached, or when a fix would need a decision from you.</p>
+        <p class="sk-eg">Example: <code>/fix-build dotnet test</code></p>
+        <ul class="sk-tags"><li>Building apps</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/fix-build.md" download="iota-skill-fix-build.md">Download .md <small>9 KB</small></a><a class="btn ghost" href="view/fix-build.html">View</a></div><p class="sk-hash">SHA-256 <code>0db9b62019f67e4a4f18501b04b2c8db192074e48d0b0f0c40edbef7806e956d</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-ps-gui" data-cat="apps" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="powershell script gui /ps-gui wrap an existing powershell script in a simple window so people who do not use a console can run it. the skill reads the script&#x27;s `param()` block, makes one input per parameter, adds run and preview (`-whatif`) buttons, shows output live, and writes a log file for every run. the original script is not changed. building apps md skill guide markdown building apps powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/ps-gui</code><span class="ver">Guide 1.0</span></div>
+        <h3>PowerShell Script GUI</h3>
+        <p>Wrap an existing PowerShell script in a simple window so people who do not use a console can run it. The skill reads the script&#x27;s <code>param()</code> block, makes one input per parameter, adds Run and Preview (<code>-WhatIf</code>) buttons, shows output live, and writes a log file for every run. The original script is not changed.</p>
+        <p class="sk-eg">Example: <code>/ps-gui Backup-Folders.ps1</code></p>
+        <ul class="sk-tags"><li>Building apps</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/ps-gui.md" download="iota-skill-ps-gui.md">Download .md <small>12 KB</small></a><a class="btn ghost" href="view/ps-gui.html">View</a></div><p class="sk-hash">SHA-256 <code>2c85fda55bdd53eaac1604abf006ec6e04b6e5a60a7cd88b396f6f4b98cdd2bc</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-package" data-cat="apps" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="windows installer packager /package turn a built windows app into an installer people can double click: an msi built with the wix toolset, or an msix package. the skill handles version numbers, start menu shortcuts, upgrades, and code signing with a certificate you already have. building apps md skill guide markdown building apps powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/package</code><span class="ver">Guide 1.0</span></div>
+        <h3>Windows Installer Packager</h3>
+        <p>Turn a built Windows app into an installer people can double click: an MSI built with the WiX Toolset, or an MSIX package. The skill handles version numbers, Start menu shortcuts, upgrades, and code signing with a certificate you already have.</p>
+        <p class="sk-eg">Example: <code>/package msi for the Release build</code></p>
+        <ul class="sk-tags"><li>Building apps</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-note"><b>Network</b> First install of the WiX .NET tool needs the internet. Timestamping a signature contacts a timestamp server, which you can skip.</p>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/package.md" download="iota-skill-package.md">Download .md <small>10 KB</small></a><a class="btn ghost" href="view/package.html">View</a></div><p class="sk-hash">SHA-256 <code>80f29ab885a2c8bf4f53e0fd6fa567fa248de3ec728addf6f63cf6086ba7386e</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-repo-map" data-cat="apps" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="repository map /repo-map index a codebase so you can ask &quot;where is x handled?&quot; and get file paths with line numbers, and draw a mermaid diagram of how folders and modules depend on each other. it uses retrieval (rag): code is split into chunks, embedded locally, and the closest chunks are passed to the model with their locations. building apps md skill guide markdown building apps powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/repo-map</code><span class="ver">Guide 1.0</span></div>
+        <h3>Repository Map</h3>
+        <p>Index a codebase so you can ask &quot;where is X handled?&quot; and get file paths with line numbers, and draw a Mermaid diagram of how folders and modules depend on each other. It uses retrieval (RAG): code is split into chunks, embedded locally, and the closest chunks are passed to the model with their locations.</p>
+        <p class="sk-eg">Example: <code>/repo-map where is login handled?</code></p>
+        <ul class="sk-tags"><li>Building apps</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/repo-map.md" download="iota-skill-repo-map.md">Download .md <small>9 KB</small></a><a class="btn ghost" href="view/repo-map.html">View</a></div><p class="sk-hash">SHA-256 <code>37cc81c8b52cba1031be4fae8119cb25936acaa31436b96d1dee94ce5b7ad5b8</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-spc" data-cat="eng" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="spc charts and capability /spc make statistical process control charts from measurement data: x-bar and r charts for subgroups, or i-mr charts for individual readings. compute cp and cpk against spec limits, flag western electric and nelson rule violations, and save a png chart plus a table of results. the numbers are computed in code, not by the language model. engineering md skill guide markdown engineering powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/spc</code><span class="ver">Guide 1.0</span></div>
+        <h3>SPC Charts and Capability</h3>
+        <p>Make statistical process control charts from measurement data: X-bar and R charts for subgroups, or I-MR charts for individual readings. Compute Cp and Cpk against spec limits, flag Western Electric and Nelson rule violations, and save a PNG chart plus a table of results. The numbers are computed in code, not by the language model.</p>
+        <p class="sk-eg">Example: <code>/spc bore.csv spec 24.95 to 25.05</code></p>
+        <ul class="sk-tags"><li>Engineering</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/spc.md" download="iota-skill-spc.md">Download .md <small>11 KB</small></a><a class="btn ghost" href="view/spc.html">View</a></div><p class="sk-hash">SHA-256 <code>a4f42fdf424d142525fc49bf7137461673387195c9f49febfc78585d938e5d2d</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-fmea" data-cat="eng" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="fmea builder /fmea build a process or design fmea (failure mode and effects analysis) with you: list the steps or functions, draft failure modes, effects, and causes, rate severity, occurrence, and detection from 1 to 10, compute rpn, sort by risk, propose actions, and export a formatted xlsx that your team can keep editing. engineering md skill guide markdown engineering powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/fmea</code><span class="ver">Guide 1.0</span></div>
+        <h3>FMEA Builder</h3>
+        <p>Build a process or design FMEA (failure mode and effects analysis) with you: list the steps or functions, draft failure modes, effects, and causes, rate Severity, Occurrence, and Detection from 1 to 10, compute RPN, sort by risk, propose actions, and export a formatted XLSX that your team can keep editing.</p>
+        <p class="sk-eg">Example: <code>/fmea process FMEA for the reaming cell</code></p>
+        <ul class="sk-tags"><li>Engineering</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/fmea.md" download="iota-skill-fmea.md">Download .md <small>10 KB</small></a><a class="btn ghost" href="view/fmea.html">View</a></div><p class="sk-hash">SHA-256 <code>3ed149202310e1b951eac08335fcd7a88a41cb464685573eaa5423b0fb792908</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-rca" data-cat="eng" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="root cause analysis and 8d /rca walk a problem from first report to a closed 8d: define the problem clearly, contain it, find causes with 5 whys and a fishbone (ishikawa) diagram, choose and verify corrective actions, and write the 8d report as docx or pdf. the skill asks the questions; you and your team supply the facts. engineering md skill guide markdown engineering powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/rca</code><span class="ver">Guide 1.0</span></div>
+        <h3>Root Cause Analysis and 8D</h3>
+        <p>Walk a problem from first report to a closed 8D: define the problem clearly, contain it, find causes with 5 Whys and a fishbone (Ishikawa) diagram, choose and verify corrective actions, and write the 8D report as DOCX or PDF. The skill asks the questions; you and your team supply the facts.</p>
+        <p class="sk-eg">Example: <code>/rca 8D for oversize bores on line 3</code></p>
+        <ul class="sk-tags"><li>Engineering</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/rca.md" download="iota-skill-rca.md">Download .md <small>11 KB</small></a><a class="btn ghost" href="view/rca.html">View</a></div><p class="sk-hash">SHA-256 <code>a1a1670a9b1b91b5c2d2d212206068c4005d2bc1fcb7138e16eba4a252f0f91e</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-work-instruction" data-cat="eng" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="work instruction writer /work-instruction turn notes, a recorded explanation, or an old document into a clear, numbered work instruction: one action per step, key points and reasons, safety callouts placed before the step they apply to, required tools and ppe, photo placeholders, and a revision block with approval lines. output is a docx your document control system can take. engineering md skill guide markdown engineering powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/work-instruction</code><span class="ver">Guide 1.0</span></div>
+        <h3>Work Instruction Writer</h3>
+        <p>Turn notes, a recorded explanation, or an old document into a clear, numbered work instruction: one action per step, key points and reasons, safety callouts placed before the step they apply to, required tools and PPE, photo placeholders, and a revision block with approval lines. Output is a DOCX your document control system can take.</p>
+        <p class="sk-eg">Example: <code>/work-instruction from these notes on the filter change</code></p>
+        <ul class="sk-tags"><li>Engineering</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/work-instruction.md" download="iota-skill-work-instruction.md">Download .md <small>10 KB</small></a><a class="btn ghost" href="view/work-instruction.html">View</a></div><p class="sk-hash">SHA-256 <code>d6e374a852e46010e85ad1c6818b3bda76b8004e7408c1c13dc26520df396c25</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-skill-maker" data-cat="tools" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="skill maker /skill-maker create a new skill from a plain description: a skill guide `.md` in the same format as this one, an optional helper script, and tests for that script. everything is written to a staging folder first. the skill is copied into your skills folder only after the tests pass and you say yes. iota tools md skill guide markdown iota tools powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/skill-maker</code><span class="ver">Guide 1.0</span></div>
+        <h3>Skill Maker</h3>
+        <p>Create a new skill from a plain description: a skill guide <code>.md</code> in the same format as this one, an optional helper script, and tests for that script. Everything is written to a staging folder first. The skill is copied into your skills folder only after the tests pass and you say yes.</p>
+        <p class="sk-eg">Example: <code>/skill-maker a skill that renames photos by date taken</code></p>
+        <ul class="sk-tags"><li>IOTA tools</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/skill-maker.md" download="iota-skill-skill-maker.md">Download .md <small>10 KB</small></a><a class="btn ghost" href="view/skill-maker.html">View</a></div><p class="sk-hash">SHA-256 <code>178bda12afafddc64c1a244aa984bb729f8a8203107e29714c9d2ef4d4c5bc03</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-bench" data-cat="tools" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="local model benchmark /bench measure how a local model actually performs on your pc: time to first token (ttft), generation speed in tokens per second, prompt processing speed, and vram and ram use. then recommend which model size and settings fit your hardware for chat, documents, and code. iota tools md skill guide markdown iota tools powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/bench</code><span class="ver">Guide 1.0</span></div>
+        <h3>Local Model Benchmark</h3>
+        <p>Measure how a local model actually performs on your PC: time to first token (TTFT), generation speed in tokens per second, prompt processing speed, and VRAM and RAM use. Then recommend which model size and settings fit your hardware for chat, documents, and code.</p>
+        <p class="sk-eg">Example: <code>/bench Gemma 3 4B and 12B</code></p>
+        <ul class="sk-tags"><li>IOTA tools</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/bench.md" download="iota-skill-bench.md">Download .md <small>9 KB</small></a><a class="btn ghost" href="view/bench.html">View</a></div><p class="sk-hash">SHA-256 <code>3ac19d92403cbbb887859bbf798e5c934fb683b30b4d3c1bb53ba60ec44ed9ae</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-story-tree" data-cat="tools" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="story tree builder /story-tree plan and write branching dialogue: scenes, characters, choices, and endings stored as a json file a game or interactive story can load, plus a visual map of every branch. the skill keeps the tree valid (no dead links, every path reaches an ending) and keeps content safe for work. iota tools md skill guide markdown iota tools powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/story-tree</code><span class="ver">Guide 1.0</span></div>
+        <h3>Story Tree Builder</h3>
+        <p>Plan and write branching dialogue: scenes, characters, choices, and endings stored as a JSON file a game or interactive story can load, plus a visual map of every branch. The skill keeps the tree valid (no dead links, every path reaches an ending) and keeps content safe for work.</p>
+        <p class="sk-eg">Example: <code>/story-tree 15 scenes, 3 endings, a robot on the night shift</code></p>
+        <ul class="sk-tags"><li>IOTA tools</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/story-tree.md" download="iota-skill-story-tree.md">Download .md <small>10 KB</small></a><a class="btn ghost" href="view/story-tree.html">View</a></div><p class="sk-hash">SHA-256 <code>9c1b6b0af43c8a6da5c454a36c315eca382f2145a953b20776d444185bcf15c1</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-sec-diff" data-cat="finance" data-kind="guide" data-ed="exe" data-net="online" data-status="available" data-q="sec filing diff /sec-diff compare two annual reports (form 10-k) from the same company and show what changed, section by section: new and removed risk factors, changed wording in management&#x27;s discussion and analysis, and other sections you choose. filings come from sec edgar or from files you already have. finance md skill guide markdown finance exe edition online ">
+        <div class="sk-top"><code class="slash">/sec-diff</code><span class="ver">Guide 1.0</span></div>
+        <h3>SEC Filing Diff</h3>
+        <p>Compare two annual reports (Form 10-K) from the same company and show what changed, section by section: new and removed risk factors, changed wording in Management&#x27;s Discussion and Analysis, and other sections you choose. Filings come from SEC EDGAR or from files you already have.</p>
+        <p class="sk-eg">Example: <code>/sec-diff latest two 10-K filings, risk factors</code></p>
+        <ul class="sk-tags"><li>Finance</li><li class="md">.md skill guide</li><li>EXE edition only</li><li class="on">Online</li></ul>
+        <p class="sk-note"><b>Network</b> Online to fetch from SEC EDGAR. Offline when you supply local files.</p>
+        <p class="sk-note"><b>Edition</b> EXE edition. Downloading filings from SEC EDGAR needs the internet and the EXE edition&#x27;s network access. If you already have two 10-K files saved on your PC, the comparison steps themselves run offline in either edition.</p>
+        <p class="sk-note"><b>Note</b> Not investment advice. The guide builds tools for your own analysis.</p>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/sec-diff.md" download="iota-skill-sec-diff.md">Download .md <small>10 KB</small></a><a class="btn ghost" href="view/sec-diff.html">View</a></div><p class="sk-hash">SHA-256 <code>4e76966d1619922fbfe464b72e958a65f01192fe0e03819014e5e3f20ee999fd</code></p></div>
+      </article>
+      <article class="card skill is-guide" id="skill-dcf" data-cat="finance" data-kind="guide" data-ed="powershell exe" data-net="offline" data-status="available" data-q="dcf model builder /dcf build a discounted cash flow (dcf) model as an excel workbook with every assumption on one sheet, a wacc calculation, a five to ten year free cash flow forecast, a terminal value (gordon growth or exit multiple), the bridge from enterprise value to equity value per share, and a sensitivity table. all cells are formulas so you can change inputs in excel. finance md skill guide markdown finance powershell edition exe edition offline ">
+        <div class="sk-top"><code class="slash">/dcf</code><span class="ver">Guide 1.0</span></div>
+        <h3>DCF Model Builder</h3>
+        <p>Build a discounted cash flow (DCF) model as an Excel workbook with every assumption on one sheet, a WACC calculation, a five to ten year free cash flow forecast, a terminal value (Gordon growth or exit multiple), the bridge from enterprise value to equity value per share, and a sensitivity table. All cells are formulas so you can change inputs in Excel.</p>
+        <p class="sk-eg">Example: <code>/dcf five year model from these inputs</code></p>
+        <ul class="sk-tags"><li>Finance</li><li class="md">.md skill guide</li><li>PowerShell edition</li><li>EXE edition</li><li class="off">Offline</li></ul>
+        <p class="sk-note"><b>Note</b> Not investment advice. The guide builds tools for your own analysis.</p>
+        <p class="sk-credit">By IOTA - Joseph Bryant</p>
+        <div class="sk-dl"><div class="sk-btns"><a class="btn primary" href="md/dcf.md" download="iota-skill-dcf.md">Download .md <small>11 KB</small></a><a class="btn ghost" href="view/dcf.html">View</a></div><p class="sk-hash">SHA-256 <code>8f58f49301e11935decb1e5850a3506b387576a3addfe228bc755254979f6df8</code></p></div>
+      </article>
     </div>
-    <p class="sk-empty muted" id="sk-empty" hidden>No skills match these filters. Every skill available today runs offline. Clear the search or pick another filter.</p>
+    <p class="sk-empty muted" id="sk-empty" hidden>No skills match these filters. Clear the search or pick another filter.</p>
   </section>
 
   <section id="install">
     <p class="eyebrow"><span class="dot"></span>How to</p>
-    <h2>How to install a skill</h2>
+    <h2>How to install a skill package</h2>
     <p class="muted">Each download is a small zip with the skill's Python files, a <code>skill.json</code> file that describes it, and an <code>INSTALL.txt</code> file with these steps. Model files are not included. The skills in this library are the same files that ship with the V1.2 kit, so you can also use a download to restore or update a skill.</p>
     <ol class="steps-list">
       <li>Download the skill. To check the file, open PowerShell in your Downloads folder and run <code>Get-FileHash .\iota-skill-chart-1.2.zip -Algorithm SHA256</code> with the file name of your download. The result should match the SHA-256 on the skill's card.</li>
@@ -161,6 +361,14 @@
       <li>Open the zip and copy everything inside its <code>files</code> folder into that skills folder. Replace files when Windows asks.</li>
       <li>Start IOTA. Open the Developer rail, then <b>Skills</b>, then <b>Check libraries</b>, to confirm the skill's libraries are ready.</li>
       <li>Type the slash command in a chat, for example <code>/chart bar of sales by month</code>.</li>
+    </ol>
+    <h3 class="sk-h3" id="guides">How to use a .md skill guide</h3>
+    <p class="muted">A guide is a Markdown text file. It tells the model in IOTA how to do one job step by step, with the commands, code, checks, and safety rules to follow. It is not a compiled program and it does not add a feature to IOTA on its own. Each guide starts with a header that lists the command, the editions it fits, whether it needs the network, and the credit to IOTA - Joseph Bryant.</p>
+    <ol class="steps-list">
+      <li>Download the guide with <b>Download .md</b>, or read it first with <b>View</b>. To check the file, run <code>Get-FileHash .\iota-skill-spc.md -Algorithm SHA256</code> with the file name of your download and compare it with the SHA-256 on the card.</li>
+      <li>Open the file in any text editor and copy its text.</li>
+      <li>Paste it into an IOTA chat, then give your request on the next line, for example <code>/spc bore.csv spec 24.95 to 25.05</code>.</li>
+      <li>Each guide tells IOTA to show its plan and ask before it changes or overwrites a file. Larger models follow long guides more closely; each guide lists what it needs.</li>
     </ol>
     <p class="muted small" style="margin-top:22px">Skills marked PowerShell edition only use tools and model files from the USB kit, such as the OCR and speech models. Replies from AI can be wrong. Check the results before you rely on them.</p>
   </section>

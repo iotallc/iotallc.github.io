@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FMEA Builder skill guide | IOTA</title>
+<meta name="description" content="Build a process or design FMEA (failure mode and effects analysis) with you: list the steps or functions, draft failure modes, effects, and causes, rate Severity, Occurrence, and Detection from 1 to 10, compute RPN, sort by risk, propose actions, and export a formatted XLSX that your team can keep editing.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FMEA Builder | IOTA skill guide">
+<meta property="og:description" content="Build a process or design FMEA (failure mode and effects analysis) with you: list the steps or functions, draft failure modes, effects, and causes, rate Severity, Occurrence, and Detection from 1 to 10, compute RPN, sort by risk, propose actions, and export a formatted XLSX that your team can keep editing.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/fmea.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=eng#library">Engineering</a> / FMEA Builder</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/fmea.md" download="iota-skill-fmea.md">Download .md <small>10 KB</small></a>
+      <a class="btn ghost" href="../md/fmea.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-fmea">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>3ed149202310e1b951eac08335fcd7a88a41cb464685573eaa5423b0fb792908</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/fmea</td></tr><tr><th>Category</th><td>Engineering</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. The model helps draft failure modes from your description, and local Python computes RPN and writes the spreadsheet. Nothing is uploaded.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/fmea: FMEA Builder</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Build a process or design FMEA (failure mode and effects analysis) with you: list the steps or functions, draft failure modes, effects, and causes, rate Severity, Occurrence, and Detection from 1 to 10, compute RPN, sort by risk, propose actions, and export a formatted XLSX that your team can keep editing.</p>
+<h2>When to use</h2>
+<ul>
+<li>Preparing a PFMEA for a new or changed process step.</li>
+<li>A DFMEA for a part or assembly.</li>
+<li>Refreshing an old FMEA after a quality escape.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>As a replacement for the cross functional team. The skill drafts; the team decides ratings.</li>
+<li>When your customer requires the AIAG and VDA 2019 Action Priority (AP) method only. The skill can add an AP column (see step 6), but check your customer's manual.</li>
+<li>Safety critical sign off. Final ratings and actions need human review and approval.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Python 3.10 or later with <code>openpyxl</code>.</li>
+<li>Model: Gemma 3 12B or a Nemotron model of similar size drafts better failure modes and causes. Gemma 3 4B works if you supply the process steps and review each row; it tends to repeat generic causes.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td>Yes</td>
+<td><code>process</code> or <code>design</code></td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>Yes</td>
+<td>"Drill and ream bore on bracket B-200, op 30"</td>
+</tr>
+<tr>
+<td>Steps or functions</td>
+<td>Yes, or let the skill propose</td>
+<td>"Load part, clamp, drill 9.8 mm, ream 10 mm H7, unload"</td>
+</tr>
+<tr>
+<td>Existing controls</td>
+<td>No</td>
+<td>"Go/no-go gauge every 10 parts"</td>
+</tr>
+<tr>
+<td>Rating scale</td>
+<td>No</td>
+<td>Default scales below, or your company's</td>
+</tr>
+<tr>
+<td>Action threshold</td>
+<td>No</td>
+<td>RPN 100 or Severity 9 to 10 (default)</td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Confirm the scope</strong> in one sentence and list the steps. If the user did not give steps, propose them and ask for a yes.</p>
+</li>
+<li>
+<p><strong>Draft rows step by step.</strong> For each step, ask the model:
+   <pre class="highlight"><code>Process step: {step}
+Scope: {scope}
+List up to 4 realistic failure modes for this step. For each give:
+failure mode, effect on the customer or next operation, one or two
+root causes, current prevention control, current detection control.
+Use short technical phrases. Do not invent controls the user did not
+mention; write "none stated" instead. Answer as JSON rows.</code></pre>
+   Show the draft rows per step and let the user edit, delete, or add before rating.</p>
+</li>
+<li>
+<p><strong>Rate with clear scales.</strong> Show the scale and suggest a rating with a one line reason; the user confirms or changes it.</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Rating</th>
+<th>Severity (effect)</th>
+<th>Occurrence (likelihood)</th>
+<th>Detection (ability to catch)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>Safety or regulatory failure without warning</td>
+<td>Very high, failure almost certain</td>
+<td>No detection, cannot detect</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Safety or regulatory failure with warning</td>
+<td></td>
+<td>Very remote chance of detection</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Loss of primary function</td>
+<td>High</td>
+<td>Remote</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Degraded primary function</td>
+<td></td>
+<td>Very low</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Loss of secondary function</td>
+<td>Moderate</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Degraded secondary function</td>
+<td></td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Noticed by most customers</td>
+<td>Low</td>
+<td>Moderately high</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Noticed by some customers</td>
+<td></td>
+<td>High</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Noticed by discerning customers</td>
+<td>Remote</td>
+<td>Very high</td>
+</tr>
+<tr>
+<td>1</td>
+<td>No effect</td>
+<td>Failure eliminated by prevention</td>
+<td>Almost certain detection, error proofed</td>
+</tr>
+</tbody>
+</table>
+<p>Rules the skill follows:
+   - Severity belongs to the effect, so the same effect gets the same S everywhere.
+   - Occurrence is lowered only by prevention controls; Detection only by detection controls.
+   - If the user has data (scrap rate, ppm), use it for Occurrence and show the mapping.</p>
+<ol start="4">
+<li>
+<p><strong>Compute RPN and flags.</strong>
+   <pre class="highlight"><code class="language-python">from dataclasses import dataclass, field
+
+@dataclass
+class Row:
+    step: str
+    mode: str
+    effect: str
+    cause: str
+    prevention: str
+    detection: str
+    s: int
+    o: int
+    d: int
+    action: str = ""
+    owner: str = ""
+    due: str = ""
+    rpn: int = field(init=False)
+
+    def __post_init__(self):
+        for name in ("s", "o", "d"):
+            v = getattr(self, name)
+            if not isinstance(v, int) or not 1 &lt;= v &lt;= 10:
+                raise ValueError(f"{name.upper()} must be a whole number 1 to 10, got {v!r}")
+        self.rpn = self.s * self.o * self.d
+
+def needs_action(r: Row, rpn_limit: int = 100) -&gt; bool:
+    return r.s &gt;= 9 or r.rpn &gt;= rpn_limit</code></pre>
+   High severity is flagged regardless of RPN, because a low O and D can hide a dangerous effect.</p>
+</li>
+<li>
+<p><strong>Propose actions</strong> for flagged rows. Prefer prevention (error proofing, design change) over more inspection. The prompt includes: "Suggest one prevention action and one detection action. Say which rating each would lower and to what, with a reason." Leave owner and due date blank for the user.</p>
+</li>
+<li>
+<p><strong>Optional Action Priority.</strong> If asked, add an AP column (High, Medium, Low). The skill uses the AP table from the user's own copy of the AIAG and VDA handbook if they provide it, because that table is copyrighted and not reproduced here. Without it, the skill omits AP and says why.</p>
+</li>
+<li>
+<p><strong>Export XLSX.</strong>
+   <pre class="highlight"><code class="language-python">from openpyxl import Workbook
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.formatting.rule import CellIsRule
+from openpyxl.utils import get_column_letter
+
+HEAD = ["Step", "Failure mode", "Effect", "S", "Cause", "Prevention control", "O",
+        "Detection control", "D", "RPN", "Recommended action", "Owner", "Due",
+        "New S", "New O", "New D", "New RPN"]
+
+SCALES = [
+    (10, "Safety or regulatory failure without warning", "Very high", "Cannot detect"),
+    (9, "Safety or regulatory failure with warning", "", "Very remote"),
+    # ... rows 8 to 2 as in the table above ...
+    (1, "No effect", "Eliminated by prevention", "Almost certain, error proofed"),
+]
+
+def export(rows, path, title, rpn_limit=100):
+    wb = Workbook(); ws = wb.active; ws.title = "FMEA"
+    ws.append([title]); ws["A1"].font = Font(bold=True, size=14)
+    ws.append(["Generated with the /fmea skill guide by IOTA - Joseph Bryant. Ratings require team review."])
+    ws.append(HEAD)
+    for c in ws[3]:
+        c.font = Font(bold=True, color="FFFFFF")
+        c.fill = PatternFill("solid", fgColor="2A2A2A")
+        c.alignment = Alignment(wrap_text=True, vertical="center")
+    for r in sorted(rows, key=lambda r: (-r.s * (r.s &gt;= 9), -r.rpn)):
+        ws.append([r.step, r.mode, r.effect, r.s, r.cause, r.prevention, r.o,
+                   r.detection, r.d, None, r.action, r.owner, r.due, None, None, None, None])
+        i = ws.max_row
+        ws[f"J{i}"] = f"=D{i}*G{i}*I{i}"
+        ws[f"Q{i}"] = f'=IF(COUNT(N{i}:P{i})=3,N{i}*O{i}*P{i},"")'
+    last = ws.max_row
+    red = PatternFill("solid", fgColor="F4C7C3")
+    ws.conditional_formatting.add(f"J4:J{last}", CellIsRule(operator="greaterThanOrEqual", formula=[str(rpn_limit)], fill=red))
+    ws.conditional_formatting.add(f"D4:D{last}", CellIsRule(operator="greaterThanOrEqual", formula=["9"], fill=red))
+    widths = [18, 26, 26, 5, 26, 22, 5, 22, 5, 7, 30, 12, 11, 7, 7, 7, 9]
+    for i, w in enumerate(widths, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+    for row in ws.iter_rows(min_row=4):
+        for c in row:
+            c.alignment = Alignment(wrap_text=True, vertical="top")
+    ws.freeze_panes = "B4"
+    ws.auto_filter.ref = f"A3:Q{last}"
+    scales = wb.create_sheet("Scales")
+    scales.append(["Rating", "Severity", "Occurrence", "Detection"])
+    for line in SCALES:   # list of (rating, severity, occurrence, detection) from step 3
+        scales.append(list(line))
+    wb.save(path)</code></pre>
+   RPN is a live formula so the team can change ratings in Excel. The Scales sheet holds the table from step 3.</p>
+</li>
+<li>
+<p><strong>Summarize.</strong> Top five risks, count of flagged rows, and the rows where only detection controls exist.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<ul>
+<li><code>FMEA_&lt;scope&gt;_&lt;date&gt;.xlsx</code> with sheets FMEA and Scales.</li>
+<li>A chat table of the top risks.</li>
+</ul>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Ratings are suggestions until the user confirms each one.</li>
+<li>Never overwrite an existing FMEA file; write a new dated file and offer to compare.</li>
+<li>The export states that ratings require team review.</li>
+<li>Nothing is sent or shared.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Every row has S, O, D between 1 and 10 and an RPN equal to S times O times D.</li>
+<li>The same effect has the same Severity across rows; the skill lists any mismatch.</li>
+<li>No action row is left without a target rating that is lower than the current one.</li>
+<li>Controls not stated by the user are written as "none stated", never invented.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li><strong>Ream bore op 30:</strong> "Oversize bore" with effect "loose fit, assembly rattle", S 7, cause "worn reamer", O 5, detection "go/no-go every 10 parts", D 4, RPN 140. Flagged. Action: tool life counter with forced change (lowers O to 2).</li>
+<li><strong>DFMEA bracket:</strong> "Crack at weld toe", S 9. Flagged on severity even though RPN is 54.</li>
+<li><strong>Refresh:</strong> user pastes 30 old rows; the skill finds 4 inconsistent severities and 6 rows with D 2 but no stated detection control.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Generic causes like "operator error"</td>
+<td>Ask "why would the operator make that error?" and record the system cause.</td>
+</tr>
+<tr>
+<td>RPN not updating in Excel</td>
+<td>Calculation set to manual; press F9 or set to automatic.</td>
+</tr>
+<tr>
+<td>Ratings drift between sessions</td>
+<td>Keep your company scale in the Scales sheet and give it back to the skill next time.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>RPN has known weaknesses (different S, O, D combinations give the same number). That is why severity is flagged separately.</li>
+<li>The skill does not reproduce copyrighted handbook tables.</li>
+<li>Drafts depend on the detail you give; the model does not know your shop floor.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Guided drafting, rating scales, RPN and severity flags, XLSX with live formulas.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Repository Map skill guide | IOTA</title>
+<meta name="description" content="Index a codebase so you can ask &quot;where is X handled?&quot; and get file paths with line numbers, and draw a Mermaid diagram of how folders and modules depend on each other. It uses retrieval (RAG): code is split into chunks, embedded locally, and the closest chunks are passed to the model with their locations.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Repository Map | IOTA skill guide">
+<meta property="og:description" content="Index a codebase so you can ask &quot;where is X handled?&quot; and get file paths with line numbers, and draw a Mermaid diagram of how folders and modules depend on each other. It uses retrieval (RAG): code is split into chunks, embedded locally, and the closest chunks are passed to the model with their locations.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/repo-map.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=apps#library">Building apps</a> / Repository Map</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/repo-map.md" download="iota-skill-repo-map.md">Download .md <small>9 KB</small></a>
+      <a class="btn ghost" href="../md/repo-map.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-repo-map">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>37cc81c8b52cba1031be4fae8119cb25936acaa31436b96d1dee94ce5b7ad5b8</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/repo-map</td></tr><tr><th>Category</th><td>Building apps</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. The index is built and searched on your PC with a local embedding model and a local file, so source code never leaves the machine.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/repo-map: Repository Map</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Index a codebase so you can ask "where is X handled?" and get file paths with line numbers, and draw a Mermaid diagram of how folders and modules depend on each other. It uses retrieval (RAG): code is split into chunks, embedded locally, and the closest chunks are passed to the model with their locations.</p>
+<h2>When to use</h2>
+<ul>
+<li>You joined a project, or came back to an old one, and need to find things quickly.</li>
+<li>You want a picture of module dependencies before a refactor.</li>
+<li>Before /fix-build on a large project, to find related files.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Tiny projects with a handful of files. Just open them.</li>
+<li>Generated code, minified bundles, or vendored libraries. They are skipped by default.</li>
+<li>Questions about runtime behavior ("why is this slow?"). The map shows structure, not performance.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Python 3.10 or later with <code>numpy</code>.</li>
+<li>A local embedding model served by IOTA, or <code>sentence-transformers</code> with a model already downloaded (for example <code>all-MiniLM-L6-v2</code>). Embedding models are separate from the chat model.</li>
+<li>Chat model: Gemma 3 4B answers "where is" questions well when given the chunks. Explaining design across many files is better with Gemma 3 12B or 27B or a Nemotron model.</li>
+<li>Disk: about 2 KB per chunk for vectors plus the text.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Repo folder</td>
+<td>Yes</td>
+<td>current folder</td>
+</tr>
+<tr>
+<td>Include extensions</td>
+<td>No</td>
+<td><code>.cs .xaml .py .kt .java .ts .tsx .js .ps1 .psm1 .cpp .h .go .rs .md</code></td>
+</tr>
+<tr>
+<td>Exclude folders</td>
+<td>No</td>
+<td><code>.git bin obj build dist node_modules .venv venv __pycache__ .gradle</code> plus <code>.gitignore</code> entries</td>
+</tr>
+<tr>
+<td>Question</td>
+<td>For "where" mode</td>
+<td>"where is the CSV export?"</td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>List files</strong> with the include and exclude rules. Skip files over 1 MB and files that look binary (contain a NUL byte in the first 8 KB). Report the file count by extension.</p>
+</li>
+<li>
+<p><strong>Chunk by structure.</strong> Split at function or class boundaries when possible, else every 60 lines with 10 lines of overlap. Keep the file path and start and end lines with each chunk.
+   <pre class="highlight"><code class="language-python">import re
+from pathlib import Path
+
+BOUNDARY = re.compile(r"^\s*(def |class |public |private |internal |protected |fun |function |export |func |fn )")
+
+def chunks(path: Path, max_lines: int = 60, overlap: int = 10):
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    start = 0
+    while start &lt; len(lines):
+        end = min(start + max_lines, len(lines))
+        # try to end at a boundary within the last 20 lines of the window
+        for j in range(end - 1, max(start + 20, end - 20), -1):
+            if BOUNDARY.match(lines[j]):
+                end = j
+                break
+        text = "\n".join(lines[start:end])
+        if text.strip():
+            yield {"file": str(path), "start": start + 1, "end": end, "text": text}
+        if end &gt;= len(lines):
+            break
+        start = max(end - overlap, start + 1)</code></pre></p>
+</li>
+<li>
+<p><strong>Embed and store.</strong> Write vectors to <code>.iota/repo-map/index.npz</code> and metadata to <code>meta.jsonl</code> inside the repo (ask first; offer a folder outside the repo instead). Add <code>.iota/</code> to <code>.gitignore</code> only with permission.
+   <pre class="highlight"><code class="language-python">import json
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+def build(chunks_list, out_dir: Path, model_name="all-MiniLM-L6-v2"):
+    model = SentenceTransformer(model_name)   # must already be downloaded for offline use
+    texts = [f"{c['file']}\n{c['text']}" for c in chunks_list]
+    vecs = model.encode(texts, batch_size=32, normalize_embeddings=True, show_progress_bar=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(out_dir / "index.npz", vecs=vecs.astype("float32"))
+    with open(out_dir / "meta.jsonl", "w", encoding="utf-8") as f:
+        for c in chunks_list:
+            f.write(json.dumps(c) + "\n")</code></pre>
+   For offline use set <code>HF_HUB_OFFLINE=1</code> so the library does not try to download.</p>
+</li>
+<li>
+<p><strong>Keep it fresh.</strong> Store each file's modified time and size in <code>files.json</code>. On the next run, re-embed only changed files and drop deleted ones.</p>
+</li>
+<li>
+<p><strong>Answer "where is X".</strong> Embed the question, take the top 8 chunks by cosine similarity, then boost chunks whose text contains exact identifiers from the question (words in <code>CamelCase</code>, <code>snake_case</code>, or quotes).
+   <pre class="highlight"><code class="language-python">def search(question, model, vecs, meta, k=8):
+    q = model.encode([question], normalize_embeddings=True)[0]
+    scores = vecs @ q
+    words = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]{3,}", question))
+    for i, m in enumerate(meta):
+        if any(w in m["text"] for w in words if not w.islower()):
+            scores[i] += 0.15
+    top = np.argsort(-scores)[:k]
+    return [(float(scores[i]), meta[i]) for i in top]</code></pre>
+   Prompt for the chat model:
+   <pre class="highlight"><code>Question: {question}
+Below are code excerpts with their file and line range. Answer only from
+these excerpts. Name the most relevant file and line range first, then up
+to three others. If the excerpts do not answer the question, say so.
+
+[1] {file}:{start}-{end}
+{text}
+...</code></pre></p>
+</li>
+<li>
+<p><strong>Draw the dependency diagram.</strong> Parse imports per language and roll them up to the folder level (two levels deep by default) so the diagram stays readable.</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Language</th>
+<th>Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C#</td>
+<td><code>^using ([\w.]+);</code> mapped to project namespaces; also <code>&lt;ProjectReference&gt;</code> in <code>.csproj</code></td>
+</tr>
+<tr>
+<td>Python</td>
+<td><code>^(?:from ([\w.]+) import|import ([\w.]+))</code></td>
+</tr>
+<tr>
+<td>Kotlin, Java</td>
+<td><code>^import ([\w.]+)</code></td>
+</tr>
+<tr>
+<td>TypeScript, JS</td>
+<td><code>from ['"](\.{1,2}/[^'"]+)['"]</code> (relative only)</td>
+</tr>
+</tbody>
+</table>
+<p>Only keep edges between modules inside the repo. Then write Mermaid:
+   <pre class="highlight"><code class="language-python">def mermaid(edges: dict[tuple[str, str], int]) -&gt; str:
+    ids = {}
+    def nid(name):
+        return ids.setdefault(name, f"n{len(ids)}")
+    lines = ["graph LR"]
+    for (a, b), n in sorted(edges.items(), key=lambda e: -e[1])[:60]:
+        lines.append(f'  {nid(a)}["{a}"] --&gt;|{n}| {nid(b)}["{b}"]')
+    return "\n".join(lines)</code></pre>
+   Example output:
+   <pre class="highlight"><code class="language-mermaid">graph LR
+  n0["src/App"] --&gt;|14| n1["src/Core"]
+  n2["tests"] --&gt;|9| n1["src/Core"]
+  n1["src/Core"] --&gt;|3| n3["src/Data"]</code></pre>
+   Point out cycles (A depends on B and B on A) because they usually matter for refactors.</p>
+<h2>Output format</h2>
+<ul>
+<li>"Where" answers: a ranked list of <code>file:start-end</code> with one line on why each matters, followed by the model's short explanation.</li>
+<li>Map: <code>repo-map.md</code> with the Mermaid block, a table of modules with file counts, and a list of cycles.</li>
+<li>Index files under <code>.iota/repo-map/</code> (or the folder the user chose).</li>
+</ul>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Read only on source files. The only writes are the index folder and <code>repo-map.md</code>, after the user agrees on the location.</li>
+<li>Skip files that look like secrets: <code>.env</code>, <code>*.pfx</code>, <code>*.pem</code>, <code>*.key</code>, <code>id_rsa*</code>, <code>secrets.*</code>, <code>appsettings.*.json</code> with <code>Password</code> or <code>ConnectionString</code> keys. Report that they were skipped.</li>
+<li>Never overwrite an existing <code>repo-map.md</code> without asking.</li>
+<li>Nothing leaves the PC.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Every cited line range exists and the cited text matches the file at search time (re-read before answering).</li>
+<li>The diagram has at most 60 edges; if more exist, the skill rolls up one more folder level.</li>
+<li>Answers say "not found in the index" instead of guessing.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li>"Where is the CSV export?" Returns <code>src/Core/Export/CsvWriter.cs:12-58</code> first, then the button handler in <code>MainWindow.xaml.cs:88-104</code>.</li>
+<li>"/repo-map diagram" on a three project .NET solution. Shows App to Core, Tests to Core, and Core to Data, no cycles.</li>
+<li>"Which files read the config file?" Finds the loader and two callers, notes one call site in a test.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model download attempted offline</td>
+<td>Set <code>HF_HUB_OFFLINE=1</code> and point to a model folder already on disk.</td>
+</tr>
+<tr>
+<td>Poor results for exact names</td>
+<td>The identifier boost helps; also try <code>rg -n Name</code> style exact search, which the skill can run alongside.</td>
+</tr>
+<tr>
+<td>Diagram too busy</td>
+<td>Lower the roll up depth to 1.</td>
+</tr>
+<tr>
+<td>Index stale</td>
+<td>Run <code>/repo-map refresh</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Import parsing is pattern based. Reflection, dependency injection, and dynamic imports are not seen.</li>
+<li>Very large monorepos take a while to embed the first time.</li>
+<li>The model can only answer from retrieved chunks; broad "how does the whole app work" questions get a partial answer.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Structure aware chunking, local embeddings, identifier boost, Mermaid dependency map.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

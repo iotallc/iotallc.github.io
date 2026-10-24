@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEC Filing Diff skill guide | IOTA</title>
+<meta name="description" content="Compare two annual reports (Form 10-K) from the same company and show what changed, section by section: new and removed risk factors, changed wording in Management&#x27;s Discussion and Analysis, and other sections you choose. Filings come from SEC EDGAR or from files you already have.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SEC Filing Diff | IOTA skill guide">
+<meta property="og:description" content="Compare two annual reports (Form 10-K) from the same company and show what changed, section by section: new and removed risk factors, changed wording in Management&#x27;s Discussion and Analysis, and other sections you choose. Filings come from SEC EDGAR or from files you already have.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/sec-diff.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=finance#library">Finance</a> / SEC Filing Diff</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/sec-diff.md" download="iota-skill-sec-diff.md">Download .md <small>10 KB</small></a>
+      <a class="btn ghost" href="../md/sec-diff.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-sec-diff">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>4e76966d1619922fbfe464b72e958a65f01192fe0e03819014e5e3f20ee999fd</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/sec-diff</td></tr><tr><th>Category</th><td>Finance</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>EXE edition. Downloading filings from SEC EDGAR needs the internet and the EXE edition&#x27;s network access. If you already have two 10-K files saved on your PC, the comparison steps themselves run offline in either edition.</td></tr><tr><th>Network</th><td>online</td></tr><tr><th>Network note</th><td>Online to fetch from SEC EDGAR. Offline when you supply local files.</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty. Not investment advice.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/sec-diff: SEC Filing Diff</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<p>Not investment advice. The output describes what changed in public documents. It does not recommend buying or selling anything.</p>
+<h2>Purpose</h2>
+<p>Compare two annual reports (Form 10-K) from the same company and show what changed, section by section: new and removed risk factors, changed wording in Management's Discussion and Analysis, and other sections you choose. Filings come from SEC EDGAR or from files you already have.</p>
+<h2>When to use</h2>
+<ul>
+<li>A new 10-K is out and you want to see what the company added, removed, or reworded since last year.</li>
+<li>Reviewing risk factor changes across several years.</li>
+<li>Preparing notes for research, with every change linked to the exact text.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>For quarterly numbers or XBRL financial data. This skill compares text sections.</li>
+<li>For non US filers that file 20-F or 40-F. The section names differ; the skill can try but says so.</li>
+<li>To make trading decisions on its own. It is a reading aid.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>EXE edition with network access for EDGAR mode.</li>
+<li>Python 3.10 or later with <code>requests</code> and <code>beautifulsoup4</code> (and <code>lxml</code> for speed).</li>
+<li>A descriptive User-Agent with your name or company and a contact email, which the SEC requires for automated access. The skill asks for it at the start, or reads it from a local config file you choose. Example: <code>Example Research admin@example.com</code>.</li>
+<li>Model: Gemma 3 12B or 27B or a Nemotron model summarizes changes well. Gemma 3 4B can label changes but its summaries of long sections are weaker, so the skill always shows the exact changed text too.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ticker or CIK</td>
+<td>EDGAR mode</td>
+<td><code>MSFT</code> or <code>0000789019</code></td>
+</tr>
+<tr>
+<td>Years</td>
+<td>No</td>
+<td>latest two 10-K filings (default) or <code>2024 2025</code></td>
+</tr>
+<tr>
+<td>Local files</td>
+<td>Local mode</td>
+<td><code>old.htm</code>, <code>new.htm</code></td>
+</tr>
+<tr>
+<td>Sections</td>
+<td>No</td>
+<td><code>1A 7</code> (default), any of <code>1 1A 1B 1C 2 3 5 7 7A 8 9A</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Resolve the company</strong> (EDGAR mode).
+   <pre class="highlight"><code class="language-python">import time
+import requests
+
+UA = {"User-Agent": "Example Research admin@example.com"}   # the user's own value
+
+def get_json(url):
+    r = requests.get(url, headers=UA, timeout=30)
+    r.raise_for_status()
+    time.sleep(0.2)          # stay well below the SEC's 10 requests per second limit
+    return r.json()
+
+def cik_for(ticker: str) -&gt; str:
+    data = get_json("https://www.sec.gov/files/company_tickers.json")
+    for row in data.values():
+        if row["ticker"].upper() == ticker.upper():
+            return str(row["cik_str"]).zfill(10)
+    raise ValueError(f"Ticker {ticker} not found")</code></pre></p>
+</li>
+<li>
+<p><strong>List 10-K filings</strong> from the submissions API and pick two.
+   <pre class="highlight"><code class="language-python">def ten_ks(cik10: str) -&gt; list[dict]:
+    sub = get_json(f"https://data.sec.gov/submissions/CIK{cik10}.json")
+    rec = sub["filings"]["recent"]
+    out = []
+    for i, form in enumerate(rec["form"]):
+        if form in ("10-K", "10-K/A"):
+            out.append({
+                "form": form,
+                "filed": rec["filingDate"][i],
+                "period": rec["reportDate"][i],
+                "accession": rec["accessionNumber"][i],
+                "doc": rec["primaryDocument"][i],
+            })
+    return out
+
+def doc_url(cik10: str, f: dict) -&gt; str:
+    return (f"https://www.sec.gov/Archives/edgar/data/{int(cik10)}/"
+            f"{f['accession'].replace('-', '')}/{f['doc']}")</code></pre>
+   Prefer original 10-K filings. If an amendment (10-K/A) exists for the same period, tell the user and ask which to use. Show the two chosen filings with dates and links before downloading.</p>
+</li>
+<li>
+<p><strong>Download and save locally.</strong> Save each document as <code>filings/&lt;cik&gt;_&lt;period&gt;.htm</code> so reruns do not download again. Ask before overwriting.</p>
+</li>
+<li>
+<p><strong>Extract text.</strong>
+   <pre class="highlight"><code class="language-python">import re
+from bs4 import BeautifulSoup
+
+def to_text(html: str) -&gt; str:
+    soup = BeautifulSoup(html, "lxml")
+    for t in soup(["script", "style"]):
+        t.decompose()
+    for t in soup.find_all(style=re.compile(r"display:\s*none", re.I)):
+        t.decompose()          # hidden inline XBRL header blocks
+    text = soup.get_text("\n")
+    text = re.sub(r"[ \t\xa0]+", " ", text)
+    return re.sub(r"\n\s*\n+", "\n\n", text).strip()</code></pre></p>
+</li>
+<li>
+<p><strong>Split into Items.</strong> The table of contents also contains "Item 1A" lines, so take the <strong>last</strong> heading match that is followed by substantial text, which is usually the real section start.
+   <pre class="highlight"><code class="language-python">ITEM = re.compile(r"^\s*item\s+(1a|1b|1c|1|2|3|4|5|6|7a|7|8|9a|9b|9c|9|10|11|12|13|14|15|16)\s*[.:]?\s*(.{0,80})$",
+                  re.I | re.M)
+
+def sections(text: str) -&gt; dict[str, str]:
+    hits = [(m.start(), m.group(1).upper()) for m in ITEM.finditer(text)]
+    starts = {}
+    for i, (pos, item) in enumerate(hits):
+        nxt = hits[i + 1][0] if i + 1 &lt; len(hits) else len(text)
+        if nxt - pos &gt; 2000:             # skip table of contents lines
+            starts[item] = (pos, nxt)
+    return {k: text[a:b].strip() for k, (a, b) in starts.items()}</code></pre>
+   If a requested section is missing in either filing, say so; do not compare the wrong text.</p>
+</li>
+<li>
+<p><strong>Compare risk factors as units.</strong> Split Item 1A into risk factors using the bold or italic headings when possible, otherwise by paragraphs that end with a period and are under 400 characters (headings are usually one sentence). Match old to new by similarity:
+   <pre class="highlight"><code class="language-python">from difflib import SequenceMatcher
+
+def match(old: list[str], new: list[str], threshold=0.6):
+    pairs, used = [], set()
+    for o in old:
+        best, score = None, 0.0
+        for j, n in enumerate(new):
+            if j in used:
+                continue
+            s = SequenceMatcher(None, o.lower(), n.lower()).quick_ratio()
+            if s &gt; score:
+                best, score = j, s
+        if best is not None and score &gt;= threshold:
+            used.add(best); pairs.append((o, new[best], score))
+        else:
+            pairs.append((o, None, score))
+    added = [n for j, n in enumerate(new) if j not in used]
+    return pairs, added</code></pre>
+   Labels: <strong>Added</strong> (new only), <strong>Removed</strong> (old only), <strong>Changed</strong> (matched with ratio below 0.98), <strong>Same</strong>.</p>
+</li>
+<li>
+<p><strong>Compare other sections by sentence.</strong> Use <code>difflib.unified_diff</code> on sentence lists and keep only changed sentences with 1 sentence of context. Highlight changed numbers (percentages, dollar amounts) separately because they are easy to miss.</p>
+</li>
+<li>
+<p><strong>Summarize with the model.</strong> For each Added, Removed, and Changed unit, ask:
+   <pre class="highlight"><code>Old text: {old or "none"}
+New text: {new or "none"}
+In one or two neutral sentences, describe what changed. Quote short phrases
+exactly. Do not speculate about why or about the stock.</code></pre></p>
+</li>
+<li>
+<p><strong>Write the report.</strong></p>
+</li>
+</ol>
+<h2>Output format</h2>
+<p><code>sec-diff_&lt;TICKER&gt;_&lt;oldperiod&gt;_vs_&lt;newperiod&gt;.html</code> (self contained) and a <code>.md</code> version, containing:
+- Header: company, CIK, the two filings with filing dates and EDGAR links.
+- A short overview paragraph of the main changes.
+- Per section: Added, Removed, and Changed items, each with the model's one line description and the exact text with insertions and deletions marked.
+- Footer: "Not investment advice. Generated with the /sec-diff skill guide by IOTA - Joseph Bryant from public SEC filings."</p>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Ask for the User-Agent contact once; never invent one.</li>
+<li>Respect SEC fair access: a delay between requests, no parallel downloads, cache files locally.</li>
+<li>Confirm the two filings before downloading.</li>
+<li>Never overwrite saved filings or reports without asking.</li>
+<li>Never post, send, or share the report. Not investment advice.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Both filings are the same company and form type.</li>
+<li>Every summarized change shows the quoted source text so the user can check it.</li>
+<li>Sections that failed to split are reported, not silently skipped.</li>
+<li>Numbers quoted in summaries appear in the source text exactly.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li><code>/sec-diff MSFT</code>: latest two 10-K filings, Items 1A and 7. Report lists new risk factors, removed ones, and reworded paragraphs with exact text.</li>
+<li><code>/sec-diff AAPL 2023 2025 sections 1A</code>: risk factors only, two years apart.</li>
+<li>Local mode: <code>/sec-diff old.htm new.htm</code> with files from a research folder, no network used.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTP 403 from SEC</td>
+<td>Missing or generic User-Agent. Set your name and email.</td>
+</tr>
+<tr>
+<td>Item 1A not found</td>
+<td>Some filings put risk factors in an exhibit or use unusual headings. The skill shows nearby headings and asks which to use.</td>
+</tr>
+<tr>
+<td>Everything shows as Changed</td>
+<td>The company reorganized the section. Lower the match threshold to 0.5 or compare by paragraph.</td>
+</tr>
+<tr>
+<td>Smaller reporting company with no risk factors</td>
+<td>Item 1A may say "not required". The skill reports that.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Section splitting is heuristic; unusual layouts can need manual help.</li>
+<li>Tables (including financial statements) are flattened to text and are not compared cell by cell.</li>
+<li>Model summaries can miss nuance; the quoted text is the source of truth.</li>
+<li>Not investment advice.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. EDGAR lookup and download with fair access, local file mode, risk factor matching, sentence diff, HTML and Markdown report.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

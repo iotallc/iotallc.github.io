@@ -1,6 +1,6 @@
 {
  "format": 1,
- "note": "Source for skills/skills.json. tools/build_skills.py adds status, file, size and sha256.",
+ "note": "Source for skills/skills.json. tools/build_skills.py adds status, file, size and sha256, and reads the .md skill guides in skills/md/.",
  "categories": {
   "docs": "Documents and visuals",
   "data": "Data and math",
@@ -25,12 +25,14 @@
     "Python 3.12 with matplotlib, NumPy, and Pillow (included in the PowerShell edition kit)",
     "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
    ],
+   "branch": "everyday",
    "status": "available",
    "version": "1.2",
    "file": "downloads/iota-skill-chart-1.2.zip",
    "size": 16005,
    "sha256": "357af7aedb39fd430dcdfda4376fbb594c5c4cfe8f428c8c25dd763775ecd5b9",
-   "files": 9
+   "files": 9,
+   "kind": "package"
   },
   {
    "id": "deck",
@@ -49,12 +51,14 @@
     "Python 3.12 with python-pptx, matplotlib, and Pillow (included in the PowerShell edition kit)",
     "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
    ],
+   "branch": "everyday",
    "status": "available",
    "version": "1.2",
    "file": "downloads/iota-skill-deck-1.2.zip",
    "size": 18872,
    "sha256": "9990e333b5f4508a666a440da5a3f39c27b7eb8067f1e106049e4595b0d4ba2c",
-   "files": 10
+   "files": 10,
+   "kind": "package"
   },
   {
    "id": "pdf",
@@ -73,12 +77,14 @@
     "Python 3.12 with ReportLab, matplotlib, and Pillow (included in the PowerShell edition kit)",
     "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
    ],
+   "branch": "everyday",
    "status": "available",
    "version": "1.2",
    "file": "downloads/iota-skill-pdf-1.2.zip",
    "size": 18082,
    "sha256": "2e8e47f4fd5839879c66d33d08e2b3422bd1b72834264228773fe24821bda615",
-   "files": 10
+   "files": 10,
+   "kind": "package"
   },
   {
    "id": "diagram",
@@ -89,7 +95,9 @@
    "network": "offline",
    "description": "Makes a flowchart or process map and saves it as a PNG.",
    "requires": [],
-   "status": "soon"
+   "branch": "everyday",
+   "status": "soon",
+   "kind": "package"
   },
   {
    "id": "units",
@@ -106,12 +114,14 @@
     "IOTA for Windows V1.2 or later, PowerShell edition",
     "Python 3.12 with pint (included in the kit)"
    ],
+   "branch": "everyday",
    "status": "available",
    "version": "1.2",
    "file": "downloads/iota-skill-units-1.2.zip",
    "size": 21380,
    "sha256": "75051dbad7b8f21e57381f6219cbe3abd942da36d8888772d037270da1d83778",
-   "files": 9
+   "files": 9,
+   "kind": "package"
   },
   {
    "id": "fin",
@@ -130,12 +140,14 @@
     "Python 3.12 with XlsxWriter and matplotlib (included in the PowerShell edition kit)",
     "EXE edition: a Python runtime with the same libraries, set in Settings or found on PATH"
    ],
+   "branch": "everyday",
    "status": "available",
    "version": "1.2",
    "file": "downloads/iota-skill-fin-1.2.zip",
    "size": 25801,
    "sha256": "7a07bc5296019bf4d6ef805ea2cee0d42bc8ee8073b4c967a56a744320710e81",
-   "files": 10
+   "files": 10,
+   "kind": "package"
   },
   {
    "id": "table",
@@ -146,7 +158,9 @@
    "network": "offline",
    "description": "Pulls tables out of a PDF, DOCX, or XLSX file into CSV or XLSX.",
    "requires": [],
-   "status": "soon"
+   "branch": "everyday",
+   "status": "soon",
+   "kind": "package"
   },
   {
    "id": "ocr",
@@ -164,12 +178,14 @@
     "Python 3.12 with RapidOCR, ONNX Runtime, OpenCV, pypdfium2, pdfplumber, Pillow, and NumPy (included in the kit)",
     "The English PP-OCRv3 OCR model in models\\ocr (in the kit, not in this download)"
    ],
+   "branch": "everyday",
    "status": "available",
    "version": "1.2",
    "file": "downloads/iota-skill-ocr-1.2.zip",
    "size": 19236,
    "sha256": "cfeedbe899f4ac672588c5a9cf708d1aba786b1cf899577c2d61d9d9ba106efc",
-   "files": 8
+   "files": 8,
+   "kind": "package"
   },
   {
    "id": "transcribe",
@@ -188,12 +204,14 @@
     "whisper-cli.exe from the kit",
     "A whisper speech model, base.en or tiny.en, in models\\stt (in the kit, not in this download)"
    ],
+   "branch": "everyday",
    "status": "available",
    "version": "1.2",
    "file": "downloads/iota-skill-transcribe-1.2.zip",
    "size": 19427,
    "sha256": "b2426ed2ed9a41c685fbc4436d6612bf21158f6aad0a072f478be3236f3d79f8",
-   "files": 10
+   "files": 10,
+   "kind": "package"
   },
   {
    "id": "summarize",
@@ -204,7 +222,9 @@
    "network": "offline",
    "description": "Summarizes a dropped PDF, DOCX, TXT, or MD file.",
    "requires": [],
-   "status": "soon"
+   "branch": "everyday",
+   "status": "soon",
+   "kind": "package"
   },
   {
    "id": "files",
@@ -215,7 +235,417 @@
    "network": "offline",
    "description": "Works with the files in a folder you choose.",
    "requires": [],
-   "status": "soon"
+   "branch": "everyday",
+   "status": "soon",
+   "kind": "package"
+  }
+ ],
+ "branches": {
+  "everyday": "Everyday",
+  "apps": "Building apps",
+  "eng": "Engineering",
+  "tools": "IOTA tools",
+  "finance": "Finance"
+ },
+ "guides": [
+  {
+   "id": "wpf",
+   "kind": "guide",
+   "name": "WPF Window Builder",
+   "slash": "/wpf",
+   "branch": "apps",
+   "category": "Building apps",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in the PowerShell edition and the EXE edition. Everything runs on your PC: the model writes the files and the .NET SDK builds them. No network access is needed once the .NET SDK is installed.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Turn a plain description of a desktop window into a working WPF project: XAML for the layout, C# code-behind or an MVVM view model for the behavior, the IOTA color palette applied, a local build with `dotnet`, a screenshot of the result, and a loop for change requests.",
+   "example": "/wpf a settings window with a theme toggle and a save button",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/wpf.md",
+   "view": "view/wpf.html",
+   "size": 14931,
+   "sha256": "f0d326325373b962aea3492a4c6a30e8f25ca04701cc2d66023fcc6f72955f5d",
+   "lines": 297
+  },
+  {
+   "id": "sketch-to-ui",
+   "kind": "guide",
+   "name": "Sketch to UI",
+   "slash": "/sketch-to-ui",
+   "branch": "apps",
+   "category": "Building apps",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. The image is read by a local vision model, and the output is plain files, so nothing leaves your PC. The EXE edition is easier if you want to drag an image into the chat.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Turn a photo of a paper sketch, a whiteboard drawing, or a screenshot of another app into a working layout. The skill reads the image, lists every region it found, confirms that list with you, and then writes WPF XAML or a single HTML page in the IOTA palette.",
+   "example": "/sketch-to-ui whiteboard.jpg as WPF",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/sketch-to-ui.md",
+   "view": "view/sketch-to-ui.html",
+   "size": 10927,
+   "sha256": "0d5c7513c64871babef4c4313d239f3d662aa81cc086acbda8520255fb5ab0d5",
+   "lines": 224
+  },
+  {
+   "id": "scaffold",
+   "kind": "guide",
+   "name": "Project Scaffolder",
+   "slash": "/scaffold",
+   "branch": "apps",
+   "category": "Building apps",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. Templates are written locally. The WPF and Python templates build offline. The Android template needs Gradle and the Android SDK, and its first build downloads dependencies unless your Gradle cache already has them.",
+   "network": "offline",
+   "network_note": "Offline once packages are cached. The xunit test project restores NuGet packages and Android needs one online build to fill the Gradle cache. The Python template works fully offline if pytest is installed.",
+   "description": "Create a new project that builds and passes its tests on the first try. Three templates are covered: a WPF MVVM desktop app, an Android app with Jetpack Compose, and a Python command line tool. Each comes with a test project, a README, and a `.gitignore`.",
+   "example": "/scaffold python-cli csvtool",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/scaffold.md",
+   "view": "view/scaffold.html",
+   "size": 13971,
+   "sha256": "80059f785ad85a5f7084e53cb08dcbd53038af4dedfbf6387f6456cd63b61829",
+   "lines": 400
+  },
+  {
+   "id": "fix-build",
+   "kind": "guide",
+   "name": "Fix the Build",
+   "slash": "/fix-build",
+   "branch": "apps",
+   "category": "Building apps",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. It runs your existing build command on your PC and edits local files. Nothing needs the network unless the build itself restores packages.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Run a build or test command, read the errors, make the smallest fix, show the diff, and run it again. The loop stops when the build is green, when the iteration limit is reached, or when a fix would need a decision from you.",
+   "example": "/fix-build dotnet test",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/fix-build.md",
+   "view": "view/fix-build.html",
+   "size": 9090,
+   "sha256": "0db9b62019f67e4a4f18501b04b2c8db192074e48d0b0f0c40edbef7806e956d",
+   "lines": 195
+  },
+  {
+   "id": "ps-gui",
+   "kind": "guide",
+   "name": "PowerShell Script GUI",
+   "slash": "/ps-gui",
+   "branch": "apps",
+   "category": "Building apps",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. The PowerShell edition is the natural fit because the output is a PowerShell file that loads WPF directly, with no compiler. The EXE edition can produce the same file.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Wrap an existing PowerShell script in a simple window so people who do not use a console can run it. The skill reads the script's `param()` block, makes one input per parameter, adds Run and Preview (`-WhatIf`) buttons, shows output live, and writes a log file for every run. The original script is not changed.",
+   "example": "/ps-gui Backup-Folders.ps1",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/ps-gui.md",
+   "view": "view/ps-gui.html",
+   "size": 11991,
+   "sha256": "2c85fda55bdd53eaac1604abf006ec6e04b6e5a60a7cd88b396f6f4b98cdd2bc",
+   "lines": 238
+  },
+  {
+   "id": "package",
+   "kind": "guide",
+   "name": "Windows Installer Packager",
+   "slash": "/package",
+   "branch": "apps",
+   "category": "Building apps",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. Packaging runs local tools: the WiX Toolset for MSI, or the Windows SDK MakeAppx and SignTool for MSIX. Installing WiX as a .NET tool downloads it once; after that it works offline.",
+   "network": "offline",
+   "network_note": "First install of the WiX .NET tool needs the internet. Timestamping a signature contacts a timestamp server, which you can skip.",
+   "description": "Turn a built Windows app into an installer people can double click: an MSI built with the WiX Toolset, or an MSIX package. The skill handles version numbers, Start menu shortcuts, upgrades, and code signing with a certificate you already have.",
+   "example": "/package msi for the Release build",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/package.md",
+   "view": "view/package.html",
+   "size": 10653,
+   "sha256": "80f29ab885a2c8bf4f53e0fd6fa567fa248de3ec728addf6f63cf6086ba7386e",
+   "lines": 213
+  },
+  {
+   "id": "repo-map",
+   "kind": "guide",
+   "name": "Repository Map",
+   "slash": "/repo-map",
+   "branch": "apps",
+   "category": "Building apps",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. The index is built and searched on your PC with a local embedding model and a local file, so source code never leaves the machine.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Index a codebase so you can ask \"where is X handled?\" and get file paths with line numbers, and draw a Mermaid diagram of how folders and modules depend on each other. It uses retrieval (RAG): code is split into chunks, embedded locally, and the closest chunks are passed to the model with their locations.",
+   "example": "/repo-map where is login handled?",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/repo-map.md",
+   "view": "view/repo-map.html",
+   "size": 9455,
+   "sha256": "37cc81c8b52cba1031be4fae8119cb25936acaa31436b96d1dee94ce5b7ad5b8",
+   "lines": 196
+  },
+  {
+   "id": "spc",
+   "kind": "guide",
+   "name": "SPC Charts and Capability",
+   "slash": "/spc",
+   "branch": "eng",
+   "category": "Engineering",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. All math runs in local Python with pandas, numpy, and matplotlib. Your measurement data stays on your PC.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Make statistical process control charts from measurement data: X-bar and R charts for subgroups, or I-MR charts for individual readings. Compute Cp and Cpk against spec limits, flag Western Electric and Nelson rule violations, and save a PNG chart plus a table of results. The numbers are computed in code, not by the language model.",
+   "example": "/spc bore.csv spec 24.95 to 25.05",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/spc.md",
+   "view": "view/spc.html",
+   "size": 10933,
+   "sha256": "a4f42fdf424d142525fc49bf7137461673387195c9f49febfc78585d938e5d2d",
+   "lines": 220
+  },
+  {
+   "id": "fmea",
+   "kind": "guide",
+   "name": "FMEA Builder",
+   "slash": "/fmea",
+   "branch": "eng",
+   "category": "Engineering",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. The model helps draft failure modes from your description, and local Python computes RPN and writes the spreadsheet. Nothing is uploaded.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Build a process or design FMEA (failure mode and effects analysis) with you: list the steps or functions, draft failure modes, effects, and causes, rate Severity, Occurrence, and Detection from 1 to 10, compute RPN, sort by risk, propose actions, and export a formatted XLSX that your team can keep editing.",
+   "example": "/fmea process FMEA for the reaming cell",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/fmea.md",
+   "view": "view/fmea.html",
+   "size": 10700,
+   "sha256": "3ed149202310e1b951eac08335fcd7a88a41cb464685573eaa5423b0fb792908",
+   "lines": 220
+  },
+  {
+   "id": "rca",
+   "kind": "guide",
+   "name": "Root Cause Analysis and 8D",
+   "slash": "/rca",
+   "branch": "eng",
+   "category": "Engineering",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. The guided questions run in chat with the local model, the fishbone is drawn with matplotlib, and the report is written with python-docx or reportlab on your PC.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Walk a problem from first report to a closed 8D: define the problem clearly, contain it, find causes with 5 Whys and a fishbone (Ishikawa) diagram, choose and verify corrective actions, and write the 8D report as DOCX or PDF. The skill asks the questions; you and your team supply the facts.",
+   "example": "/rca 8D for oversize bores on line 3",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/rca.md",
+   "view": "view/rca.html",
+   "size": 10801,
+   "sha256": "a1a1670a9b1b91b5c2d2d212206068c4005d2bc1fcb7138e16eba4a252f0f91e",
+   "lines": 210
+  },
+  {
+   "id": "work-instruction",
+   "kind": "guide",
+   "name": "Work Instruction Writer",
+   "slash": "/work-instruction",
+   "branch": "eng",
+   "category": "Engineering",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. The model drafts the steps locally and python-docx writes the document on your PC. Photos you add stay local.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Turn notes, a recorded explanation, or an old document into a clear, numbered work instruction: one action per step, key points and reasons, safety callouts placed before the step they apply to, required tools and PPE, photo placeholders, and a revision block with approval lines. Output is a DOCX your document control system can take.",
+   "example": "/work-instruction from these notes on the filter change",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/work-instruction.md",
+   "view": "view/work-instruction.html",
+   "size": 10118,
+   "sha256": "d6e374a852e46010e85ad1c6818b3bda76b8004e7408c1c13dc26520df396c25",
+   "lines": 204
+  },
+  {
+   "id": "skill-maker",
+   "kind": "guide",
+   "name": "Skill Maker",
+   "slash": "/skill-maker",
+   "branch": "tools",
+   "category": "IOTA tools",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. It writes a skill guide, a helper script, and tests into a staging folder on your PC and runs the tests locally. Nothing is downloaded or published.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Create a new skill from a plain description: a skill guide `.md` in the same format as this one, an optional helper script, and tests for that script. Everything is written to a staging folder first. The skill is copied into your skills folder only after the tests pass and you say yes.",
+   "example": "/skill-maker a skill that renames photos by date taken",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/skill-maker.md",
+   "view": "view/skill-maker.html",
+   "size": 10599,
+   "sha256": "178bda12afafddc64c1a244aa984bb729f8a8203107e29714c9d2ef4d4c5bc03",
+   "lines": 244
+  },
+  {
+   "id": "bench",
+   "kind": "guide",
+   "name": "Local Model Benchmark",
+   "slash": "/bench",
+   "branch": "tools",
+   "category": "IOTA tools",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. It sends test prompts to the model server running on your own PC and reads memory use from local system tools. Nothing leaves the machine.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Measure how a local model actually performs on your PC: time to first token (TTFT), generation speed in tokens per second, prompt processing speed, and VRAM and RAM use. Then recommend which model size and settings fit your hardware for chat, documents, and code.",
+   "example": "/bench Gemma 3 4B and 12B",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/bench.md",
+   "view": "view/bench.html",
+   "size": 9164,
+   "sha256": "3ac19d92403cbbb887859bbf798e5c934fb683b30b4d3c1bb53ba60ec44ed9ae",
+   "lines": 166
+  },
+  {
+   "id": "story-tree",
+   "kind": "guide",
+   "name": "Story Tree Builder",
+   "slash": "/story-tree",
+   "branch": "tools",
+   "category": "IOTA tools",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. The local model writes the scenes, Python validates the tree, and Graphviz or Mermaid draws the map on your PC.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Plan and write branching dialogue: scenes, characters, choices, and endings stored as a JSON file a game or interactive story can load, plus a visual map of every branch. The skill keeps the tree valid (no dead links, every path reaches an ending) and keeps content safe for work.",
+   "example": "/story-tree 15 scenes, 3 endings, a robot on the night shift",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/story-tree.md",
+   "view": "view/story-tree.html",
+   "size": 10106,
+   "sha256": "9c1b6b0af43c8a6da5c454a36c315eca382f2145a953b20776d444185bcf15c1",
+   "lines": 218
+  },
+  {
+   "id": "sec-diff",
+   "kind": "guide",
+   "name": "SEC Filing Diff",
+   "slash": "/sec-diff",
+   "branch": "finance",
+   "category": "Finance",
+   "editions": [
+    "exe"
+   ],
+   "editions_reason": "EXE edition. Downloading filings from SEC EDGAR needs the internet and the EXE edition's network access. If you already have two 10-K files saved on your PC, the comparison steps themselves run offline in either edition.",
+   "network": "online",
+   "network_note": "Online to fetch from SEC EDGAR. Offline when you supply local files.",
+   "description": "Compare two annual reports (Form 10-K) from the same company and show what changed, section by section: new and removed risk factors, changed wording in Management's Discussion and Analysis, and other sections you choose. Filings come from SEC EDGAR or from files you already have.",
+   "example": "/sec-diff latest two 10-K filings, risk factors",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/sec-diff.md",
+   "view": "view/sec-diff.html",
+   "size": 10310,
+   "sha256": "4e76966d1619922fbfe464b72e958a65f01192fe0e03819014e5e3f20ee999fd",
+   "lines": 217
+  },
+  {
+   "id": "dcf",
+   "kind": "guide",
+   "name": "DCF Model Builder",
+   "slash": "/dcf",
+   "branch": "finance",
+   "category": "Finance",
+   "editions": [
+    "powershell",
+    "exe"
+   ],
+   "editions_reason": "Works in both editions. You type or paste the inputs, local Python computes the model and writes an Excel file with live formulas. No market data is fetched, so it runs offline.",
+   "network": "offline",
+   "network_note": "",
+   "description": "Build a discounted cash flow (DCF) model as an Excel workbook with every assumption on one sheet, a WACC calculation, a five to ten year free cash flow forecast, a terminal value (Gordon growth or exit multiple), the bridge from enterprise value to equity value per share, and a sensitivity table. All cells are formulas so you can change inputs in Excel.",
+   "example": "/dcf five year model from these inputs",
+   "version": "1.0",
+   "author": "IOTA - Joseph Bryant",
+   "status": "available",
+   "file": "md/dcf.md",
+   "view": "view/dcf.html",
+   "size": 11593,
+   "sha256": "8f58f49301e11935decb1e5850a3506b387576a3addfe228bc755254979f6df8",
+   "lines": 215
   }
  ],
  "updated": "2026-10-23"

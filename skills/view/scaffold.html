@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Scaffolder skill guide | IOTA</title>
+<meta name="description" content="Create a new project that builds and passes its tests on the first try. Three templates are covered: a WPF MVVM desktop app, an Android app with Jetpack Compose, and a Python command line tool. Each comes with a test project, a README, and a .gitignore.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Project Scaffolder | IOTA skill guide">
+<meta property="og:description" content="Create a new project that builds and passes its tests on the first try. Three templates are covered: a WPF MVVM desktop app, an Android app with Jetpack Compose, and a Python command line tool. Each comes with a test project, a README, and a .gitignore.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/scaffold.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=apps#library">Building apps</a> / Project Scaffolder</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/scaffold.md" download="iota-skill-scaffold.md">Download .md <small>14 KB</small></a>
+      <a class="btn ghost" href="../md/scaffold.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-scaffold">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>80059f785ad85a5f7084e53cb08dcbd53038af4dedfbf6387f6456cd63b61829</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/scaffold</td></tr><tr><th>Category</th><td>Building apps</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. Templates are written locally. The WPF and Python templates build offline. The Android template needs Gradle and the Android SDK, and its first build downloads dependencies unless your Gradle cache already has them.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Network note</th><td>Offline once packages are cached. The xunit test project restores NuGet packages and Android needs one online build to fill the Gradle cache. The Python template works fully offline if pytest is installed.</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/scaffold: Project Scaffolder</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Create a new project that builds and passes its tests on the first try. Three templates are covered: a WPF MVVM desktop app, an Android app with Jetpack Compose, and a Python command line tool. Each comes with a test project, a README, and a <code>.gitignore</code>.</p>
+<h2>When to use</h2>
+<ul>
+<li>Starting a new app and you want a clean, tested structure instead of an empty folder.</li>
+<li>You want the same layout across projects so other skills (/fix-build, /repo-map, /package) work well.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Adding features to an existing project. Use /wpf or ask directly.</li>
+<li>Web apps, game engines, or other stacks not listed here. The skill says so instead of guessing.</li>
+</ul>
+<h2>Requirements</h2>
+<table>
+<thead>
+<tr>
+<th>Template</th>
+<th>Needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WPF MVVM</td>
+<td>Windows, .NET 8 SDK</td>
+</tr>
+<tr>
+<td>Android Compose</td>
+<td>JDK 17, Android SDK (API 34), Gradle wrapper, Android Studio optional</td>
+</tr>
+<tr>
+<td>Python CLI</td>
+<td>Python 3.10 or later, <code>pytest</code> installed or available in a local wheel cache</td>
+</tr>
+</tbody>
+</table>
+<p>Model: Gemma 3 4B can fill these templates because the structure is fixed below. Larger Gemma or Nemotron models write better feature code on top.</p>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Template</td>
+<td>Yes</td>
+<td><code>wpf-mvvm</code>, <code>android-compose</code>, <code>python-cli</code></td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Yes</td>
+<td><code>PartTracker</code> or <code>part-tracker</code></td>
+</tr>
+<tr>
+<td>Folder</td>
+<td>No</td>
+<td>A new empty folder (default <code>./&lt;name&gt;</code>)</td>
+</tr>
+<tr>
+<td>Package id (Android)</td>
+<td>Android only</td>
+<td><code>com.example.parttracker</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Check tools.</strong> Run the version check for the chosen template and stop with a clear message if a tool is missing.
+   <pre class="highlight"><code class="language-powershell">dotnet --list-sdks            # WPF
+java -version; $env:ANDROID_HOME   # Android
+python --version; python -m pytest --version   # Python</code></pre></p>
+</li>
+<li>
+<p><strong>Check the folder.</strong> It must not exist or must be empty. If it has files, list them and ask. Never write into a folder with existing files without a yes.</p>
+</li>
+<li>
+<p><strong>Create the template.</strong></p>
+</li>
+</ol>
+<h3>Template A: WPF MVVM</h3>
+<p><pre class="highlight"><code class="language-powershell">$n = "PartTracker"
+dotnet new sln -n $n -o $n
+dotnet new wpf -n "$n.App" -o "$n/src/$n.App" --framework net8.0
+dotnet new classlib -n "$n.Core" -o "$n/src/$n.Core" --framework net8.0
+dotnet new xunit -n "$n.Tests" -o "$n/tests/$n.Tests" --framework net8.0
+dotnet sln "$n/$n.sln" add "$n/src/$n.App" "$n/src/$n.Core" "$n/tests/$n.Tests"
+dotnet add "$n/src/$n.App" reference "$n/src/$n.Core"
+dotnet add "$n/tests/$n.Tests" reference "$n/src/$n.Core"</code></pre>
+View models live in <code>Core</code> so tests can run without WPF. <code>src/PartTracker.Core/ViewModels/MainViewModel.cs</code>:
+<pre class="highlight"><code class="language-csharp">using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace PartTracker.Core.ViewModels;
+
+public class MainViewModel : INotifyPropertyChanged
+{
+    private string _newPart = "";
+    public ObservableCollection&lt;string&gt; Parts { get; } = new();
+
+    public string NewPart
+    {
+        get =&gt; _newPart;
+        set { if (_newPart != value) { _newPart = value; OnChanged(); } }
+    }
+
+    public bool AddPart()
+    {
+        var p = NewPart.Trim();
+        if (p.Length == 0 || Parts.Contains(p)) return false;
+        Parts.Add(p);
+        NewPart = "";
+        return true;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private void OnChanged([CallerMemberName] string? n = null) =&gt;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
+}</code></pre>
+<code>tests/PartTracker.Tests/MainViewModelTests.cs</code>:
+<pre class="highlight"><code class="language-csharp">using PartTracker.Core.ViewModels;
+using Xunit;
+
+public class MainViewModelTests
+{
+    [Fact]
+    public void AddPart_adds_trimmed_value_and_clears_input()
+    {
+        var vm = new MainViewModel { NewPart = "  A-100 " };
+        Assert.True(vm.AddPart());
+        Assert.Equal(new[] { "A-100" }, vm.Parts);
+        Assert.Equal("", vm.NewPart);
+    }
+
+    [Fact]
+    public void AddPart_rejects_blank_and_duplicates()
+    {
+        var vm = new MainViewModel { NewPart = " " };
+        Assert.False(vm.AddPart());
+        vm.NewPart = "A"; vm.AddPart();
+        vm.NewPart = "A";
+        Assert.False(vm.AddPart());
+    }
+}</code></pre>
+Set <code>DataContext = new MainViewModel();</code> in <code>MainWindow.xaml.cs</code> and bind a <code>TextBox</code>, a <code>ListBox</code>, and an Add button. Delete the template's <code>UnitTest1.cs</code> only after telling the user (it is a file the skill created a moment ago, never a user file).</p>
+<p>Verify:
+<pre class="highlight"><code class="language-powershell">dotnet build "$n/$n.sln" -nologo
+dotnet test "$n/$n.sln" -nologo</code></pre></p>
+<h3>Template B: Android Compose</h3>
+<p>Structure:
+<pre class="highlight"><code>part-tracker/
+  settings.gradle.kts
+  build.gradle.kts
+  gradle.properties
+  app/build.gradle.kts
+  app/src/main/AndroidManifest.xml
+  app/src/main/java/com/example/parttracker/MainActivity.kt
+  app/src/main/java/com/example/parttracker/PartList.kt
+  app/src/test/java/com/example/parttracker/PartListTest.kt</code></pre>
+<code>settings.gradle.kts</code>:
+<pre class="highlight"><code class="language-kotlin">pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+rootProject.name = "part-tracker"
+include(":app")</code></pre>
+Root <code>build.gradle.kts</code>:
+<pre class="highlight"><code class="language-kotlin">plugins {
+    id("com.android.application") version "8.5.2" apply false
+    id("org.jetbrains.kotlin.android") version "2.0.20" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.20" apply false
+}</code></pre>
+<code>gradle.properties</code>:
+<pre class="highlight"><code>android.useAndroidX=true
+org.gradle.jvmargs=-Xmx2g</code></pre>
+<code>app/build.gradle.kts</code>:
+<pre class="highlight"><code class="language-kotlin">plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+android {
+    namespace = "com.example.parttracker"
+    compileSdk = 34
+    defaultConfig {
+        applicationId = "com.example.parttracker"
+        minSdk = 26; targetSdk = 34; versionCode = 1; versionName = "1.0"
+    }
+    buildFeatures { compose = true }
+    compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
+    kotlinOptions { jvmTarget = "17" }
+}
+dependencies {
+    implementation(platform("androidx.compose:compose-bom:2024.09.00"))
+    implementation("androidx.activity:activity-compose:1.9.2")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui")
+    testImplementation("junit:junit:4.13.2")
+}</code></pre>
+Version numbers are known good pairs at the time of writing. If the user's Gradle cache has other versions, prefer those to stay offline.</p>
+<p><code>PartList.kt</code> holds plain logic so it can be unit tested without a device:
+<pre class="highlight"><code class="language-kotlin">package com.example.parttracker
+
+class PartList {
+    private val items = mutableListOf&lt;String&gt;()
+    val parts: List&lt;String&gt; get() = items
+    fun add(raw: String): Boolean {
+        val p = raw.trim()
+        if (p.isEmpty() || p in items) return false
+        items += p
+        return true
+    }
+}</code></pre>
+<code>MainActivity.kt</code>:
+<pre class="highlight"><code class="language-kotlin">package com.example.parttracker
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent { MaterialTheme(colorScheme = darkColorScheme()) { PartScreen() } }
+    }
+}
+
+@Composable
+fun PartScreen() {
+    val list = remember { PartList() }
+    var text by remember { mutableStateOf("") }
+    var parts by remember { mutableStateOf(list.parts.toList()) }
+    Surface(Modifier.fillMaxSize()) {
+        Column(Modifier.padding(16.dp)) {
+            Row {
+                OutlinedTextField(text, { text = it }, Modifier.weight(1f), label = { Text("Part") })
+                Spacer(Modifier.width(8.dp))
+                Button(onClick = { if (list.add(text)) { text = ""; parts = list.parts.toList() } }) { Text("Add") }
+            }
+            parts.forEach { Text(it, Modifier.padding(top = 8.dp)) }
+        }
+    }
+}</code></pre>
+<code>PartListTest.kt</code>:
+<pre class="highlight"><code class="language-kotlin">package com.example.parttracker
+
+import org.junit.Assert.*
+import org.junit.Test
+
+class PartListTest {
+    @Test fun addsTrimmed() { val l = PartList(); assertTrue(l.add(" A ")); assertEquals(listOf("A"), l.parts) }
+    @Test fun rejectsDuplicate() { val l = PartList(); l.add("A"); assertFalse(l.add("A")) }
+}</code></pre>
+The manifest declares <code>MainActivity</code> with the <code>MAIN</code> and <code>LAUNCHER</code> intent filter and <code>android:exported="true"</code>. If no Gradle wrapper is present, run <code>gradle wrapper --gradle-version 8.9</code> once (online). Verify with <code>./gradlew testDebugUnitTest assembleDebug</code>.</p>
+<h3>Template C: Python CLI</h3>
+<p><pre class="highlight"><code>part-tracker/
+  pyproject.toml
+  src/part_tracker/__init__.py
+  src/part_tracker/cli.py
+  tests/test_cli.py</code></pre>
+<code>pyproject.toml</code>:
+<pre class="highlight"><code class="language-toml">[build-system]
+requires = ["setuptools&gt;=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "part-tracker"
+version = "0.1.0"
+requires-python = "&gt;=3.10"
+
+[project.scripts]
+part-tracker = "part_tracker.cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]</code></pre>
+<code>src/part_tracker/cli.py</code>:
+<pre class="highlight"><code class="language-python">import argparse
+import json
+from pathlib import Path
+
+
+def add_part(store: Path, part: str) -&gt; bool:
+    part = part.strip()
+    parts = json.loads(store.read_text()) if store.exists() else []
+    if not part or part in parts:
+        return False
+    parts.append(part)
+    store.write_text(json.dumps(parts, indent=2))
+    return True
+
+
+def main(argv: list[str] | None = None) -&gt; int:
+    ap = argparse.ArgumentParser(prog="part-tracker")
+    ap.add_argument("--store", type=Path, default=Path("parts.json"))
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("list")
+    a = sub.add_parser("add"); a.add_argument("part")
+    args = ap.parse_args(argv)
+    if args.cmd == "add":
+        ok = add_part(args.store, args.part)
+        print("added" if ok else "skipped")
+        return 0 if ok else 1
+    for p in (json.loads(args.store.read_text()) if args.store.exists() else []):
+        print(p)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())</code></pre>
+<code>tests/test_cli.py</code>:
+<pre class="highlight"><code class="language-python">from part_tracker.cli import add_part, main
+
+
+def test_add_and_duplicate(tmp_path):
+    store = tmp_path / "parts.json"
+    assert add_part(store, " A-1 ")
+    assert not add_part(store, "A-1")
+
+
+def test_main_list(tmp_path, capsys):
+    store = tmp_path / "parts.json"
+    main(["--store", str(store), "add", "B-2"])
+    main(["--store", str(store), "list"])
+    assert "B-2" in capsys.readouterr().out</code></pre>
+Verify: <code>python -m pytest -q</code> from the project folder.</p>
+<ol start="4">
+<li>
+<p><strong>Add common files.</strong> README with build, test, and run commands; <code>.gitignore</code> for the stack (<code>bin/ obj/</code> for .NET, <code>build/ .gradle/ local.properties</code> for Android, <code>__pycache__/ .venv/ *.egg-info/</code> for Python).</p>
+</li>
+<li>
+<p><strong>Build and test.</strong> Run the verify commands. If anything fails, use the /fix-build loop with a limit of 5 attempts. Report the final test count and result.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<p>A folder tree listing, the verify command output (pass or fail with counts), and the next three commands the user is likely to need.</p>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Only write into a new or empty folder unless the user says otherwise.</li>
+<li>Ask before any command that downloads packages (Gradle first build, <code>pip install</code>).</li>
+<li>Never delete anything outside the files this skill created in this run.</li>
+<li>Nothing is sent or published. No git remote is added.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Build passes and all template tests pass before the skill says "done".</li>
+<li>Names are consistent: solution, namespaces, package id, and folder.</li>
+<li>No absolute personal paths in any file.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li><code>/scaffold wpf-mvvm PartTracker</code>: solution with App, Core, Tests. <code>dotnet test</code> shows 2 passed.</li>
+<li><code>/scaffold python-cli part-tracker</code>: <code>pytest</code> shows 2 passed; <code>part-tracker add A-1</code> prints <code>added</code> after <code>pip install -e .</code>.</li>
+<li><code>/scaffold android-compose part-tracker com.example.parttracker</code>: Gradle unit tests pass and a debug APK is built under <code>app/build/outputs/apk/debug/</code>.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dotnet test</code> cannot find xunit offline</td>
+<td>The xunit template restores packages. Run once online or use a local NuGet feed.</td>
+</tr>
+<tr>
+<td>Gradle "Could not resolve" offline</td>
+<td>Run one online build, then use <code>--offline</code>.</td>
+</tr>
+<tr>
+<td><code>SDK location not found</code></td>
+<td>Create <code>local.properties</code> with <code>sdk.dir=</code> pointing to your Android SDK. Do not commit it.</td>
+</tr>
+<tr>
+<td><code>ModuleNotFoundError: part_tracker</code> in pytest</td>
+<td>Check <code>pythonpath = ["src"]</code> in <code>pyproject.toml</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Library versions age. The skill prefers versions already on the PC.</li>
+<li>iOS is not covered.</li>
+<li>The WPF xunit test project and the Android build both need packages that are usually downloaded once.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. WPF MVVM, Android Compose, and Python CLI templates with tests.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

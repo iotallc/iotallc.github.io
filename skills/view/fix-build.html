@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fix the Build skill guide | IOTA</title>
+<meta name="description" content="Run a build or test command, read the errors, make the smallest fix, show the diff, and run it again. The loop stops when the build is green, when the iteration limit is reached, or when a fix would need a decision from you.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fix the Build | IOTA skill guide">
+<meta property="og:description" content="Run a build or test command, read the errors, make the smallest fix, show the diff, and run it again. The loop stops when the build is green, when the iteration limit is reached, or when a fix would need a decision from you.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/fix-build.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=apps#library">Building apps</a> / Fix the Build</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/fix-build.md" download="iota-skill-fix-build.md">Download .md <small>9 KB</small></a>
+      <a class="btn ghost" href="../md/fix-build.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-fix-build">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>0db9b62019f67e4a4f18501b04b2c8db192074e48d0b0f0c40edbef7806e956d</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/fix-build</td></tr><tr><th>Category</th><td>Building apps</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. It runs your existing build command on your PC and edits local files. Nothing needs the network unless the build itself restores packages.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/fix-build: Fix the Build</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Run a build or test command, read the errors, make the smallest fix, show the diff, and run it again. The loop stops when the build is green, when the iteration limit is reached, or when a fix would need a decision from you.</p>
+<h2>When to use</h2>
+<ul>
+<li>A project stopped building after a change.</li>
+<li>Tests fail and the error messages point at specific lines.</li>
+<li>A generated project from /wpf, /scaffold, or /sketch-to-ui did not build on the first try.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Failures caused by missing tools or SDKs. The skill reports these instead of editing code.</li>
+<li>Flaky tests that pass and fail randomly. The skill will say it found a flaky test and stop.</li>
+<li>Large refactors or design changes. Ask for those directly.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>The project's normal build tool on PATH: <code>dotnet</code>, <code>gradlew</code>, <code>python -m pytest</code>, <code>npm</code>, <code>cargo</code>, or <code>msbuild</code>.</li>
+<li>Git is strongly recommended. With git, every change is easy to review and undo with <code>git diff</code> and <code>git restore</code>.</li>
+<li>Model: Gemma 3 12B or a Nemotron model of similar size handles most compiler errors. Gemma 3 4B fixes simple errors (typos, missing <code>using</code>, wrong names) but can loop on type errors; the iteration limit protects against that.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project folder</td>
+<td>Yes</td>
+<td>current folder</td>
+</tr>
+<tr>
+<td>Build command</td>
+<td>No</td>
+<td>detected (see step 1)</td>
+</tr>
+<tr>
+<td>Max iterations</td>
+<td>No</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Mode</td>
+<td>No</td>
+<td><code>ask</code> (confirm each fix). <code>auto</code> applies fixes without asking but still never deletes code.</td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li><strong>Detect the build command</strong> when none was given:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Found</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>*.sln</code> or <code>*.csproj</code></td>
+<td><code>dotnet build -nologo -v q</code> then <code>dotnet test -nologo</code></td>
+</tr>
+<tr>
+<td><code>gradlew</code> or <code>gradlew.bat</code></td>
+<td><code>./gradlew assembleDebug testDebugUnitTest</code></td>
+</tr>
+<tr>
+<td><code>pyproject.toml</code> or <code>pytest.ini</code></td>
+<td><code>python -m pytest -q</code></td>
+</tr>
+<tr>
+<td><code>package.json</code> with a <code>build</code> script</td>
+<td><code>npm run build</code></td>
+</tr>
+<tr>
+<td><code>Cargo.toml</code></td>
+<td><code>cargo build</code></td>
+</tr>
+</tbody>
+</table>
+<p>Tell the user which command will run.</p>
+<ol start="2">
+<li>
+<p><strong>Take a safety snapshot.</strong> If the folder is a git repo, record <code>git status --porcelain</code> and the current <code>git stash list</code> count. If it is not a repo, copy each file before its first edit to <code>&lt;file&gt;.fixbuild.bak</code> and tell the user where the copies are.</p>
+</li>
+<li>
+<p><strong>Run the build and capture output.</strong>
+   <pre class="highlight"><code class="language-powershell">$log = &amp; dotnet build -nologo -v q 2&gt;&amp;1 | Out-String
+$code = $LASTEXITCODE</code></pre></p>
+</li>
+<li>
+<p><strong>Parse errors into a list.</strong> Keep the first 10 unique errors. Common formats:
+   <pre class="highlight"><code class="language-python">import re
+
+PATTERNS = [
+    # MSBuild / C#: path(line,col): error CS0103: message
+    re.compile(r"^(?P&lt;file&gt;[^\s(][^(]*)\((?P&lt;line&gt;\d+),(?P&lt;col&gt;\d+)\): error (?P&lt;code&gt;\w+): (?P&lt;msg&gt;.+?)(?: \[.*\])?$"),
+    # Kotlin: e: file:///path/File.kt:12:5 message
+    re.compile(r"^e: (?:file://)?(?P&lt;file&gt;.+?):(?P&lt;line&gt;\d+):(?P&lt;col&gt;\d+) (?P&lt;msg&gt;.+)$"),
+    # Python traceback last frame
+    re.compile(r'^\s*File "(?P&lt;file&gt;.+?)", line (?P&lt;line&gt;\d+)'),
+    # TypeScript: file(line,col): error TS2304: message
+    re.compile(r"^(?P&lt;file&gt;.+?)\((?P&lt;line&gt;\d+),(?P&lt;col&gt;\d+)\): error (?P&lt;code&gt;TS\d+): (?P&lt;msg&gt;.+)$"),
+]
+
+def parse(log: str) -&gt; list[dict]:
+    seen, out = set(), []
+    for raw in log.splitlines():
+        for pat in PATTERNS:
+            m = pat.match(raw.strip())
+            if m:
+                key = (m.group("file"), m.group("line"), m.groupdict().get("msg"))
+                if key not in seen:
+                    seen.add(key)
+                    out.append(m.groupdict())
+                break
+    return out[:10]</code></pre></p>
+</li>
+<li>
+<p><strong>Classify the first error.</strong>
+   - <em>Code error</em>: a name, type, syntax, or test assertion in project code. Go to step 6.
+   - <em>Environment error</em>: SDK missing, package restore failed, permission denied, path too long. Stop and explain the fix to the user. Do not edit code.
+   - <em>Decision needed</em>: the fix would change public behavior, remove a feature, or change a test's expected value. Stop and ask.</p>
+</li>
+<li>
+<p><strong>Read context.</strong> Open the file around the error line (20 lines before and after) plus any file named in the error message. Use this prompt:
+   <pre class="highlight"><code>Build error:
+{file}({line},{col}): {code} {msg}
+
+Code around the error (line numbers on the left):
+{snippet}
+
+Propose the smallest change that fixes this error without changing what
+the code is meant to do. Reply with a unified diff only. Do not delete
+functions, classes, or tests. If the right fix is unclear, reply with
+QUESTION: and one question for the user.</code></pre></p>
+</li>
+<li>
+<p><strong>Check the proposed diff before applying.</strong> Reject it and ask the model again (once) if:
+   - It removes more than 3 lines of user code, or removes any function, class, or test.
+   - It comments out code or adds <code>#pragma warning disable</code>, <code>@Suppress</code>, <code># type: ignore</code>, <code>skip</code>, or <code>[Fact(Skip=...)]</code> to silence the error.
+   - It edits files outside the project folder.
+   If the second proposal is also rejected, stop and show both to the user.</p>
+</li>
+<li>
+<p><strong>Show and apply.</strong> Print the diff. In <code>ask</code> mode wait for yes. Apply with <code>git apply</code> when in a repo:
+   <pre class="highlight"><code class="language-powershell">$diff | Set-Content -Encoding utf8 fix.patch
+git apply --check fix.patch; if ($LASTEXITCODE -eq 0) { git apply fix.patch }
+Remove-Item fix.patch</code></pre></p>
+</li>
+<li>
+<p><strong>Rebuild and compare.</strong> Run the build again. Track the error count each round:
+   - Fewer errors: continue.
+   - Same error again after a fix: try one different approach, then stop.
+   - More errors than before: undo the last change (<code>git restore</code> the file or copy back the <code>.bak</code>) after telling the user, then stop.</p>
+</li>
+<li>
+<p><strong>Stop conditions.</strong> Green build, max iterations reached, environment error, decision needed, or no progress for 2 rounds.</p>
+</li>
+<li>
+<p><strong>Report.</strong> Summarize what changed and what is left.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<pre class="highlight"><code>/fix-build report
+Command: dotnet build -nologo -v q
+Rounds: 3 of 5
+Result: build succeeded, 12 tests passed
+Changes:
+  1. src/App/MainWindow.xaml.cs:14  added "using System.Linq;" (CS1061)
+  2. src/Core/Parser.cs:42          renamed Parce to Parse (CS0103)
+  3. tests/ParserTests.cs:9         fixed namespace import (CS0246)
+Undo: git restore src/App/MainWindow.xaml.cs src/Core/Parser.cs tests/ParserTests.cs</code></pre>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Never delete user code, files, or tests without asking first.</li>
+<li>Never silence errors by disabling warnings, skipping tests, or commenting out code.</li>
+<li>Never change a test's expected value without asking.</li>
+<li>Never run <code>git reset --hard</code>, <code>git clean</code>, or force push.</li>
+<li>Back up files before editing in folders without git.</li>
+<li>Nothing is sent or pushed anywhere.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Every applied change is shown as a diff in the chat.</li>
+<li>The final build output is quoted, not summarized from memory.</li>
+<li>The error count never ends higher than it started.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li><strong>C#:</strong> <code>CS0103: The name 'Results' does not exist</code>. The XAML had <code>x:Name="Result"</code>. The skill proposes renaming the XAML name to match, shows the one line diff, rebuilds: green in 1 round.</li>
+<li><strong>Python:</strong> <code>AssertionError: assert 3 == 4</code> in <code>test_total</code>. The skill sees the function adds tax twice, proposes the fix, and asks first because it changes behavior. After yes, tests pass.</li>
+<li><strong>Gradle:</strong> <code>SDK location not found</code>. Environment error: the skill explains <code>local.properties</code> and edits nothing.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Loop repeats the same fix</td>
+<td>The stop rule triggers after 2 rounds without progress. Read the error yourself or try a larger model.</td>
+</tr>
+<tr>
+<td>Errors in generated files (<code>obj/</code>, <code>build/</code>)</td>
+<td>Fix the source that generates them, or run a clean build: <code>dotnet clean</code>.</td>
+</tr>
+<tr>
+<td>Hundreds of errors</td>
+<td>Usually one root cause (a missing reference or a broken file). The skill fixes the first error only, then rebuilds.</td>
+</tr>
+<tr>
+<td><code>git apply</code> fails</td>
+<td>The file changed since it was read. The skill re-reads and asks for a new diff.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Linker errors, native build errors, and code generators are harder; expect more questions.</li>
+<li>The skill cannot verify that a fix is correct beyond building and passing tests.</li>
+<li>With no tests, a green build only means the code compiles.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Detection table, error parsers, diff guard rules, iteration limit, report format.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

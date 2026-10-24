@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Story Tree Builder skill guide | IOTA</title>
+<meta name="description" content="Plan and write branching dialogue: scenes, characters, choices, and endings stored as a JSON file a game or interactive story can load, plus a visual map of every branch. The skill keeps the tree valid (no dead links, every path reaches an ending) and keeps content safe for work.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Story Tree Builder | IOTA skill guide">
+<meta property="og:description" content="Plan and write branching dialogue: scenes, characters, choices, and endings stored as a JSON file a game or interactive story can load, plus a visual map of every branch. The skill keeps the tree valid (no dead links, every path reaches an ending) and keeps content safe for work.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/story-tree.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=tools#library">IOTA tools</a> / Story Tree Builder</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/story-tree.md" download="iota-skill-story-tree.md">Download .md <small>10 KB</small></a>
+      <a class="btn ghost" href="../md/story-tree.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-story-tree">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>9c1b6b0af43c8a6da5c454a36c315eca382f2145a953b20776d444185bcf15c1</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/story-tree</td></tr><tr><th>Category</th><td>IOTA tools</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. The local model writes the scenes, Python validates the tree, and Graphviz or Mermaid draws the map on your PC.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/story-tree: Story Tree Builder</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Plan and write branching dialogue: scenes, characters, choices, and endings stored as a JSON file a game or interactive story can load, plus a visual map of every branch. The skill keeps the tree valid (no dead links, every path reaches an ending) and keeps content safe for work.</p>
+<h2>When to use</h2>
+<ul>
+<li>Writing a choose your own path story, a game conversation, or a training scenario with choices.</li>
+<li>Mapping an existing story to find dead ends and loose threads.</li>
+<li>Producing dialogue data for a game engine.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Linear stories with no choices.</li>
+<li>Adult or graphic content. This skill only writes content suitable for all audiences (see the content rules).</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Python 3.10 or later. Graphviz (<code>dot</code>) for PNG and SVG maps, or none if you only need the Mermaid map.</li>
+<li>Model: Gemma 3 12B or 27B or a Nemotron model keeps characters and tone consistent across many scenes. Gemma 3 4B can write short trees (under 20 scenes) if each scene is generated with the summary of its path.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Premise</td>
+<td>Yes</td>
+<td>"A night shift engineer finds the factory robot talking to itself"</td>
+</tr>
+<tr>
+<td>Audience</td>
+<td>No</td>
+<td>all ages (default) or teen</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>No</td>
+<td>about 15 scenes, 3 endings (default)</td>
+</tr>
+<tr>
+<td>Characters</td>
+<td>No</td>
+<td>names, roles, voice notes</td>
+</tr>
+<tr>
+<td>Style</td>
+<td>No</td>
+<td>short lines, present tense</td>
+</tr>
+<tr>
+<td>Existing JSON</td>
+<td>For edit or map mode</td>
+<td><code>story.json</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Content rules (SFW)</h2>
+<p>The skill applies these to every scene and choice and refuses requests outside them:
+- No sexual content, nudity, or romantic content involving minors.
+- No graphic violence or gore. Danger and conflict are fine when described without graphic detail.
+- No hate speech or slurs, and no content that demeans people for who they are.
+- No instructions for real world harm (weapons, drugs, hacking).
+- No real living people as characters without the user confirming it is respectful and fictional.
+- Self harm is never presented as a choice.
+If a request breaks a rule, the skill says which rule and offers an alternative direction.</p>
+<h2>Data format</h2>
+<p><pre class="highlight"><code class="language-json">{
+  "title": "Night Shift",
+  "version": 1,
+  "credit": "Built with the /story-tree skill guide by IOTA - Joseph Bryant",
+  "start": "s1",
+  "characters": {
+    "mara": {"name": "Mara", "role": "night shift engineer"},
+    "unit7": {"name": "Unit 7", "role": "assembly robot"}
+  },
+  "variables": {"trust": 0},
+  "scenes": {
+    "s1": {
+      "text": "The line is silent. Then Unit 7 speaks: \"Are you the one who fixes things?\"",
+      "speaker": "unit7",
+      "choices": [
+        {"label": "Answer it", "next": "s2", "effects": {"trust": 1}},
+        {"label": "Call the supervisor", "next": "s3"}
+      ]
+    },
+    "s2": {"text": "...", "choices": [{"label": "...", "next": "e1", "requires": {"trust": 1}}]},
+    "s3": {"text": "...", "choices": [{"label": "...", "next": "e2"}]},
+    "e1": {"text": "...", "ending": "good"},
+    "e2": {"text": "...", "ending": "neutral"}
+  }
+}</code></pre>
+Rules: scene ids are short strings; a scene has either <code>choices</code> (1 to 4) or <code>ending</code>; <code>effects</code> add numbers to variables; <code>requires</code> hides a choice unless each variable is at least the given value.</p>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Outline first.</strong> Propose the structure before writing scenes: acts, the main decision points, and the endings. Use a branch and merge shape (paths split, then rejoin at key scenes) to keep the size manageable. Ask the user to approve or change the outline.</p>
+</li>
+<li>
+<p><strong>Write scenes one at a time</strong>, each with the path so far:
+   <pre class="highlight"><code>Story: {title}. Premise: {premise}. Audience: {audience}. Style: {style}.
+Characters: {character notes}
+Path so far (summaries): {summaries}
+Write scene {id}: {outline line}. 40 to 120 words of narration and dialogue.
+Then 2 or 3 choices, each under 8 words, each leading to {allowed next ids}.
+Follow the content rules. Return JSON for this one scene only.</code></pre></p>
+</li>
+<li>
+<p><strong>Validate the tree after every few scenes.</strong>
+   <pre class="highlight"><code class="language-python">import json
+from collections import deque
+
+def validate(story: dict) -&gt; list[str]:
+    errs, scenes = [], story["scenes"]
+    if story["start"] not in scenes:
+        errs.append(f"start {story['start']} missing")
+    for sid, s in scenes.items():
+        has_choices, is_end = bool(s.get("choices")), "ending" in s
+        if has_choices == is_end:
+            errs.append(f"{sid}: needs choices or an ending, not both or neither")
+        for c in s.get("choices", []):
+            if c["next"] not in scenes:
+                errs.append(f"{sid}: choice '{c['label']}' points to missing {c['next']}")
+            for var in list(c.get("effects", {})) + list(c.get("requires", {})):
+                if var not in story.get("variables", {}):
+                    errs.append(f"{sid}: unknown variable {var}")
+    seen, q = {story["start"]}, deque([story["start"]])
+    while q:
+        for c in scenes.get(q.popleft(), {}).get("choices", []):
+            if c["next"] in scenes and c["next"] not in seen:
+                seen.add(c["next"]); q.append(c["next"])
+    errs += [f"{sid}: unreachable" for sid in scenes if sid not in seen]
+    # every scene must be able to reach an ending
+    ends = {sid for sid, s in scenes.items() if "ending" in s}
+    can_end, changed = set(ends), True
+    while changed:
+        changed = False
+        for sid, s in scenes.items():
+            if sid not in can_end and any(c["next"] in can_end for c in s.get("choices", [])):
+                can_end.add(sid); changed = True
+    errs += [f"{sid}: no path to an ending" for sid in scenes if sid not in can_end]
+    return errs</code></pre>
+   Also check that no scene has all its choices locked by <code>requires</code> on every path. A simple check: if every choice in a scene has <code>requires</code>, flag it for review.</p>
+</li>
+<li>
+<p><strong>Draw the map.</strong> Mermaid (works in many Markdown viewers) and Graphviz for an image:
+   <pre class="highlight"><code class="language-python">def to_mermaid(story):
+    out = ["flowchart TD"]
+    for sid, s in story["scenes"].items():
+        label = s["text"][:40].replace('"', "'")
+        shape = f'{sid}(["{label}"])' if "ending" in s else f'{sid}["{label}"]'
+        out.append(f"  {shape}")
+        for c in s.get("choices", []):
+            out.append(f'  {sid} --&gt;|{c["label"][:24]}| {c["next"]}')
+    return "\n".join(out)
+
+def to_dot(story):
+    lines = ["digraph story {", '  rankdir=TB; node [shape=box, style="rounded,filled", fillcolor="#F2F2F2", fontname="Segoe UI"];']
+    for sid, s in story["scenes"].items():
+        fill = "#CFE8D5" if s.get("ending") == "good" else "#F4C7C3" if s.get("ending") == "bad" else "#F2F2F2"
+        label = json.dumps(f"{sid}: {s['text'][:40]}")
+        lines.append(f"  {sid} [label={label}, fillcolor=\"{fill}\"];")
+        for c in s.get("choices", []):
+            lines.append(f"  {sid} -&gt; {c['next']} [label={json.dumps(c['label'][:24])}];")
+    lines.append("}")
+    return "\n".join(lines)</code></pre>
+   Render: <code>dot -Tpng story.dot -o story-map.png</code> and <code>-Tsvg</code> for a zoomable version.</p>
+</li>
+<li>
+<p><strong>Content review pass.</strong> Re-read every scene against the content rules and list any line that needs a change, with a suggested rewrite. Apply only after the user agrees.</p>
+</li>
+<li>
+<p><strong>Play test.</strong> Print every path from start to each ending as a numbered list of choices so the user can read them like a reader would.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<ul>
+<li><code>story.json</code></li>
+<li><code>story-map.md</code> (Mermaid), <code>story.dot</code>, <code>story-map.png</code> or <code>.svg</code></li>
+<li><code>paths.txt</code> with every path</li>
+<li>Chat summary: scene count, endings by type, longest and shortest path, validation result.</li>
+</ul>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Content rules above are always on.</li>
+<li>Never overwrite an existing <code>story.json</code>; save <code>story.v2.json</code> and show the differences.</li>
+<li>Never delete scenes without asking; unreachable scenes are reported, not removed.</li>
+<li>Nothing is published or shared.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li><code>validate()</code> returns no errors.</li>
+<li>Every choice label is distinct within its scene.</li>
+<li>Character names and voices stay consistent (the skill checks each speaker id exists).</li>
+<li>Each ending is reachable.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li>"Night Shift" premise, 15 scenes, 3 endings: outline, scenes, valid JSON, PNG map with endings colored.</li>
+<li>Map mode: an existing 40 scene JSON with 2 dead links and 1 unreachable scene; the skill reports them and draws the map.</li>
+<li>Training scenario: a customer service conversation with a <code>trust</code> variable that unlocks a better ending.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Characters change voice</td>
+<td>Add voice notes to <code>characters</code> and keep the path summaries short.</td>
+</tr>
+<tr>
+<td>Tree grows too large</td>
+<td>Merge branches into shared scenes; the outline step controls size.</td>
+</tr>
+<tr>
+<td><code>dot</code> not found</td>
+<td>Install Graphviz or use the Mermaid map.</td>
+</tr>
+<tr>
+<td>JSON parse errors from the model</td>
+<td>The skill asks for that one scene again with "return only JSON".</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>The map is readable up to about 60 scenes; larger trees are split by act.</li>
+<li>Variables are simple counters; no strings or complex logic.</li>
+<li>Writing quality depends on the model size.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Outline first workflow, JSON format with variables, validator, Mermaid and Graphviz maps, SFW content rules.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

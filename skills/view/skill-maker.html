@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skill Maker skill guide | IOTA</title>
+<meta name="description" content="Create a new skill from a plain description: a skill guide .md in the same format as this one, an optional helper script, and tests for that script. Everything is written to a staging folder first. The skill is copied into your skills folder only after the tests pass and you say yes.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Skill Maker | IOTA skill guide">
+<meta property="og:description" content="Create a new skill from a plain description: a skill guide .md in the same format as this one, an optional helper script, and tests for that script. Everything is written to a staging folder first. The skill is copied into your skills folder only after the tests pass and you say yes.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/skill-maker.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=tools#library">IOTA tools</a> / Skill Maker</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/skill-maker.md" download="iota-skill-skill-maker.md">Download .md <small>10 KB</small></a>
+      <a class="btn ghost" href="../md/skill-maker.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-skill-maker">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>178bda12afafddc64c1a244aa984bb729f8a8203107e29714c9d2ef4d4c5bc03</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/skill-maker</td></tr><tr><th>Category</th><td>IOTA tools</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. It writes a skill guide, a helper script, and tests into a staging folder on your PC and runs the tests locally. Nothing is downloaded or published.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/skill-maker: Skill Maker</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Create a new skill from a plain description: a skill guide <code>.md</code> in the same format as this one, an optional helper script, and tests for that script. Everything is written to a staging folder first. The skill is copied into your skills folder only after the tests pass and you say yes.</p>
+<h2>When to use</h2>
+<ul>
+<li>You repeat the same multi step task and want IOTA to follow the same steps every time.</li>
+<li>You have a script and want a guide that tells the model when and how to run it.</li>
+<li>You want to adapt one of the published guides to your own shop or team.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>One time tasks. Just ask directly.</li>
+<li>Tasks that need tools you do not have installed. The skill will list what is missing rather than write code that cannot run.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Python 3.10 or later with <code>pytest</code> for script based skills, or Pester 5 for PowerShell scripts.</li>
+<li>Model: Gemma 3 12B or 27B or a Nemotron model writes better procedures and code. Gemma 3 4B can fill the template for simple skills; review its code carefully.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Description</td>
+<td>Yes</td>
+<td>"Rename scanned PDFs using the invoice number on page 1"</td>
+</tr>
+<tr>
+<td>Command name</td>
+<td>No</td>
+<td><code>/rename-invoices</code> (default derived from the description)</td>
+</tr>
+<tr>
+<td>Script language</td>
+<td>No</td>
+<td><code>python</code> (default), <code>powershell</code>, or <code>none</code></td>
+</tr>
+<tr>
+<td>Category</td>
+<td>No</td>
+<td>Building apps, Engineering, Finance, IOTA tools, Everyday</td>
+</tr>
+<tr>
+<td>Skills folder</td>
+<td>No</td>
+<td>your configured skills folder</td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Interview.</strong> Ask up to five short questions, one at a time, only where the description is unclear:
+   - What goes in (files, text, folders)?
+   - What comes out (file type, location, naming)?
+   - What must never happen (overwrite, delete, send)?
+   - What does a correct result look like for one example?
+   - Does it need the internet?</p>
+</li>
+<li>
+<p><strong>Check the name.</strong> The command must be lowercase letters, digits, and hyphens, start with a letter, and not collide with an existing skill in the skills folder. If it collides, suggest <code>-2</code> or a better name.</p>
+</li>
+<li>
+<p><strong>Write the guide</strong> to <code>staging/&lt;name&gt;/&lt;name&gt;.md</code> using this template:
+   <pre class="highlight"><code class="language-markdown">---
+name: &lt;Title Case Name&gt;
+command: /&lt;name&gt;
+version: "1.0"
+category: &lt;category&gt;
+editions: &lt;both | powershell | exe&gt;
+editions_reason: "&lt;one honest sentence&gt;"
+network: &lt;offline | online&gt;
+author: "&lt;your name&gt;"
+based_on: "Skill Maker by IOTA - Joseph Bryant"
+license: "&lt;your license note&gt;"
+---
+
+# /&lt;name&gt;: &lt;Title&gt;
+
+## Purpose
+## When to use
+## When not to use
+## Requirements
+## Inputs
+## Step-by-step procedure
+## Output format
+## Safety and confirmation rules
+## Quality checks
+## Examples
+## Troubleshooting
+## Limitations
+## Changelog</code></pre>
+   Rules for the content:
+   - Steps are numbered and each one is something the model can actually do.
+   - Every destructive action (overwrite, delete, move, send) has an explicit "ask first" line.
+   - Requirements state honestly what model size works.
+   - The guide credits its author. When built with this skill, it also keeps the <code>based_on</code> line.</p>
+</li>
+<li>
+<p><strong>Write the helper script</strong> (if any) to <code>staging/&lt;name&gt;/&lt;name_with_underscores&gt;.py</code> (hyphens become underscores so tests can import it) with a <code>main(argv)</code> function, <code>argparse</code>, dry run as the default for anything that changes files (an <code>--apply</code> flag makes the changes), and pure functions for the logic so they can be tested. Example for the invoice renamer:
+   <pre class="highlight"><code class="language-python">import argparse
+import re
+from pathlib import Path
+
+INVOICE = re.compile(r"Invoice\s*(?:No\.?|Number|#)\s*[:#]?\s*([A-Z0-9-]{4,20})", re.I)
+
+def invoice_number(text: str) -&gt; str | None:
+    m = INVOICE.search(text)
+    return m.group(1).upper() if m else None
+
+def plan(folder: Path, read_text) -&gt; list[tuple[Path, Path]]:
+    moves, taken = [], set()
+    for pdf in sorted(folder.glob("*.pdf")):
+        num = invoice_number(read_text(pdf))
+        if not num:
+            continue
+        target = pdf.with_name(f"INV_{num}.pdf")
+        i = 2
+        while target.exists() or target in taken:
+            target = pdf.with_name(f"INV_{num}_{i}.pdf"); i += 1
+        taken.add(target)
+        if target != pdf:
+            moves.append((pdf, target))
+    return moves
+
+def first_page_text(pdf: Path) -&gt; str:
+    from pypdf import PdfReader
+    return PdfReader(pdf).pages[0].extract_text() or ""
+
+def main(argv=None) -&gt; int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("folder", type=Path)
+    ap.add_argument("--apply", action="store_true", help="rename files (default is a dry run)")
+    a = ap.parse_args(argv)
+    moves = plan(a.folder, first_page_text)
+    for src, dst in moves:
+        print(f"{'RENAME' if a.apply else 'WOULD RENAME'} {src.name} -&gt; {dst.name}")
+        if a.apply:
+            src.rename(dst)
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())</code></pre></p>
+</li>
+<li>
+<p><strong>Write tests</strong> to <code>staging/&lt;name&gt;/test_&lt;name_with_underscores&gt;.py</code>. Test the pure logic with fake inputs and a temporary folder; never test against real user files.
+   <pre class="highlight"><code class="language-python">from pathlib import Path
+import rename_invoices as ri
+
+def test_invoice_number_variants():
+    assert ri.invoice_number("Invoice No. ab-1234") == "AB-1234"
+    assert ri.invoice_number("INVOICE # 99881") == "99881"
+    assert ri.invoice_number("Receipt") is None
+
+def test_plan_avoids_collisions(tmp_path: Path):
+    for n in ("a.pdf", "b.pdf"):
+        (tmp_path / n).write_bytes(b"")
+    moves = ri.plan(tmp_path, lambda p: "Invoice Number: 1001")
+    assert [d.name for _, d in moves] == ["INV_1001.pdf", "INV_1001_2.pdf"]
+
+def test_dry_run_changes_nothing(tmp_path: Path, monkeypatch):
+    (tmp_path / "a.pdf").write_bytes(b"")
+    monkeypatch.setattr(ri, "first_page_text", lambda p: "Invoice # 7777")
+    ri.main([str(tmp_path)])
+    assert (tmp_path / "a.pdf").exists()</code></pre>
+   The file name in the test import must match the script name with hyphens replaced by underscores; the skill names the script file accordingly (<code>rename_invoices.py</code>).</p>
+</li>
+<li>
+<p><strong>Run the tests</strong> in the staging folder: <code>python -m pytest -q staging/&lt;name&gt;</code>. Use the /fix-build loop (max 5 rounds) if they fail. Do not continue to install with failing tests.</p>
+</li>
+<li>
+<p><strong>Lint the guide.</strong> Check that the frontmatter parses, the command matches the file name, all sections exist in order, and the safety section mentions every destructive action used in the script.
+   <pre class="highlight"><code class="language-python">import re, yaml
+REQUIRED = ["Purpose", "When to use", "When not to use", "Requirements", "Inputs",
+            "Step-by-step procedure", "Output format", "Safety and confirmation rules",
+            "Quality checks", "Examples", "Troubleshooting", "Limitations", "Changelog"]
+
+def lint(md: str) -&gt; list[str]:
+    errs = []
+    m = re.match(r"^---\n(.*?)\n---\n", md, re.S)
+    if not m:
+        return ["missing frontmatter"]
+    meta = yaml.safe_load(m.group(1))
+    for k in ("name", "command", "version", "category", "editions", "network", "author"):
+        if k not in meta:
+            errs.append(f"frontmatter missing {k}")
+    heads = re.findall(r"^## (.+)$", md, re.M)
+    pos = [heads.index(h) if h in heads else -1 for h in REQUIRED]
+    errs += [f"missing section {h}" for h, p in zip(REQUIRED, pos) if p &lt; 0]
+    found = [p for p in pos if p &gt;= 0]
+    if found != sorted(found):
+        errs.append("sections out of order")
+    return errs</code></pre>
+   If PyYAML is not installed, the skill parses the simple <code>key: value</code> lines itself.</p>
+</li>
+<li>
+<p><strong>Show and ask.</strong> Show the guide, the script, and the test result. Ask: "Install /<name> into your skills folder?" Only on yes, copy the staging folder. If a skill with that name exists there, ask again before replacing it and keep a backup copy as <code>&lt;name&gt;.bak-&lt;date&gt;</code>.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<pre class="highlight"><code>staging/rename-invoices/
+  rename-invoices.md
+  rename_invoices.py
+  test_rename_invoices.py
+pytest: 3 passed</code></pre>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Nothing is installed without an explicit yes after the tests pass.</li>
+<li>Generated scripts default to dry run for anything that changes files.</li>
+<li>Never overwrite an existing skill without a second confirmation and a backup.</li>
+<li>Generated code must not read credentials, send network requests, or delete files unless the user asked for that in the interview, and then the guide must say so in its safety section.</li>
+<li>Nothing is published or shared.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Tests pass and cover the main logic plus the dry run.</li>
+<li>The guide lint returns no errors.</li>
+<li>The example in the guide matches what the script actually prints.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li>"Rename scanned invoices": the example above, 3 tests passing, installed after yes.</li>
+<li>"A guide for our weekly scrap report, no script": a guide only, with steps that call /chart and /fin.</li>
+<li>"Adapt /work-instruction to our template": a copy with a new name, <code>based_on</code> credit, and the company template path as an input.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ModuleNotFoundError</code> in tests</td>
+<td>Run pytest from the staging folder or add <code>conftest.py</code> that puts it on <code>sys.path</code>.</td>
+</tr>
+<tr>
+<td>pypdf missing</td>
+<td>Install it, or let the script take text from /ocr output.</td>
+</tr>
+<tr>
+<td>Name collision</td>
+<td>Pick another name; the skill never replaces silently.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Generated code is only as good as the tests; review before using on important files.</li>
+<li>The skill does not package skills for sharing; zip the folder yourself if you want to share it.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Interview, guide template, helper script with dry run, tests, lint, confirmed install.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

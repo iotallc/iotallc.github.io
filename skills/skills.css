@@ -46,3 +46,100 @@
 .sk-search{grid-column:1/-1}
 @media (max-width:900px){.js .sk-filters{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.js .sk-filters{grid-template-columns:1fr}.sk-grid{grid-template-columns:1fr}.skill{padding:20px}.sk-hero{padding-top:56px}}
+
+/* ---------- skill types tree (created by IOTA - Joseph Bryant) ---------- */
+.sk-lead2{font-size:17px!important;color:var(--highlight)}
+.sk-tree-sec{padding:36px 0 40px}
+.sk-tree-sec h2{margin:6px 0 8px}
+.sk-tree-help{max-width:760px;margin-bottom:18px}
+.sk-stage-card{position:relative;padding:0;overflow:hidden}
+.sk-stage-card[hidden]{display:none}
+.sk-stage{position:relative;height:620px;margin:0;overflow:hidden;
+  --b-everyday:var(--highlight);--b-apps:var(--c-win);--b-eng:var(--sky);--b-tools:var(--c-rag);--b-finance:var(--c-inv)}
+.sk-stage svg.links{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sk-stage .lk{fill:none;stroke:rgba(255,255,255,.13);stroke-width:1.4;transition:stroke .3s,stroke-width .3s,opacity .3s}
+.sk-stage .lk.on{stroke:var(--sky);stroke-width:2.2}
+.sk-stage[data-zoom] .lk:not(.on){opacity:.5}
+.sk-stage[data-zoom=""] .lk{opacity:1}
+.sk-stage .node{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;white-space:nowrap;cursor:pointer;
+  font:500 14px var(--font);color:var(--chrome);background:rgba(18,18,18,.92);border:1px solid var(--border);border-radius:999px;padding:9px 15px;
+  transition:border-color .25s,background .25s,box-shadow .25s,opacity .35s}
+.sk-stage .node:focus-visible{outline:2px solid var(--sky);outline-offset:3px}
+.sk-stage .node.root{padding:12px 20px 12px 14px;font-size:16px;font-weight:600;border-color:rgba(224,224,224,.4)}
+.sk-stage .node.root img{width:30px;height:auto}
+.sk-stage .node.branch .bd{width:10px;height:10px;border-radius:50%;background:var(--bc);box-shadow:0 0 12px var(--bc)}
+.sk-stage .node.branch:hover{border-color:var(--bc)}
+.sk-stage .node.branch[aria-pressed="true"]{border-color:var(--bc);background:color-mix(in srgb,var(--bc) 16%,#121212);box-shadow:0 0 0 4px color-mix(in srgb,var(--bc) 14%,transparent),0 0 40px color-mix(in srgb,var(--bc) 30%,transparent)}
+.sk-stage .br-everyday{--bc:var(--b-everyday)}.sk-stage .br-apps{--bc:var(--b-apps)}.sk-stage .br-eng{--bc:var(--b-eng)}.sk-stage .br-tools{--bc:var(--b-tools)}.sk-stage .br-finance{--bc:var(--b-finance)}
+.sk-stage .node.leaf{transform:translate(0,-50%);padding:4px 10px;gap:6px;font-size:12.5px;background:rgba(18,18,18,.85);border-color:color-mix(in srgb,var(--bc) 28%,var(--border))}
+.sk-stage .node.leaf code{font:500 12px var(--mono);color:var(--bc)}
+.sk-stage .node.leaf .nm{display:none;color:var(--highlight)}
+.sk-stage .node.leaf.in .nm{display:inline}
+.sk-stage .node.leaf .tg{font:10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim);border:1px solid var(--hair-2);border-radius:99px;padding:1px 6px}
+.sk-stage .node.leaf .tg.md{color:var(--sky);border-color:color-mix(in srgb,var(--sky) 40%,transparent)}
+.sk-stage .node.leaf.soon{opacity:.7}
+.sk-stage .node.leaf:hover{border-color:var(--bc);opacity:1}
+.sk-stage[data-zoom]:not([data-zoom=""]) .node:not(.root):not([aria-pressed="true"]):not(.in){opacity:.4}
+.sk-stage-card .zoom-reset{position:absolute;right:16px;top:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:99px;
+  font:500 13px var(--font);color:var(--chrome);background:rgba(18,18,18,.95);border:1px solid var(--border);cursor:pointer;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .25s,transform .25s}
+.sk-stage-card.zoomed .zoom-reset{opacity:1;transform:none;pointer-events:auto}
+.sk-stage-card .zoom-reset:focus-visible{outline:2px solid var(--sky)}
+.sk-stage-card .zoom-reset kbd{font:500 10.5px var(--mono);color:var(--muted);border:1px solid var(--hair-2);border-radius:5px;padding:2px 4px}
+@media (max-width:720px){
+  .sk-stage{height:560px}
+  .sk-stage .node{font-size:12.5px;padding:7px 11px}
+  .sk-stage .node.root{font-size:14px;padding:9px 14px 9px 11px}
+  .sk-stage .node.branch{flex-direction:column;gap:4px;padding:7px 9px;border-radius:14px;white-space:normal;text-align:center;max-width:76px;font-size:11.5px;line-height:1.2}
+  .sk-stage .node.leaf:not(.in){padding:0;width:10px;height:10px;border-radius:50%;background:var(--bc);overflow:hidden}
+  .sk-stage .node.leaf:not(.in) > *{display:none}
+  .sk-stage .node.leaf .tg{display:none}
+  .sk-stage-card .zoom-reset kbd{display:none}
+}
+@media (prefers-reduced-motion:reduce){.sk-stage .node,.sk-stage .lk,.sk-stage-card .zoom-reset{transition:none}.skill.flash{animation:none!important}}
+/* grouped list: the view without JavaScript */
+.sk-tree-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.sk-tree-list > li{border:1px solid var(--hair);border-radius:16px;padding:16px 18px;background:rgba(255,255,255,.02)}
+.sk-tree-list .tb{font-weight:600;font-size:17px;color:var(--chrome);text-decoration:none}
+.sk-tree-list ul{list-style:none;padding:0 0 0 14px;margin:10px 0 0;border-left:1px solid var(--hair-2)}
+.sk-tree-list ul li{margin:6px 0;font-size:14.5px}
+.sk-tree-list ul a{color:var(--highlight)}
+.sk-tree-list code{color:var(--sky);font-size:13px}
+.js .sk-tree-list.enhanced{display:none}
+/* guide cards */
+.sk-tags li.md{color:var(--sky);border-color:color-mix(in srgb,var(--sky) 45%,transparent)}
+.sk-tags li.on{color:var(--c-inv);border-color:color-mix(in srgb,var(--c-inv) 40%,transparent)}
+.sk-note{font-size:13.5px!important;color:var(--highlight);margin:0 0 10px}
+.sk-note b{font:500 11.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-right:6px}
+.sk-credit{font:12px var(--mono)!important;color:var(--dim);margin:0 0 4px}
+.sk-btns{display:flex;flex-wrap:wrap;gap:10px}
+.skill p code{font-size:.92em}
+.skill.flash{animation:skflash 1.6s ease-out 1}
+@keyframes skflash{0%{box-shadow:0 0 0 3px var(--sky)}100%{box-shadow:0 0 0 0 transparent}}
+.skill:focus{outline:none}
+.sk-h3{margin:34px 0 8px;font-size:22px}
+/* rendered guide pages */
+.md-view{padding-top:40px;padding-bottom:60px}
+.crumb-line{font:13px var(--mono);color:var(--dim);margin:0 0 18px}
+.crumb-line a{color:var(--highlight)}
+.md-head{border:1px solid var(--hair);border-radius:18px;padding:20px 22px;margin-bottom:30px;background:rgba(255,255,255,.02)}
+.md-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 4px}
+.md-actions .btn{padding:10px 16px;font-size:14.5px}
+.md-actions .btn small{font:12px var(--mono);opacity:.7}
+.md-meta{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+.md-meta th{text-align:left;font:500 11.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding:7px 14px 7px 0;vertical-align:top;white-space:nowrap;width:1%}
+.md-meta td{color:var(--highlight);padding:7px 0;border-top:1px solid var(--hair)}
+.md-meta th{border-top:1px solid var(--hair)}
+.md-body h1{font-size:clamp(30px,4vw,44px);margin:0 0 14px}
+.md-body h2{font-size:24px;margin:38px 0 10px;padding-top:10px;border-top:1px solid var(--hair)}
+.md-body h3{font-size:18px;margin:24px 0 8px}
+.md-body p,.md-body li{color:var(--highlight);font-size:16px;line-height:1.65}
+.md-body pre{background:var(--well);border:1px solid var(--border);border-radius:12px;padding:14px 16px;overflow:auto;font-size:13px;line-height:1.55}
+.md-body pre code{background:none;border:0;padding:0;color:var(--chrome);font-family:var(--mono)}
+.md-body :not(pre) > code{font-family:var(--mono);font-size:.9em;color:var(--chrome);background:var(--input);border:1px solid var(--border);border-radius:6px;padding:1px 5px}
+.md-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px;display:block;overflow-x:auto}
+.md-body th,.md-body td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+.md-body th{background:var(--well);color:var(--chrome)}
+.md-body td{color:var(--highlight)}
+.md-foot{margin-top:40px;border-top:1px solid var(--hair);padding-top:18px}
+.js .nojs-only{display:none}
+html:not(.js) .js-only{display:none}

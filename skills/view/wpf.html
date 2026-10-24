@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WPF Window Builder skill guide | IOTA</title>
+<meta name="description" content="Turn a plain description of a desktop window into a working WPF project: XAML for the layout, C# code-behind or an MVVM view model for the behavior, the IOTA color palette applied, a local build with dotnet, a screenshot of the result, and a loop for change requests.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WPF Window Builder | IOTA skill guide">
+<meta property="og:description" content="Turn a plain description of a desktop window into a working WPF project: XAML for the layout, C# code-behind or an MVVM view model for the behavior, the IOTA color palette applied, a local build with dotnet, a screenshot of the result, and a loop for change requests.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/wpf.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=apps#library">Building apps</a> / WPF Window Builder</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/wpf.md" download="iota-skill-wpf.md">Download .md <small>15 KB</small></a>
+      <a class="btn ghost" href="../md/wpf.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-wpf">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>f0d326325373b962aea3492a4c6a30e8f25ca04701cc2d66023fcc6f72955f5d</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/wpf</td></tr><tr><th>Category</th><td>Building apps</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in the PowerShell edition and the EXE edition. Everything runs on your PC: the model writes the files and the .NET SDK builds them. No network access is needed once the .NET SDK is installed.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/wpf: WPF Window Builder</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA for Windows how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Turn a plain description of a desktop window into a working WPF project: XAML for the layout, C# code-behind or an MVVM view model for the behavior, the IOTA color palette applied, a local build with <code>dotnet</code>, a screenshot of the result, and a loop for change requests.</p>
+<h2>When to use</h2>
+<ul>
+<li>You want a small Windows tool with a real window: a form, a dashboard, a settings screen, a file picker utility.</li>
+<li>You have a description such as "a window with a file list on the left, a preview on the right, and Save and Cancel buttons".</li>
+<li>You want to change an existing generated window: "make the list wider", "add a search box".</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Web pages or cross platform apps. Use /scaffold or /sketch-to-ui with the HTML target instead.</li>
+<li>Wrapping an existing PowerShell script in a window. Use /ps-gui.</li>
+<li>Large existing applications with their own style system. The skill can help with one window at a time, but it will not refactor a whole app.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Windows 10 or 11.</li>
+<li>.NET 8 SDK or later. Check with <code>dotnet --list-sdks</code>. WPF projects need the Windows desktop workload, which ships with the standard SDK installer on Windows.</li>
+<li>A local model that writes C# and XAML reliably. Gemma 3 12B or a Nemotron model of similar size gives the best results. Gemma 3 4B can handle simple forms but makes more XAML mistakes, so the build and fix loop below matters more with small models.</li>
+<li>About 1 GB of free disk space for the SDK and build output.</li>
+<li>Optional: PowerShell 5.1 or 7 for the screenshot step.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Window description</td>
+<td>Yes</td>
+<td>"Inventory lookup: part number box, Search button, results grid, status bar"</td>
+</tr>
+<tr>
+<td>Project name</td>
+<td>No</td>
+<td><code>InventoryLookup</code> (default: derived from the description, PascalCase)</td>
+</tr>
+<tr>
+<td>Pattern</td>
+<td>No</td>
+<td><code>code-behind</code> (default) or <code>mvvm</code></td>
+</tr>
+<tr>
+<td>Output folder</td>
+<td>No</td>
+<td>A folder you choose. The skill asks before using a folder that already has files.</td>
+</tr>
+<tr>
+<td>Target framework</td>
+<td>No</td>
+<td><code>net8.0-windows</code> (default)</td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Restate the window.</strong> Write back a short list of the controls, their layout, and their behavior. Ask one question at a time only if something blocks the layout, for example "Should the grid be editable?" Otherwise pick a sensible default and say which default you picked.</p>
+</li>
+<li>
+<p><strong>Pick the layout plan.</strong> Map the description onto WPF panels:
+   - Whole window: <code>Grid</code> with named rows and columns.
+   - Toolbars and button rows: <code>StackPanel Orientation="Horizontal"</code> or <code>DockPanel</code>.
+   - Forms: a two column <code>Grid</code> (labels in column 0, inputs in column 1).
+   - Lists of records: <code>DataGrid</code> with <code>AutoGenerateColumns="False"</code> and explicit columns.</p>
+</li>
+<li>
+<p><strong>Check the output folder.</strong> If the folder exists and is not empty, list what is there and ask before writing. Never overwrite a file without a yes from the user.</p>
+</li>
+<li>
+<p><strong>Create the project.</strong>
+   <pre class="highlight"><code class="language-powershell">dotnet new wpf -n InventoryLookup -o .\InventoryLookup --framework net8.0</code></pre>
+   If the user chose an existing project, skip this step and edit only the files the change needs.</p>
+</li>
+<li>
+<p><strong>Add the IOTA palette.</strong> Create <code>Themes/Iota.xaml</code> and merge it in <code>App.xaml</code>.
+   <pre class="highlight"><code class="language-xml">&lt;!-- Themes/Iota.xaml --&gt;
+&lt;ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"&gt;
+  &lt;SolidColorBrush x:Key="Bg" Color="#050506"/&gt;
+  &lt;SolidColorBrush x:Key="Surface" Color="#121212"/&gt;
+  &lt;SolidColorBrush x:Key="Border" Color="#2A2A2A"/&gt;
+  &lt;SolidColorBrush x:Key="Text" Color="#E0E0E0"/&gt;
+  &lt;SolidColorBrush x:Key="Muted" Color="#9A9A9A"/&gt;
+  &lt;SolidColorBrush x:Key="Accent" Color="#8EB8D4"/&gt;
+
+  &lt;Style TargetType="Window"&gt;
+    &lt;Setter Property="Background" Value="{StaticResource Bg}"/&gt;
+    &lt;Setter Property="Foreground" Value="{StaticResource Text}"/&gt;
+    &lt;Setter Property="FontFamily" Value="Segoe UI"/&gt;
+    &lt;Setter Property="FontSize" Value="14"/&gt;
+  &lt;/Style&gt;
+  &lt;Style TargetType="TextBlock"&gt;
+    &lt;Setter Property="Foreground" Value="{StaticResource Text}"/&gt;
+  &lt;/Style&gt;
+  &lt;Style TargetType="TextBox"&gt;
+    &lt;Setter Property="Background" Value="{StaticResource Surface}"/&gt;
+    &lt;Setter Property="Foreground" Value="{StaticResource Text}"/&gt;
+    &lt;Setter Property="BorderBrush" Value="{StaticResource Border}"/&gt;
+    &lt;Setter Property="Padding" Value="8,6"/&gt;
+    &lt;Setter Property="CaretBrush" Value="{StaticResource Text}"/&gt;
+  &lt;/Style&gt;
+  &lt;Style TargetType="Button"&gt;
+    &lt;Setter Property="Background" Value="{StaticResource Surface}"/&gt;
+    &lt;Setter Property="Foreground" Value="{StaticResource Text}"/&gt;
+    &lt;Setter Property="BorderBrush" Value="{StaticResource Accent}"/&gt;
+    &lt;Setter Property="Padding" Value="14,6"/&gt;
+    &lt;Setter Property="Margin" Value="0,0,8,0"/&gt;
+  &lt;/Style&gt;
+&lt;/ResourceDictionary&gt;</code></pre>
+   <pre class="highlight"><code class="language-xml">&lt;!-- App.xaml (inside &lt;Application.Resources&gt;) --&gt;
+&lt;ResourceDictionary&gt;
+  &lt;ResourceDictionary.MergedDictionaries&gt;
+    &lt;ResourceDictionary Source="Themes/Iota.xaml"/&gt;
+  &lt;/ResourceDictionary.MergedDictionaries&gt;
+&lt;/ResourceDictionary&gt;</code></pre>
+   Note: implicit <code>Style TargetType="Window"</code> does not apply to derived window classes, so also set <code>Background="{StaticResource Bg}"</code> on <code>MainWindow</code> directly.</p>
+</li>
+<li>
+<p><strong>Write the XAML.</strong> Use <code>x:Name</code> only on elements the code-behind touches. Example for the inventory window:
+   <pre class="highlight"><code class="language-xml">&lt;Window x:Class="InventoryLookup.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Inventory lookup" Width="900" Height="560"
+        Background="{StaticResource Bg}" Foreground="{StaticResource Text}"&gt;
+  &lt;Grid Margin="16"&gt;
+    &lt;Grid.RowDefinitions&gt;
+      &lt;RowDefinition Height="Auto"/&gt;
+      &lt;RowDefinition Height="*"/&gt;
+      &lt;RowDefinition Height="Auto"/&gt;
+    &lt;/Grid.RowDefinitions&gt;
+    &lt;StackPanel Orientation="Horizontal" Margin="0,0,0,12"&gt;
+      &lt;TextBlock Text="Part number" VerticalAlignment="Center" Margin="0,0,8,0"/&gt;
+      &lt;TextBox x:Name="PartBox" Width="220"/&gt;
+      &lt;Button Content="Search" Margin="8,0,0,0" Click="Search_Click" IsDefault="True"/&gt;
+    &lt;/StackPanel&gt;
+    &lt;DataGrid x:Name="Results" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True"
+              Background="{StaticResource Surface}" Foreground="{StaticResource Text}" RowBackground="#121212" AlternatingRowBackground="#1A1A1A"&gt;
+      &lt;DataGrid.Columns&gt;
+        &lt;DataGridTextColumn Header="Part" Binding="{Binding Part}" Width="*"/&gt;
+        &lt;DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="2*"/&gt;
+        &lt;DataGridTextColumn Header="On hand" Binding="{Binding OnHand}" Width="Auto"/&gt;
+      &lt;/DataGrid.Columns&gt;
+    &lt;/DataGrid&gt;
+    &lt;TextBlock x:Name="Status" Grid.Row="2" Margin="0,10,0,0" Foreground="{StaticResource Muted}" Text="Ready"/&gt;
+  &lt;/Grid&gt;
+&lt;/Window&gt;</code></pre></p>
+</li>
+<li>
+<p><strong>Write the behavior.</strong></p>
+</li>
+</ol>
+<p><em>Code-behind (default):</em>
+   <pre class="highlight"><code class="language-csharp">using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+
+namespace InventoryLookup;
+
+public record Item(string Part, string Description, int OnHand);
+
+public partial class MainWindow : Window
+{
+    private readonly List&lt;Item&gt; _items = new()
+    {
+        new("A-100", "Hex bolt, 10 mm", 240),
+        new("A-101", "Washer, 10 mm", 1200),
+        new("B-200", "Bracket, steel", 35),
+    };
+
+    public MainWindow() =&gt; InitializeComponent();
+
+    private void Search_Click(object sender, RoutedEventArgs e)
+    {
+        var q = PartBox.Text.Trim();
+        var hits = _items.Where(i =&gt; i.Part.Contains(q, System.StringComparison.OrdinalIgnoreCase)).ToList();
+        Results.ItemsSource = hits;
+        Status.Text = hits.Count == 0 ? "No matches" : $"{hits.Count} match(es)";
+    }
+}</code></pre></p>
+<p><em>MVVM option:</em> add <code>CommunityToolkit.Mvvm</code> only if the package is already in the local NuGet cache or the user agrees to download it. Without it, use this minimal base:
+   <pre class="highlight"><code class="language-csharp">using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+
+public abstract class ViewModelBase : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected bool Set&lt;T&gt;(ref T field, T value, [CallerMemberName] string? name = null)
+    {
+        if (Equals(field, value)) return false;
+        field = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        return true;
+    }
+}
+
+public sealed class RelayCommand : ICommand
+{
+    private readonly Action _run; private readonly Func&lt;bool&gt;? _can;
+    public RelayCommand(Action run, Func&lt;bool&gt;? can = null) { _run = run; _can = can; }
+    public event EventHandler? CanExecuteChanged
+    {
+        add =&gt; CommandManager.RequerySuggested += value;
+        remove =&gt; CommandManager.RequerySuggested -= value;
+    }
+    public bool CanExecute(object? p) =&gt; _can?.Invoke() ?? true;
+    public void Execute(object? p) =&gt; _run();
+}</code></pre>
+   Then bind with <code>Text="{Binding PartNumber, UpdateSourceTrigger=PropertyChanged}"</code> and <code>Command="{Binding SearchCommand}"</code>, and set <code>DataContext = new MainViewModel();</code> in the window constructor.</p>
+<ol start="8">
+<li>
+<p><strong>Build.</strong>
+   <pre class="highlight"><code class="language-powershell">dotnet build .\InventoryLookup\InventoryLookup.csproj -c Debug -nologo -v q</code></pre>
+   If the build fails, read the first error, fix only the line it names, and rebuild. Stop after 5 attempts and show the remaining errors to the user (see /fix-build for the full loop).</p>
+</li>
+<li>
+<p><strong>Run and screenshot.</strong> Start the app, wait for the window, capture it, then close it.
+   <pre class="highlight"><code class="language-powershell">$exe = Get-ChildItem .\InventoryLookup\bin\Debug -Recurse -Filter InventoryLookup.exe | Select-Object -First 1
+$p = Start-Process $exe.FullName -PassThru
+Start-Sleep -Seconds 3
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+Add-Type @"
+using System; using System.Runtime.InteropServices;
+public static class Win { [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L, T, R, B; }
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r); }
+"@
+$p.Refresh(); $r = New-Object Win+RECT
+[void][Win]::GetWindowRect($p.MainWindowHandle, [ref]$r)
+$bmp = New-Object System.Drawing.Bitmap ($r.R - $r.L), ($r.B - $r.T)
+$g = [System.Drawing.Graphics]::FromImage($bmp)
+$g.CopyFromScreen($r.L, $r.T, 0, 0, $bmp.Size)
+$bmp.Save("$PWD\wpf-preview.png"); $g.Dispose(); $bmp.Dispose()
+Stop-Process -Id $p.Id</code></pre>
+   Show the screenshot in the chat. With display scaling above 100 percent the capture can be offset; if so, note it and ask the user to check the running window instead.</p>
+</li>
+<li>
+<p><strong>Iterate.</strong> For each change request, edit the smallest part of the XAML or C#, show the diff, rebuild, and take a new screenshot. Keep a short change list in the chat.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<ul>
+<li>A project folder with <code>App.xaml</code>, <code>MainWindow.xaml</code>, <code>MainWindow.xaml.cs</code>, <code>Themes/Iota.xaml</code>, and for MVVM a <code>ViewModels</code> folder.</li>
+<li>A screenshot <code>wpf-preview.png</code> next to the project.</li>
+<li>A chat reply with: the control list, the build result, the screenshot, and the exact commands to build and run it again.</li>
+</ul>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Never overwrite or delete a file without asking first. When editing, show a diff.</li>
+<li>Ask before adding any NuGet package, because it may need a download.</li>
+<li>Do not run the built app with administrator rights.</li>
+<li>Do not send, upload, or post anything. The skill only writes files in the folder the user chose.</li>
+</ul>
+<h2>Quality checks</h2>
+<p>Before replying, the skill checks that:
+- <code>dotnet build</code> finished with 0 errors. Warnings are listed, not hidden.
+- Every <code>Click</code> handler named in XAML exists in the code-behind, and every <code>x:Name</code> used in C# exists in XAML.
+- Text contrast: foreground <code>#E0E0E0</code> on <code>#050506</code> or <code>#121212</code>. No dark text on dark backgrounds.
+- The window opens at a size that fits a 1366 x 768 screen.
+- No hard coded personal paths in the code.</p>
+<h2>Examples</h2>
+<ol>
+<li>
+<p><strong>Request:</strong> "/wpf a unit converter: value box, from and to dropdowns, Convert button, result label."
+   <strong>Result:</strong> A 480 x 260 window with a two column form, two <code>ComboBox</code> controls filled with mm, cm, m, in, ft, a converter in code-behind, a passing build, and a screenshot.</p>
+</li>
+<li>
+<p><strong>Request:</strong> "/wpf mvvm a task list with add, remove, and a done checkbox."
+   <strong>Result:</strong> <code>MainViewModel</code> with an <code>ObservableCollection&lt;TaskItem&gt;</code>, <code>AddCommand</code> and <code>RemoveCommand</code>, a <code>ListBox</code> with a <code>DataTemplate</code> holding a <code>CheckBox</code> and <code>TextBlock</code>, and a passing build.</p>
+</li>
+<li>
+<p><strong>Request:</strong> "Make the results grid fill the window and put the status bar in accent color."
+   <strong>Result:</strong> A two line diff in <code>MainWindow.xaml</code>, a rebuild, and a new screenshot.</p>
+</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NETSDK1100</code> or WPF not found</td>
+<td>Build on Windows with a <code>-windows</code> target framework, for example <code>net8.0-windows</code>.</td>
+</tr>
+<tr>
+<td><code>The name 'InitializeComponent' does not exist</code></td>
+<td>The <code>x:Class</code> in XAML must match the namespace and class in the <code>.cs</code> file.</td>
+</tr>
+<tr>
+<td><code>StaticResource</code> not found at runtime</td>
+<td>The theme dictionary is not merged in <code>App.xaml</code>, or the key is misspelled.</td>
+</tr>
+<tr>
+<td>Blank screenshot</td>
+<td>The window opened slowly. Increase the wait to 5 seconds and retry.</td>
+</tr>
+<tr>
+<td>Restore fails offline</td>
+<td>A package reference needs the internet. Remove it or use the plain MVVM base above.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Small local models sometimes produce XAML that looks right but fails to build. The build loop catches this, but complex custom controls and animations may need several rounds.</li>
+<li>The screenshot step uses screen capture, so the window must be visible and not covered.</li>
+<li>The skill does not design icons or custom fonts.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Code-behind and MVVM patterns, IOTA palette, build loop, screenshot step.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

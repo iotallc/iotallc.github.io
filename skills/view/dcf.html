@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DCF Model Builder skill guide | IOTA</title>
+<meta name="description" content="Build a discounted cash flow (DCF) model as an Excel workbook with every assumption on one sheet, a WACC calculation, a five to ten year free cash flow forecast, a terminal value (Gordon growth or exit multiple), the bridge from enterprise value to equity value per share, and a sensitivity table. All cells are formulas so you can change inputs in Excel.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DCF Model Builder | IOTA skill guide">
+<meta property="og:description" content="Build a discounted cash flow (DCF) model as an Excel workbook with every assumption on one sheet, a WACC calculation, a five to ten year free cash flow forecast, a terminal value (Gordon growth or exit multiple), the bridge from enterprise value to equity value per share, and a sensitivity table. All cells are formulas so you can change inputs in Excel.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/dcf.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=finance#library">Finance</a> / DCF Model Builder</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/dcf.md" download="iota-skill-dcf.md">Download .md <small>11 KB</small></a>
+      <a class="btn ghost" href="../md/dcf.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-dcf">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>8f58f49301e11935decb1e5850a3506b387576a3addfe228bc755254979f6df8</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/dcf</td></tr><tr><th>Category</th><td>Finance</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. You type or paste the inputs, local Python computes the model and writes an Excel file with live formulas. No market data is fetched, so it runs offline.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty. Not investment advice.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/dcf: DCF Model Builder</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<p>Not investment advice. A DCF shows what a set of assumptions implies. Different assumptions give very different answers.</p>
+<h2>Purpose</h2>
+<p>Build a discounted cash flow (DCF) model as an Excel workbook with every assumption on one sheet, a WACC calculation, a five to ten year free cash flow forecast, a terminal value (Gordon growth or exit multiple), the bridge from enterprise value to equity value per share, and a sensitivity table. All cells are formulas so you can change inputs in Excel.</p>
+<h2>When to use</h2>
+<ul>
+<li>You want a transparent valuation model you can audit and edit.</li>
+<li>Teaching or learning how a DCF works.</li>
+<li>Checking what growth or margin a current price implies.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Banks, insurers, and other financials where free cash flow is not meaningful. Use dividend or residual income models.</li>
+<li>Early stage companies with no path to positive cash flow inside the forecast period.</li>
+<li>As a recommendation to buy or sell. The skill produces a model, not advice.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Python 3.10 or later with <code>openpyxl</code>.</li>
+<li>Inputs from you: recent revenue, margins, capital spending, and so on. The skill does not download market data. It can read numbers from a /sec-diff download or a CSV you provide.</li>
+<li>Model: any Gemma 3 size or a Nemotron model. The math is in Excel formulas written by code; the model only collects inputs and explains results.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Example</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Company, currency, units</td>
+<td>Example Co, USD, millions</td>
+<td></td>
+</tr>
+<tr>
+<td>Base year revenue</td>
+<td>1,200</td>
+<td>last full year</td>
+</tr>
+<tr>
+<td>Revenue growth by year</td>
+<td>8%, 7%, 6%, 5%, 4%</td>
+<td>one per forecast year</td>
+</tr>
+<tr>
+<td>EBIT margin by year</td>
+<td>18% flat</td>
+<td></td>
+</tr>
+<tr>
+<td>Tax rate</td>
+<td>21%</td>
+<td></td>
+</tr>
+<tr>
+<td>D&amp;A, capex, change in NWC</td>
+<td>4%, 5%, 1% of revenue</td>
+<td>or by year</td>
+</tr>
+<tr>
+<td>Risk free rate</td>
+<td>4.2%</td>
+<td></td>
+</tr>
+<tr>
+<td>Equity risk premium</td>
+<td>5.0%</td>
+<td></td>
+</tr>
+<tr>
+<td>Beta</td>
+<td>1.1</td>
+<td></td>
+</tr>
+<tr>
+<td>Pre tax cost of debt</td>
+<td>5.5%</td>
+<td></td>
+</tr>
+<tr>
+<td>Market value of equity and debt</td>
+<td>9,000 and 1,500</td>
+<td>for WACC weights</td>
+</tr>
+<tr>
+<td>Terminal method</td>
+<td>growth 2.5% or EV/EBITDA 10x</td>
+<td></td>
+</tr>
+<tr>
+<td>Cash, debt, shares</td>
+<td>400, 1,500, 150</td>
+<td>for the equity bridge</td>
+</tr>
+<tr>
+<td>Mid year convention</td>
+<td>yes or no (default no)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Collect inputs</strong> in the order above. Repeat them back in a table and ask the user to confirm units (thousands versus millions is the most common mistake).</p>
+</li>
+<li>
+<p><strong>Sanity check before building.</strong> Warn, but do not block, when:
+   - Terminal growth is at or above the risk free rate, or above 4 percent.
+   - WACC minus terminal growth is under 2 percentage points (the terminal value becomes very sensitive).
+   - Any margin is above 60 percent or negative in the final year.</p>
+</li>
+<li>
+<p><strong>Formulas used.</strong>
+   - Cost of equity (CAPM): <code>Ke = Rf + Beta * ERP</code>
+   - After tax cost of debt: <code>Kd_at = Kd * (1 - t)</code>
+   - WACC: <code>E/(D+E) * Ke + D/(D+E) * Kd_at</code>
+   - Unlevered free cash flow: <code>FCF = EBIT * (1 - t) + D&amp;A - Capex - change in NWC</code>
+   - Discount factor year n: <code>1 / (1 + WACC)^n</code>, or <code>^(n - 0.5)</code> with the mid year convention
+   - Gordon terminal value: <code>TV = FCF_N * (1 + g) / (WACC - g)</code>
+   - Exit multiple terminal value: <code>TV = EBITDA_N * multiple</code>
+   - Enterprise value: sum of discounted FCF + <code>TV / (1 + WACC)^N</code>
+   - Equity value: <code>EV - debt + cash</code>; per share: <code>equity / shares</code></p>
+</li>
+</ol>
+<p>With the mid year convention, the terminal value is still discounted at <code>N</code> (end of year) for the Gordon method in this skill, and the skill states that choice in the Notes sheet.</p>
+<ol start="4">
+<li>
+<p><strong>Build the workbook.</strong>
+   <pre class="highlight"><code class="language-python">from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
+from openpyxl.utils import get_column_letter as col
+
+BLUE = Font(color="1F4E9E")              # inputs in blue, formulas in black
+
+def build(inp: dict, path: str):
+    wb = Workbook()
+    a = wb.active; a.title = "Assumptions"
+    rows = [
+        ("Company", inp["company"]), ("Units", inp["units"]),
+        ("Base revenue", inp["revenue0"]), ("Tax rate", inp["tax"]),
+        ("D&amp;A % revenue", inp["da"]), ("Capex % revenue", inp["capex"]),
+        ("Change in NWC % revenue", inp["nwc"]),
+        ("Risk free rate", inp["rf"]), ("Equity risk premium", inp["erp"]), ("Beta", inp["beta"]),
+        ("Pre tax cost of debt", inp["kd"]), ("Equity value (market)", inp["E"]), ("Debt (market)", inp["D"]),
+        ("Terminal growth", inp["g"]), ("Exit EV/EBITDA", inp.get("multiple", 10)),
+        ("Use exit multiple (1 = yes)", 1 if inp.get("method") == "multiple" else 0),
+        ("Mid year (1 = yes)", 1 if inp.get("midyear") else 0),
+        ("Cash", inp["cash"]), ("Debt for bridge", inp["debt"]), ("Shares", inp["shares"]),
+    ]
+    name = {}
+    for i, (k, v) in enumerate(rows, start=1):
+        a.cell(i, 1, k); c = a.cell(i, 2, v); c.font = BLUE
+        name[k] = f"Assumptions!$B${i}"
+    r0 = len(rows) + 2
+    a.cell(r0, 1, "Year"); a.cell(r0 + 1, 1, "Revenue growth"); a.cell(r0 + 2, 1, "EBIT margin")
+    N = len(inp["growth"])
+    for n in range(N):
+        a.cell(r0, 2 + n, n + 1)
+        a.cell(r0 + 1, 2 + n, inp["growth"][n]).font = BLUE
+        a.cell(r0 + 2, 2 + n, inp["margin"][n]).font = BLUE
+    ke = f"({name['Risk free rate']}+{name['Beta']}*{name['Equity risk premium']})"
+    kd = f"({name['Pre tax cost of debt']}*(1-{name['Tax rate']}))"
+    E, D = name["Equity value (market)"], name["Debt (market)"]
+    a.cell(r0 + 4, 1, "Cost of equity"); a.cell(r0 + 4, 2, f"={ke}")
+    a.cell(r0 + 5, 1, "After tax cost of debt"); a.cell(r0 + 5, 2, f"={kd}")
+    a.cell(r0 + 6, 1, "WACC"); a.cell(r0 + 6, 2, f"={E}/({E}+{D})*{ke}+{D}/({E}+{D})*{kd}")
+    wacc = f"Assumptions!$B${r0 + 6}"
+
+    f = wb.create_sheet("DCF")
+    labels = ["Year", "Revenue", "EBIT", "NOPAT", "D&amp;A", "Capex", "Change in NWC", "FCF",
+              "Discount period", "Discount factor", "PV of FCF"]
+    for i, l in enumerate(labels, start=1):
+        f.cell(i, 1, l)
+    for n in range(N):
+        c = col(2 + n); prev = "Assumptions!$B$3" if n == 0 else f"{col(1 + n)}2"
+        g = f"Assumptions!{col(2 + n)}${r0 + 1}"; m = f"Assumptions!{col(2 + n)}${r0 + 2}"
+        f[f"{c}1"] = n + 1
+        f[f"{c}2"] = f"={prev}*(1+{g})"
+        f[f"{c}3"] = f"={c}2*{m}"
+        f[f"{c}4"] = f"={c}3*(1-{name['Tax rate']})"
+        f[f"{c}5"] = f"={c}2*{name['D&amp;A % revenue']}"
+        f[f"{c}6"] = f"={c}2*{name['Capex % revenue']}"
+        f[f"{c}7"] = f"={c}2*{name['Change in NWC % revenue']}"
+        f[f"{c}8"] = f"={c}4+{c}5-{c}6-{c}7"
+        f[f"{c}9"] = f"={c}1-0.5*{name['Mid year (1 = yes)']}"
+        f[f"{c}10"] = f"=1/(1+{wacc})^{c}9"
+        f[f"{c}11"] = f"={c}8*{c}10"
+    last = col(1 + N)
+    gordon = f"{last}8*(1+{name['Terminal growth']})/({wacc}-{name['Terminal growth']})"
+    exitv = f"({last}3+{last}5)*{name['Exit EV/EBITDA']}"
+    out = [
+        ("Terminal value", f"=IF({name['Use exit multiple (1 = yes)']}=1,{exitv},{gordon})"),
+        ("PV of terminal value", f"=B13/(1+{wacc})^{last}1"),
+        ("Sum of PV of FCF", f"=SUM(B11:{last}11)"),
+        ("Enterprise value", "=B14+B15"),
+        ("Less debt", f"={name['Debt for bridge']}"),
+        ("Plus cash", f"={name['Cash']}"),
+        ("Equity value", "=B16-B17+B18"),
+        ("Value per share", f"=B19/{name['Shares']}"),
+        ("Terminal value share of EV", "=B14/B16"),
+    ]
+    for i, (k, v) in enumerate(out, start=13):
+        f.cell(i, 1, k); f.cell(i, 2, v)
+    notes = wb.create_sheet("Notes")
+    notes["A1"] = "Not investment advice. Built with the /dcf skill guide by IOTA - Joseph Bryant."
+    notes["A2"] = "Blue cells on Assumptions are inputs. All other cells are formulas."
+    wb.save(path)</code></pre></p>
+</li>
+<li>
+<p><strong>Sensitivity table.</strong> On a <code>Sensitivity</code> sheet, show value per share for WACC from minus 2 to plus 2 points in 0.5 steps (rows) against terminal growth from 1.5 to 3.5 percent (columns). Because openpyxl cannot create Excel Data Tables, the skill computes each cell with Python using the same formulas, writes values, and labels the sheet "values computed at build time; rebuild after changing inputs". It also checks that the center cell equals the DCF sheet result within 0.01.</p>
+</li>
+<li>
+<p><strong>Explain the result.</strong> Show EV, equity value, value per share, the terminal value share of EV, and the two inputs that move the result most (from the sensitivity table). If the terminal value is more than 75 percent of EV, say so plainly.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<ul>
+<li><code>DCF_&lt;company&gt;_&lt;date&gt;.xlsx</code> with sheets Assumptions, DCF, Sensitivity, Notes.</li>
+<li>A chat table: WACC, EV, equity value, per share value, terminal share of EV, plus "Not investment advice."</li>
+</ul>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Not investment advice; this line appears in the workbook and the chat summary.</li>
+<li>Inputs are confirmed before building. The skill never makes up a company's financial numbers; missing inputs are asked for.</li>
+<li>Never overwrite an existing workbook; save a new dated file.</li>
+<li>Nothing is sent or shared.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Recompute value per share in Python and compare with the workbook formulas (after a LibreOffice headless recalculation if available, else by evaluating the same formulas in Python).</li>
+<li>WACC greater than terminal growth, or the build stops with an explanation.</li>
+<li>Units consistent across revenue, cash, debt, and shares.</li>
+<li>FCF signs: capex and NWC increases reduce FCF.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li>Example Co, revenue 1,200, growth 8 to 4 percent, margin 18 percent, WACC about 8.6 percent, g 2.5 percent. The workbook shows EV, equity value, and per share value, with the terminal value about two thirds of EV.</li>
+<li>Same inputs with an exit multiple of 10x EBITDA. The skill shows both methods side by side and the implied perpetual growth of the multiple.</li>
+<li>Reverse check: the user gives a share price; the skill searches growth rates in the sensitivity grid that match it and reports the implied growth.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#DIV/0!</code> in terminal value</td>
+<td>WACC equals terminal growth. Change one.</td>
+</tr>
+<tr>
+<td>Value per share wildly off</td>
+<td>Units mismatch, usually shares in millions and cash in thousands.</td>
+</tr>
+<tr>
+<td>Formulas show as text</td>
+<td>The cell started with a space. The skill writes formulas beginning with <code>=</code>.</td>
+</tr>
+<tr>
+<td>Sensitivity center does not match</td>
+<td>Inputs changed after build. Rebuild.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Single scenario per workbook (add copies for bull and bear cases).</li>
+<li>No automatic market data, beta estimation, or peer multiples.</li>
+<li>Simplified bridge: no minority interest, leases, or pensions unless added by hand.</li>
+<li>Not investment advice.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Assumption sheet, CAPM WACC, FCF forecast, Gordon and exit multiple, equity bridge, sensitivity grid.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

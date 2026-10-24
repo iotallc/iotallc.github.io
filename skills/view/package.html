@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Windows Installer Packager skill guide | IOTA</title>
+<meta name="description" content="Turn a built Windows app into an installer people can double click: an MSI built with the WiX Toolset, or an MSIX package. The skill handles version numbers, Start menu shortcuts, upgrades, and code signing with a certificate you already have.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows Installer Packager | IOTA skill guide">
+<meta property="og:description" content="Turn a built Windows app into an installer people can double click: an MSI built with the WiX Toolset, or an MSIX package. The skill handles version numbers, Start menu shortcuts, upgrades, and code signing with a certificate you already have.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/package.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=apps#library">Building apps</a> / Windows Installer Packager</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/package.md" download="iota-skill-package.md">Download .md <small>10 KB</small></a>
+      <a class="btn ghost" href="../md/package.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-package">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>80f29ab885a2c8bf4f53e0fd6fa567fa248de3ec728addf6f63cf6086ba7386e</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/package</td></tr><tr><th>Category</th><td>Building apps</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. Packaging runs local tools: the WiX Toolset for MSI, or the Windows SDK MakeAppx and SignTool for MSIX. Installing WiX as a .NET tool downloads it once; after that it works offline.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Network note</th><td>First install of the WiX .NET tool needs the internet. Timestamping a signature contacts a timestamp server, which you can skip.</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/package: Windows Installer Packager</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Turn a built Windows app into an installer people can double click: an MSI built with the WiX Toolset, or an MSIX package. The skill handles version numbers, Start menu shortcuts, upgrades, and code signing with a certificate you already have.</p>
+<h2>When to use</h2>
+<ul>
+<li>You built an app with /wpf or /scaffold and want to hand it to others.</li>
+<li>You need repeatable versioned installers for each release.</li>
+<li>Your organization requires signed installers.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Publishing to the Microsoft Store (needs Partner Center steps the skill does not perform).</li>
+<li>Apps that need drivers, services with custom accounts, or complex prerequisites. The skill covers common cases only.</li>
+<li>When you do not have the right to distribute the app or its dependencies.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>A release build of the app, for example from:
+  <pre class="highlight"><code class="language-powershell">dotnet publish .\src\PartTracker.App -c Release -r win-x64 --self-contained false -o .\publish</code></pre></li>
+<li>MSI path: WiX Toolset v5 or later as a .NET tool: <code>dotnet tool install --global wix</code> (online once).</li>
+<li>MSIX path: Windows 10 SDK (<code>makeappx.exe</code>, <code>signtool.exe</code>), usually under <code>C:\Program Files (x86)\Windows Kits\10\bin\&lt;version&gt;\x64</code>.</li>
+<li>Signing: a code signing certificate in the user's certificate store or a <code>.pfx</code> file. The skill never creates or requests a commercial certificate.</li>
+<li>Model: any Gemma 3 or Nemotron size works; the templates are fixed and only names and versions change.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Publish folder</td>
+<td>Yes</td>
+<td><code>.\publish</code></td>
+</tr>
+<tr>
+<td>Product name</td>
+<td>Yes</td>
+<td><code>Part Tracker</code></td>
+</tr>
+<tr>
+<td>Manufacturer</td>
+<td>Yes</td>
+<td>your company name</td>
+</tr>
+<tr>
+<td>Version</td>
+<td>Yes</td>
+<td><code>1.2.0</code></td>
+</tr>
+<tr>
+<td>Format</td>
+<td>No</td>
+<td><code>msi</code> (default) or <code>msix</code></td>
+</tr>
+<tr>
+<td>Main exe</td>
+<td>No</td>
+<td>detected if only one <code>.exe</code></td>
+</tr>
+<tr>
+<td>Certificate</td>
+<td>No</td>
+<td>thumbprint or <code>.pfx</code> path</td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Check the version.</strong> MSI versions use <code>major.minor.build</code> where major and minor are at most 255 and build is at most 65535. MSIX uses four parts <code>major.minor.build.revision</code>. Convert as needed and tell the user. Read the current version from the project if present:
+   <pre class="highlight"><code class="language-powershell">[xml]$proj = Get-Content .\src\PartTracker.App\PartTracker.App.csproj
+$proj.Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1</code></pre></p>
+</li>
+<li>
+<p><strong>Make or reuse the UpgradeCode.</strong> The UpgradeCode must stay the same for every release of a product so upgrades replace older versions. Look for <code>installer/upgrade-code.txt</code>. If missing, generate one with <code>[guid]::NewGuid()</code> and save it there, and tell the user to keep that file in source control.</p>
+</li>
+<li>
+<p><strong>MSI: write <code>installer/Product.wxs</code>.</strong>
+   <pre class="highlight"><code class="language-xml">&lt;Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"&gt;
+  &lt;Package Name="Part Tracker" Manufacturer="Example Co" Version="1.2.0"
+           UpgradeCode="PUT-THE-SAVED-GUID-HERE" Scope="perMachine"&gt;
+    &lt;MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." /&gt;
+    &lt;MediaTemplate EmbedCab="yes" /&gt;
+
+    &lt;StandardDirectory Id="ProgramFiles64Folder"&gt;
+      &lt;Directory Id="INSTALLFOLDER" Name="Part Tracker" /&gt;
+    &lt;/StandardDirectory&gt;
+    &lt;StandardDirectory Id="ProgramMenuFolder"&gt;
+      &lt;Directory Id="AppMenuFolder" Name="Part Tracker" /&gt;
+    &lt;/StandardDirectory&gt;
+
+    &lt;ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER"&gt;
+      &lt;Files Include="..\publish\**" /&gt;
+    &lt;/ComponentGroup&gt;
+
+    &lt;Component Id="StartMenuShortcut" Directory="AppMenuFolder" Guid="*"&gt;
+      &lt;Shortcut Id="AppShortcut" Name="Part Tracker"
+                Target="[INSTALLFOLDER]PartTracker.App.exe" WorkingDirectory="INSTALLFOLDER" /&gt;
+      &lt;RemoveFolder Id="RemoveAppMenuFolder" On="uninstall" /&gt;
+      &lt;RegistryValue Root="HKCU" Key="Software\Example Co\Part Tracker"
+                     Name="installed" Type="integer" Value="1" KeyPath="yes" /&gt;
+    &lt;/Component&gt;
+
+    &lt;Feature Id="Main"&gt;
+      &lt;ComponentGroupRef Id="AppFiles" /&gt;
+      &lt;ComponentRef Id="StartMenuShortcut" /&gt;
+    &lt;/Feature&gt;
+  &lt;/Package&gt;
+&lt;/Wix&gt;</code></pre>
+   Build:
+   <pre class="highlight"><code class="language-powershell">wix build .\installer\Product.wxs -arch x64 -o ".\dist\PartTracker-1.2.0-x64.msi"</code></pre>
+   The <code>Files</code> element harvests the publish folder at build time (added in WiX v5). If WiX v4 or older is installed, the skill says so and suggests upgrading instead of writing older syntax. The schema namespace stays <code>wixtoolset.org/schemas/v4/wxs</code> in v5 and later; that is expected.</p>
+</li>
+<li>
+<p><strong>MSIX: write <code>msix/AppxManifest.xml</code></strong> and copy the publish folder plus logo images into a layout folder.
+   <pre class="highlight"><code class="language-xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap rescap"&gt;
+  &lt;Identity Name="ExampleCo.PartTracker" Publisher="CN=Example Co" Version="1.2.0.0" ProcessorArchitecture="x64" /&gt;
+  &lt;Properties&gt;
+    &lt;DisplayName&gt;Part Tracker&lt;/DisplayName&gt;
+    &lt;PublisherDisplayName&gt;Example Co&lt;/PublisherDisplayName&gt;
+    &lt;Logo&gt;Assets\StoreLogo.png&lt;/Logo&gt;
+  &lt;/Properties&gt;
+  &lt;Dependencies&gt;
+    &lt;TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" /&gt;
+  &lt;/Dependencies&gt;
+  &lt;Resources&gt;&lt;Resource Language="en-us" /&gt;&lt;/Resources&gt;
+  &lt;Applications&gt;
+    &lt;Application Id="App" Executable="PartTracker.App.exe" EntryPoint="Windows.FullTrustApplication"&gt;
+      &lt;uap:VisualElements DisplayName="Part Tracker" Description="Part Tracker"
+          BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png"
+          Square44x44Logo="Assets\Square44x44Logo.png" /&gt;
+    &lt;/Application&gt;
+  &lt;/Applications&gt;
+  &lt;Capabilities&gt;&lt;rescap:Capability Name="runFullTrust" /&gt;&lt;/Capabilities&gt;
+&lt;/Package&gt;</code></pre>
+   The <code>Publisher</code> value must exactly match the subject of the signing certificate. Pack:
+   <pre class="highlight"><code class="language-powershell">makeappx pack /d .\msix\layout /p ".\dist\PartTracker-1.2.0.0-x64.msix" /o</code></pre>
+   The <code>/o</code> flag overwrites; the skill only uses it on files inside <code>dist</code> that it created in this run, and asks otherwise.</p>
+</li>
+<li>
+<p><strong>Sign</strong> (optional but recommended). With a certificate in the store:
+   <pre class="highlight"><code class="language-powershell">signtool sign /fd SHA256 /sha1 &lt;THUMBPRINT&gt; /tr http://timestamp.digicert.com /td SHA256 ".\dist\PartTracker-1.2.0-x64.msi"</code></pre>
+   With a <code>.pfx</code>, ask the user to type the password at the prompt (<code>/p</code> on the command line is visible in history, so prefer importing the pfx into the store first). Offline: leave out <code>/tr</code> and <code>/td</code> and warn that unsigned timestamps make the signature invalid when the certificate expires.</p>
+</li>
+</ol>
+<p>For local testing only, a self signed certificate:
+   <pre class="highlight"><code class="language-powershell">$cert = New-SelfSignedCertificate -Type CodeSigningCert -Subject "CN=Example Co" -CertStoreLocation Cert:\CurrentUser\My</code></pre>
+   Explain that other PCs will not trust it unless it is installed in their Trusted People store, so it is not for distribution.</p>
+<ol start="6">
+<li>
+<p><strong>Verify.</strong>
+   <pre class="highlight"><code class="language-powershell">signtool verify /pa /v ".\dist\PartTracker-1.2.0-x64.msi"
+Get-FileHash ".\dist\PartTracker-1.2.0-x64.msi" -Algorithm SHA256</code></pre>
+   Optionally do a test install in a VM or Windows Sandbox: <code>msiexec /i dist\PartTracker-1.2.0-x64.msi /l*v install.log</code>.</p>
+</li>
+<li>
+<p><strong>Write release notes</strong> <code>dist/RELEASE-1.2.0.txt</code> with version, file name, size, SHA-256, signing subject, and the build command.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<pre class="highlight"><code>dist/
+  PartTracker-1.2.0-x64.msi
+  RELEASE-1.2.0.txt
+installer/
+  Product.wxs
+  upgrade-code.txt</code></pre>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Never overwrite an existing installer in <code>dist</code> without asking. Different versions get different file names.</li>
+<li>Never print or store certificate passwords. Never commit <code>.pfx</code> files; add <code>*.pfx</code> to <code>.gitignore</code>.</li>
+<li>Never change the UpgradeCode of an existing product without asking; doing so breaks upgrades.</li>
+<li>Test installs only with the user's go ahead. The skill does not upload or publish installers.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Version in the file name, the package, and the release notes all match.</li>
+<li><code>signtool verify</code> passes when signed.</li>
+<li>The main exe exists in the publish folder and the shortcut target matches it.</li>
+<li>The SHA-256 in the notes matches <code>Get-FileHash</code>.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li><code>/package .\publish "Part Tracker" "Example Co" 1.2.0</code>: signed x64 MSI with a Start menu shortcut and release notes.</li>
+<li><code>/package msix ... 1.2.0</code>: converts to <code>1.2.0.0</code>, warns that the Publisher must match the certificate subject, produces a signed MSIX.</li>
+<li>Upgrade test: building 1.2.1 with the same UpgradeCode replaces 1.2.0 on install.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wix</code> not found</td>
+<td><code>dotnet tool install --global wix</code> and reopen the terminal.</td>
+</tr>
+<tr>
+<td>MSIX install error 0x800B0109</td>
+<td>The certificate is not trusted on this PC.</td>
+</tr>
+<tr>
+<td>MSIX error about Publisher</td>
+<td>The manifest <code>Publisher</code> does not match the certificate subject.</td>
+</tr>
+<tr>
+<td>Two copies after upgrade</td>
+<td>The UpgradeCode changed or the version did not increase.</td>
+</tr>
+<tr>
+<td>SmartScreen warning</td>
+<td>New certificates need reputation; signing still helps.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>WiX v3 and v4 syntax are not covered.</li>
+<li>No installer UI customization beyond the defaults.</li>
+<li>Prerequisite bundles (for example installing the .NET runtime) need a WiX Burn bundle, which is outside this guide; publishing self contained is the simpler option.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. WiX v5 MSI, MSIX manifest, signing, verification, release notes.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

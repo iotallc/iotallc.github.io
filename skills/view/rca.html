@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Root Cause Analysis and 8D skill guide | IOTA</title>
+<meta name="description" content="Walk a problem from first report to a closed 8D: define the problem clearly, contain it, find causes with 5 Whys and a fishbone (Ishikawa) diagram, choose and verify corrective actions, and write the 8D report as DOCX or PDF. The skill asks the questions; you and your team supply the facts.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Root Cause Analysis and 8D | IOTA skill guide">
+<meta property="og:description" content="Walk a problem from first report to a closed 8D: define the problem clearly, contain it, find causes with 5 Whys and a fishbone (Ishikawa) diagram, choose and verify corrective actions, and write the 8D report as DOCX or PDF. The skill asks the questions; you and your team supply the facts.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/rca.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=eng#library">Engineering</a> / Root Cause Analysis and 8D</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/rca.md" download="iota-skill-rca.md">Download .md <small>11 KB</small></a>
+      <a class="btn ghost" href="../md/rca.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-rca">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>a1a1670a9b1b91b5c2d2d212206068c4005d2bc1fcb7138e16eba4a252f0f91e</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/rca</td></tr><tr><th>Category</th><td>Engineering</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. The guided questions run in chat with the local model, the fishbone is drawn with matplotlib, and the report is written with python-docx or reportlab on your PC.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/rca: Root Cause Analysis and 8D</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Walk a problem from first report to a closed 8D: define the problem clearly, contain it, find causes with 5 Whys and a fishbone (Ishikawa) diagram, choose and verify corrective actions, and write the 8D report as DOCX or PDF. The skill asks the questions; you and your team supply the facts.</p>
+<h2>When to use</h2>
+<ul>
+<li>A customer complaint, internal escape, or repeat defect needs a documented root cause.</li>
+<li>You want a structured 5 Whys instead of a free discussion.</li>
+<li>A supplier or customer asked for an 8D.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Injuries or safety incidents that need a formal investigation under your company's or regulator's procedure. The skill can help organize notes but is not that procedure.</li>
+<li>When facts are not available yet. The skill will keep asking for data instead of guessing.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>Python 3.10 or later with <code>matplotlib</code>, and <code>python-docx</code> for DOCX or <code>reportlab</code> for PDF.</li>
+<li>Model: Gemma 3 12B or 27B or a Nemotron model asks better follow up questions. Gemma 3 4B can run the templates but tends to accept the first plausible cause; the "evidence" rule below matters more with small models.</li>
+</ul>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem report</td>
+<td>Yes</td>
+<td>"Customer found 12 brackets with bore oversize, lot 2410-07"</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>Strongly recommended</td>
+<td>measurements, photos, dates, lot numbers</td>
+</tr>
+<tr>
+<td>Team members</td>
+<td>No</td>
+<td>names and roles for D1</td>
+</tr>
+<tr>
+<td>Report format</td>
+<td>No</td>
+<td><code>docx</code> (default) or <code>pdf</code></td>
+</tr>
+<tr>
+<td>Report number</td>
+<td>No</td>
+<td><code>8D-2026-014</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>D1 Team.</strong> Record names and roles. If the user is alone, record that and suggest who should review.</p>
+</li>
+<li>
+<p><strong>D2 Problem description with 5W2H.</strong> Ask each until answered or marked unknown:</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Example answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What is the defect?</td>
+<td>Bore 10.03 to 10.05 mm, spec 10.000 to 10.015</td>
+</tr>
+<tr>
+<td>Where was it found?</td>
+<td>Customer incoming inspection</td>
+</tr>
+<tr>
+<td>When?</td>
+<td>October 14, lot 2410-07</td>
+</tr>
+<tr>
+<td>Who found it?</td>
+<td>Customer QA</td>
+</tr>
+<tr>
+<td>Which parts?</td>
+<td>B-200 bracket, rev C</td>
+</tr>
+<tr>
+<td>How many?</td>
+<td>12 of 400 checked</td>
+</tr>
+<tr>
+<td>How was it detected?</td>
+<td>Pin gauge</td>
+</tr>
+</tbody>
+</table>
+<p>Then write a one sentence problem statement with no cause in it. Wrong: "Worn reamer caused oversize." Right: "12 of 400 B-200 brackets from lot 2410-07 had bore diameter 10.03 to 10.05 mm against a 10.015 mm maximum."</p>
+<ol start="3">
+<li>
+<p><strong>D3 Containment.</strong> Ask what has been done to protect the customer now: sort stock, quarantine, 100 percent check. Record quantity checked, quantity rejected, and date. Containment is not the fix.</p>
+</li>
+<li>
+<p><strong>D4 Root cause.</strong></p>
+</li>
+</ol>
+<p><em>Fishbone first.</em> Brainstorm possible causes under the six M categories: Man (people), Machine, Method, Material, Measurement, Mother Nature (environment). Draw it:
+   <pre class="highlight"><code class="language-python">import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+def fishbone(problem: str, causes: dict[str, list[str]], path: str):
+    cats = list(causes)
+    fig, ax = plt.subplots(figsize=(13, 6.5))
+    ax.set_xlim(0, 13); ax.set_ylim(0, 6.5); ax.axis("off")
+    ax.annotate("", xy=(10.6, 3.25), xytext=(0.5, 3.25),
+                arrowprops=dict(arrowstyle="-|&gt;", lw=2, color="#333"))
+    ax.text(10.7, 3.25, problem, va="center", ha="left", fontsize=11, wrap=True,
+            bbox=dict(boxstyle="round", fc="#F2F2F2", ec="#333"))
+    xs = [2.5, 5.5, 8.5]
+    for i, cat in enumerate(cats[:6]):
+        top = i % 2 == 0
+        x = xs[i // 2]
+        y_end = 5.9 if top else 0.6
+        ax.plot([x - 1.2, x], [y_end, 3.25], color="#333", lw=1.5)
+        ax.text(x - 1.2, y_end + (0.2 if top else -0.3), cat, ha="center", fontsize=11, weight="bold")
+        for j, c in enumerate(causes[cat][:4]):
+            t = (j + 1) / 5
+            cx = x - 1.2 + 1.2 * t
+            cy = y_end + (3.25 - y_end) * t
+            ax.plot([cx - 0.9, cx], [cy, cy], color="#777", lw=1)
+            ax.text(cx - 0.95, cy, c, ha="right", va="center", fontsize=8.5)
+    fig.tight_layout(); fig.savefig(path, dpi=150); plt.close(fig)</code></pre></p>
+<p><em>Then narrow.</em> For each fishbone cause, ask: "What evidence supports or rules this out?" Mark each cause as Confirmed, Ruled out, or Not checked. Only confirmed or likely causes go to 5 Whys.</p>
+<p><em>5 Whys.</em> Ask "why" for each surviving cause, one level at a time. At every level require a fact, not an opinion:
+   <pre class="highlight"><code>Why {n}: Why did "{previous answer}" happen?
+Answer with what is known. Then say what evidence shows it
+(measurement, record, photo, test). If there is no evidence yet,
+say "needs check" and suggest how to check it.</code></pre>
+   Stop when the answer is a process or system cause that the team can change (a missing control, an unclear standard, a design gap). Do the chain twice: once for why it <strong>occurred</strong> and once for why it <strong>escaped</strong> (was not detected).</p>
+<p>Example chain:
+   <pre class="highlight"><code>Occurred
+1. Bore oversize            -&gt; reamer cut large (CMM shows 10.04 on parts)
+2. Reamer cut large         -&gt; reamer worn (tool shows edge wear at 1,900 parts)
+3. Reamer worn              -&gt; used past 1,200 part life
+4. Used past life           -&gt; no tool life counter on op 30
+5. No counter               -&gt; tool life not set in the machine setup standard
+Escaped
+1. Not caught at op 30      -&gt; gauge check every 10 parts used a worn go pin
+2. Worn go pin              -&gt; gauge not in calibration system</code></pre></p>
+<ol start="5">
+<li>
+<p><strong>D5 Choose corrective actions.</strong> One action per root cause (occurred and escaped). Prefer error proofing over training or reminders. State how each will be verified.</p>
+</li>
+<li>
+<p><strong>D6 Implement and verify.</strong> Record what was done, when, and the result data. Example: "Tool life counter set to 1,000 parts on Oct 18; 600 parts since, bore 10.004 to 10.011."</p>
+</li>
+<li>
+<p><strong>D7 Prevent recurrence.</strong> Update standards: setup sheet, PFMEA (link to /fmea), control plan, work instruction (link to /work-instruction), and similar machines.</p>
+</li>
+<li>
+<p><strong>D8 Close and recognize the team.</strong></p>
+</li>
+<li>
+<p><strong>Write the report.</strong>
+   <pre class="highlight"><code class="language-python">from docx import Document
+from docx.shared import Inches, Pt
+
+def write_8d(data: dict, fishbone_png: str, path: str):
+    doc = Document()
+    doc.styles["Normal"].font.size = Pt(10.5)
+    doc.add_heading(f"8D Report {data['number']}", 0)
+    doc.add_paragraph(f"Part: {data['part']}    Customer: {data['customer']}    Opened: {data['opened']}")
+    sections = [
+        ("D1 Team", data["team"]), ("D2 Problem description", data["problem"]),
+        ("D3 Containment", data["containment"]), ("D4 Root cause", data["root_cause"]),
+        ("D5 Corrective actions", data["actions"]), ("D6 Implementation and verification", data["verification"]),
+        ("D7 Prevent recurrence", data["prevention"]), ("D8 Closure", data["closure"]),
+    ]
+    for title, body in sections:
+        doc.add_heading(title, level=1)
+        for para in body if isinstance(body, list) else [body]:
+            doc.add_paragraph(para)
+        if title.startswith("D4"):
+            doc.add_picture(fishbone_png, width=Inches(6.5))
+            for chain_name, chain in data["whys"].items():
+                doc.add_paragraph(chain_name, style="Heading 3")
+                t = doc.add_table(rows=1, cols=3); t.style = "Light Grid Accent 1"
+                t.rows[0].cells[0].text, t.rows[0].cells[1].text, t.rows[0].cells[2].text = "Why", "Answer", "Evidence"
+                for i, (ans, ev) in enumerate(chain, 1):
+                    r = t.add_row().cells; r[0].text, r[1].text, r[2].text = str(i), ans, ev
+    doc.add_paragraph("Prepared with the /rca skill guide by IOTA - Joseph Bryant. Content reviewed by the team listed in D1.")
+    doc.save(path)</code></pre>
+   For PDF, build the same sections with <code>reportlab.platypus</code> (<code>SimpleDocTemplate</code>, <code>Paragraph</code>, <code>Table</code>, <code>Image</code>), or convert the DOCX with LibreOffice if it is installed: <code>soffice --headless --convert-to pdf report.docx</code>.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<ul>
+<li><code>8D-&lt;number&gt;.docx</code> or <code>.pdf</code></li>
+<li><code>fishbone.png</code></li>
+<li>A chat summary: problem statement, root causes (occurred and escaped), actions, and open items.</li>
+</ul>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Never write a cause into the report as confirmed without evidence the user provided. Unverified items are labeled "needs check".</li>
+<li>Do not name or blame individuals; record system causes.</li>
+<li>Never overwrite an existing report; create a new revision file.</li>
+<li>Nothing is sent to customers or suppliers. The user sends the report.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>The problem statement contains no cause.</li>
+<li>Each root cause has an action, and each action has a verification with data.</li>
+<li>Both the occurrence and escape chains are present.</li>
+<li>D3 containment quantities add up (checked = accepted + rejected).</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li><strong>Oversize bore:</strong> chains above; actions: tool life counter and gauge calibration; DOCX with fishbone.</li>
+<li><strong>Label mix up at packing:</strong> occurred root cause "two part numbers share one print template"; escaped root cause "no scan verification"; action: barcode scan at pack out.</li>
+<li><strong>Incomplete data:</strong> the user has no measurements yet. The skill stops at D4 with a list of checks to run and saves a draft marked "open".</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5 Whys ends at "operator error"</td>
+<td>Ask why the process allowed the error. Keep going.</td>
+</tr>
+<tr>
+<td>Too many fishbone causes</td>
+<td>Vote on the top three with evidence, mark the rest "not checked".</td>
+</tr>
+<tr>
+<td><code>Light Grid Accent 1</code> style missing</td>
+<td>Use <code>Table Grid</code>, which exists in every default template.</td>
+</tr>
+<tr>
+<td>PDF conversion fails</td>
+<td>Install LibreOffice or use the reportlab path.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>The quality of the analysis depends on the facts supplied; the model does not see your parts.</li>
+<li>One problem per 8D.</li>
+<li>The fishbone drawing fits up to six categories and four causes each; longer lists go in a table.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. 5W2H, fishbone, evidence based 5 Whys (occurred and escaped), 8D DOCX and PDF.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sketch to UI skill guide | IOTA</title>
+<meta name="description" content="Turn a photo of a paper sketch, a whiteboard drawing, or a screenshot of another app into a working layout. The skill reads the image, lists every region it found, confirms that list with you, and then writes WPF XAML or a single HTML page in the IOTA palette.">
+<meta name="author" content="IOTA - Joseph Bryant">
+<meta name="theme-color" content="#050506">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sketch to UI | IOTA skill guide">
+<meta property="og:description" content="Turn a photo of a paper sketch, a whiteboard drawing, or a screenshot of another app into a working layout. The skill reads the image, lists every region it found, confirms that list with you, and then writes WPF XAML or a single HTML page in the IOTA palette.">
+<meta property="og:url" content="https://iotallc.github.io/skills/view/sketch-to-ui.html">
+<meta property="og:image" content="https://iotallc.github.io/assets/img/og-image-v3.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../../assets/img/favicon.png">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="../skills.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="IOTA home">
+      <img src="../../assets/img/iota-chevron-sm.png" alt="" width="48" height="32">
+      <span><b>IOTA</b><small>Investment Management LLC</small></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul id="nav-links">
+      <li><a href="../#library">Skills</a></li>
+      <li><a href="../#install">Install a skill</a></li>
+      <li><a href="../../tutorials/">Tutorials</a></li>
+      <li><a class="cta" href="../../">Home</a></li>
+    </ul>
+  </div>
+</header>
+<main id="main" class="wrap doc md-view" style="--accent:var(--c-win)">
+  <p class="crumb-line"><a href="../#library">Skills Library</a> / <a href="../?category=apps#library">Building apps</a> / Sketch to UI</p>
+  <div class="md-head">
+    <p class="eyebrow"><span class="dot"></span>.md skill guide</p>
+    <div class="md-actions">
+      <a class="btn primary" href="../md/sketch-to-ui.md" download="iota-skill-sketch-to-ui.md">Download .md <small>11 KB</small></a>
+      <a class="btn ghost" href="../md/sketch-to-ui.md">Plain text</a>
+      <a class="btn ghost" href="../#skill-sketch-to-ui">Back to the library</a>
+    </div>
+    <p class="sk-hash">SHA-256 <code>0d5c7513c64871babef4c4313d239f3d662aa81cc086acbda8520255fb5ab0d5</code></p>
+    <table class="md-meta"><tr><th>Command</th><td>/sketch-to-ui</td></tr><tr><th>Category</th><td>Building apps</td></tr><tr><th>Version</th><td>1.0</td></tr><tr><th>Editions</th><td>Works in both editions. The image is read by a local vision model, and the output is plain files, so nothing leaves your PC. The EXE edition is easier if you want to drag an image into the chat.</td></tr><tr><th>Network</th><td>offline</td></tr><tr><th>Author</th><td>IOTA - Joseph Bryant</td></tr><tr><th>License</th><td>Free to use, copy, and adapt with credit to IOTA - Joseph Bryant. Provided as is, without warranty.</td></tr></table>
+  </div>
+  <article class="md-body">
+<h1>/sketch-to-ui: Sketch to UI</h1>
+<p>Created by IOTA - Joseph Bryant. https://iotallc.github.io/</p>
+<p>This file is a skill guide. It tells the model in IOTA how to do the job step by step. It is not a compiled program and it does not install anything. To use it, paste its text into an IOTA chat and then give your request, or read it and follow the steps yourself.</p>
+<h2>Purpose</h2>
+<p>Turn a photo of a paper sketch, a whiteboard drawing, or a screenshot of another app into a working layout. The skill reads the image, lists every region it found, confirms that list with you, and then writes WPF XAML or a single HTML page in the IOTA palette.</p>
+<h2>When to use</h2>
+<ul>
+<li>You drew a screen on paper and want a first working version.</li>
+<li>You have a screenshot of an old tool and want the same layout rebuilt.</li>
+<li>You want to compare two layout ideas quickly.</li>
+</ul>
+<h2>When not to use</h2>
+<ul>
+<li>Pixel perfect copies of someone else's product. The skill rebuilds structure, not artwork, logos, or brand assets.</li>
+<li>Complex charts or drawings inside the sketch. Those become placeholders.</li>
+<li>When no vision model is loaded and you do not want to describe the regions by hand.</li>
+</ul>
+<h2>Requirements</h2>
+<ul>
+<li>A local vision capable model. Gemma 3 4B, 12B, and 27B accept images. 12B or larger reads handwriting much better than 4B.</li>
+<li>For the WPF target: the .NET 8 SDK (see /wpf).</li>
+<li>For the HTML target: any browser.</li>
+<li>A clear image: good light, the whole sketch in frame, dark pen on light paper. 1000 to 2000 pixels on the long side is plenty.</li>
+</ul>
+<p><strong>Fallback without vision.</strong> If the loaded model cannot read images, the skill says so and asks you to describe the regions in this format instead:
+<pre class="highlight"><code>top bar: title "Shift log", buttons New and Export on the right
+left column, 30 percent: list of shifts
+right: form with Date, Operator, Notes (multi line), Save button
+bottom: status text</code></pre></p>
+<h2>Inputs</h2>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Required</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Image</td>
+<td>Yes, or a text description</td>
+<td><code>sketch.jpg</code></td>
+</tr>
+<tr>
+<td>Target</td>
+<td>No</td>
+<td><code>wpf</code> (default) or <code>html</code></td>
+</tr>
+<tr>
+<td>Window size</td>
+<td>No</td>
+<td><code>1000x640</code> (default)</td>
+</tr>
+<tr>
+<td>Notes</td>
+<td>No</td>
+<td>"The list should be sortable"</td>
+</tr>
+</tbody>
+</table>
+<h2>Step-by-step procedure</h2>
+<ol>
+<li>
+<p><strong>Check vision support.</strong> If the model cannot take the image, switch to the text fallback above and continue from step 4.</p>
+</li>
+<li>
+<p><strong>Read the image with this prompt.</strong> The skill sends the image with a fixed prompt so the answer is structured:
+   <pre class="highlight"><code>You are reading a user interface sketch. List every region you can see.
+For each region give: id, type (title, toolbar, button, text input,
+multi line input, dropdown, checkbox, list, table, image, text, panel),
+label text exactly as written (or "unreadable"), and position as
+left, top, width, height in percent of the whole sketch.
+Answer only with JSON: {"regions":[{"id":"r1","type":"...","label":"...",
+"box":[l,t,w,h]}], "notes":"anything unclear"}
+Do not guess hidden text. Mark unclear labels as "unreadable".</code></pre></p>
+</li>
+<li>
+<p><strong>Validate the JSON.</strong> Parse it. If parsing fails, ask the model once more with "Return only valid JSON." If it fails again, fall back to the text description.
+   <pre class="highlight"><code class="language-python">import json
+
+def load_regions(text: str) -&gt; list[dict]:
+    start, end = text.find("{"), text.rfind("}")
+    data = json.loads(text[start:end + 1])
+    out = []
+    for r in data.get("regions", []):
+        l, t, w, h = (float(v) for v in r["box"])
+        if w &lt;= 0 or h &lt;= 0:
+            continue
+        out.append({**r, "box": [max(0, l), max(0, t), min(100, w), min(100, h)]})
+    return sorted(out, key=lambda r: (round(r["box"][1] / 5), r["box"][0]))</code></pre></p>
+</li>
+<li>
+<p><strong>Confirm with the user.</strong> Show a short table: id, type, label, rough position. Ask: "Is this right? Tell me what to add, remove, or rename." Do not write any code until the user says the list is right or says "go".</p>
+</li>
+<li>
+<p><strong>Group regions into a layout.</strong> Rules:
+   - Regions whose top edges are within 5 percent of each other form a row.
+   - A region taller than 50 percent beside other regions becomes a side column.
+   - Buttons in the same row become a horizontal button bar.
+   - A label directly left of or above an input becomes that input's label.</p>
+</li>
+<li>
+<p><strong>Write the output.</strong></p>
+</li>
+</ol>
+<p><em>WPF target.</em> Follow /wpf for the project and palette. Map types like this:</p>
+<table>
+<thead>
+<tr>
+<th>Sketch type</th>
+<th>WPF control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><code>TextBlock FontSize="22" FontWeight="SemiBold"</code></td>
+</tr>
+<tr>
+<td>button</td>
+<td><code>Button</code></td>
+</tr>
+<tr>
+<td>text input</td>
+<td><code>TextBox</code></td>
+</tr>
+<tr>
+<td>multi line input</td>
+<td><code>TextBox AcceptsReturn="True" TextWrapping="Wrap" MinHeight="90"</code></td>
+</tr>
+<tr>
+<td>dropdown</td>
+<td><code>ComboBox</code></td>
+</tr>
+<tr>
+<td>checkbox</td>
+<td><code>CheckBox</code></td>
+</tr>
+<tr>
+<td>list</td>
+<td><code>ListBox</code></td>
+</tr>
+<tr>
+<td>table</td>
+<td><code>DataGrid AutoGenerateColumns="False"</code></td>
+</tr>
+<tr>
+<td>image</td>
+<td><code>Border</code> with a <code>TextBlock</code> "Image placeholder"</td>
+</tr>
+</tbody>
+</table>
+<p>Example output for the shift log sketch:
+   <pre class="highlight"><code class="language-xml">&lt;Grid Margin="16"&gt;
+  &lt;Grid.RowDefinitions&gt;
+    &lt;RowDefinition Height="Auto"/&gt;&lt;RowDefinition Height="*"/&gt;&lt;RowDefinition Height="Auto"/&gt;
+  &lt;/Grid.RowDefinitions&gt;
+  &lt;Grid.ColumnDefinitions&gt;
+    &lt;ColumnDefinition Width="3*"/&gt;&lt;ColumnDefinition Width="7*"/&gt;
+  &lt;/Grid.ColumnDefinitions&gt;
+  &lt;DockPanel Grid.ColumnSpan="2" Margin="0,0,0,12"&gt;
+    &lt;StackPanel Orientation="Horizontal" DockPanel.Dock="Right"&gt;
+      &lt;Button Content="New"/&gt;&lt;Button Content="Export"/&gt;
+    &lt;/StackPanel&gt;
+    &lt;TextBlock Text="Shift log" FontSize="22" FontWeight="SemiBold"/&gt;
+  &lt;/DockPanel&gt;
+  &lt;ListBox x:Name="Shifts" Grid.Row="1" Margin="0,0,12,0"/&gt;
+  &lt;Grid Grid.Row="1" Grid.Column="1"&gt;
+    &lt;Grid.ColumnDefinitions&gt;&lt;ColumnDefinition Width="Auto"/&gt;&lt;ColumnDefinition Width="*"/&gt;&lt;/Grid.ColumnDefinitions&gt;
+    &lt;Grid.RowDefinitions&gt;
+      &lt;RowDefinition Height="Auto"/&gt;&lt;RowDefinition Height="Auto"/&gt;&lt;RowDefinition Height="*"/&gt;&lt;RowDefinition Height="Auto"/&gt;
+    &lt;/Grid.RowDefinitions&gt;
+    &lt;TextBlock Text="Date" Margin="0,6,12,6"/&gt;&lt;DatePicker Grid.Column="1" Margin="0,4"/&gt;
+    &lt;TextBlock Grid.Row="1" Text="Operator" Margin="0,6,12,6"/&gt;&lt;TextBox Grid.Row="1" Grid.Column="1" Margin="0,4"/&gt;
+    &lt;TextBlock Grid.Row="2" Text="Notes" Margin="0,6,12,6"/&gt;
+    &lt;TextBox Grid.Row="2" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,4"/&gt;
+    &lt;Button Grid.Row="3" Grid.Column="1" Content="Save" HorizontalAlignment="Right" Margin="0,8,0,0"/&gt;
+  &lt;/Grid&gt;
+  &lt;TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="Ready" Foreground="#9A9A9A" Margin="0,10,0,0"/&gt;
+&lt;/Grid&gt;</code></pre></p>
+<p><em>HTML target.</em> One file, no external libraries, CSS grid:
+   <pre class="highlight"><code class="language-html">&lt;!doctype html&gt;
+&lt;html lang="en"&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;
+&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;
+&lt;title&gt;Shift log&lt;/title&gt;
+&lt;style&gt;
+  :root{--bg:#050506;--surface:#121212;--border:#2A2A2A;--text:#E0E0E0;--muted:#9A9A9A;--accent:#8EB8D4}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px "Segoe UI",system-ui,sans-serif}
+  .app{display:grid;grid-template:auto 1fr auto / 3fr 7fr;gap:12px;height:100vh;padding:16px;box-sizing:border-box}
+  header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px}
+  button{background:var(--surface);color:var(--text);border:1px solid var(--accent);border-radius:8px;padding:6px 14px}
+  input,textarea{width:100%;box-sizing:border-box;background:#1A1A1A;color:var(--text);border:1px solid var(--border);padding:6px}
+  footer{grid-column:1/-1;color:var(--muted)}
+&lt;/style&gt;&lt;/head&gt;
+&lt;body&gt;&lt;div class="app"&gt;
+  &lt;header&gt;&lt;h1&gt;Shift log&lt;/h1&gt;&lt;div&gt;&lt;button&gt;New&lt;/button&gt; &lt;button&gt;Export&lt;/button&gt;&lt;/div&gt;&lt;/header&gt;
+  &lt;ul class="panel" aria-label="Shifts"&gt;&lt;/ul&gt;
+  &lt;form class="panel"&gt;
+    &lt;label&gt;Date &lt;input type="date"&gt;&lt;/label&gt;
+    &lt;label&gt;Operator &lt;input&gt;&lt;/label&gt;
+    &lt;label&gt;Notes &lt;textarea rows="5"&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;button type="button"&gt;Save&lt;/button&gt;
+  &lt;/form&gt;
+  &lt;footer&gt;Ready&lt;/footer&gt;
+&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</code></pre></p>
+<ol start="7">
+<li>
+<p><strong>Build or open.</strong> For WPF, run <code>dotnet build</code> and take a screenshot as in /wpf. For HTML, open the file in the browser and, if a headless browser is available, save a screenshot.</p>
+</li>
+<li>
+<p><strong>Compare.</strong> Show the sketch and the screenshot side by side and list any region that was dropped or moved. Ask the user for changes, then edit and rebuild.</p>
+</li>
+</ol>
+<h2>Output format</h2>
+<ul>
+<li>The region table (as confirmed).</li>
+<li><code>MainWindow.xaml</code> plus project files, or <code>index.html</code>.</li>
+<li>A screenshot and a list of differences from the sketch.</li>
+</ul>
+<h2>Safety and confirmation rules</h2>
+<ul>
+<li>Always confirm the region list before writing code.</li>
+<li>Never overwrite or delete files without asking. Show diffs for edits.</li>
+<li>Images stay on the PC. The skill does not upload them.</li>
+<li>Do not copy logos, trademarks, or artwork from a screenshot of another product.</li>
+</ul>
+<h2>Quality checks</h2>
+<ul>
+<li>Every confirmed region appears in the output exactly once.</li>
+<li>Labels match the sketch text, or are marked as placeholders when unreadable.</li>
+<li>WPF builds with 0 errors, or the HTML file passes a basic check (opens, no console errors).</li>
+<li>Tab order follows reading order: top to bottom, left to right.</li>
+<li>All inputs have a visible label.</li>
+</ul>
+<h2>Examples</h2>
+<ol>
+<li><strong>Input:</strong> a phone photo of a login sketch with two boxes and a button. <strong>Output:</strong> a 420 x 300 WPF window with Username, Password (<code>PasswordBox</code>), and Sign in, plus a screenshot.</li>
+<li><strong>Input:</strong> a screenshot of an old VB6 order form, target <code>html</code>. <strong>Output:</strong> one HTML file with the same form fields in a two column grid, the logo replaced by a placeholder.</li>
+<li><strong>Input:</strong> no vision model, text description of a dashboard with four tiles and a table. <strong>Output:</strong> WPF <code>UniformGrid</code> with four tiles and a <code>DataGrid</code> underneath.</li>
+</ol>
+<h2>Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Many labels "unreadable"</td>
+<td>Retake the photo with better light, or type the labels in the confirmation step.</td>
+</tr>
+<tr>
+<td>Regions overlap in the output</td>
+<td>Positions were rough. Tell the skill which region belongs to which row.</td>
+</tr>
+<tr>
+<td>Model returns prose, not JSON</td>
+<td>The skill retries once, then uses the text fallback.</td>
+</tr>
+<tr>
+<td>Small model misses regions</td>
+<td>Use Gemma 3 12B or larger, or crop the image into halves.</td>
+</tr>
+</tbody>
+</table>
+<h2>Limitations</h2>
+<ul>
+<li>Vision models estimate positions; expect to adjust spacing.</li>
+<li>Handwriting recognition is weaker on small models.</li>
+<li>Free form drawings, charts, and icons become placeholders.</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>1.0 (October 2026): First release. Vision prompt, JSON validation, confirmation step, WPF and HTML targets.</li>
+</ul>
+  </article>
+  <p class="muted small md-foot">This guide was written by IOTA - Joseph Bryant. It is a set of instructions for the model in IOTA or for you to follow. It does not install anything. Replies from AI can be wrong. Check the results before you rely on them.</p>
+</main>
+<footer>
+  <div class="wrap">
+    <p>&copy; 2026 IOTA. <a href="../../">Home</a> &middot; <a href="../">Skills Library</a> &middot; <a href="../../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
+  </div>
+</footer>
+<script>
+(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
+b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});})();
+</script>
+</body>
+</html>
