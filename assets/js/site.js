@@ -95,11 +95,49 @@
     var ctx = cv.getContext('2d');
     var css = getComputedStyle(document.documentElement);
     var BR = [
-      ['Enterprise AI', '--c-ent'], ['Windows', '--c-win'], ['Mobile', '--c-mob'], ['Games', '--c-game'],
-      ['Models', '--c-model'], ['IOTA RAG', '--c-rag'], ['Investment', '--c-inv']
-    ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0' }; });
+      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
+      ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment']
+    ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0', id: b[2] }; });
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
+    var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
+    var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var fineHover = !!(fineMq && fineMq.matches);
+    function syncFine() {
+      fineHover = !!(fineMq && fineMq.matches);
+      if (!fineHover) { hoverTarget = null; focusIndex = null; }
+    }
+    if (fineMq && fineMq.addEventListener) fineMq.addEventListener('change', syncFine);
+    var hits = document.createElement('div');
+    hits.className = 'tree-hits';
+    cv.parentNode.appendChild(hits);
+    hits.addEventListener('pointerover', function (e) {
+      if (!fineHover) return;
+      var a = e.target.closest && e.target.closest('a');
+      if (!a || !hits.contains(a)) return;
+      hoverTarget = +a.getAttribute('data-i');
+      if (reduce) frame(performance.now());
+    });
+    hits.addEventListener('pointerout', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a || !hits.contains(a)) return;
+      var to = e.relatedTarget;
+      if (to && a.contains(to)) return;
+      if (hoverTarget === +a.getAttribute('data-i')) hoverTarget = null;
+      if (reduce) frame(performance.now());
+    });
+    hits.addEventListener('focusin', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      focusIndex = +a.getAttribute('data-i');
+      if (reduce) frame(performance.now());
+    });
+    hits.addEventListener('focusout', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      if (focusIndex === +a.getAttribute('data-i')) focusIndex = null;
+      if (reduce) frame(performance.now());
+    });
 
     function rand(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
 
@@ -146,8 +184,8 @@
             edges.push(e3); kids.push([e2, e3]);
           }
         }
-        kids.forEach(function (kk) { paths.push({ list: [trunk, e1, kk[0], kk[1]], color: b.color }); });
-        paths.push({ list: [trunk, e1], color: b.color, toTip: true });
+        kids.forEach(function (kk) { paths.push({ list: [trunk, e1, kk[0], kk[1]], color: b.color, b: i }); });
+        paths.push({ list: [trunk, e1], color: b.color, b: i, toTip: true });
       });
       // background constellation
       stars = [];
@@ -155,6 +193,7 @@
       for (var s = 0; s < n; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
       pulses = [];
       built = true;
+      positionHits();
     }
 
     function q(e, t) { // point on quadratic bezier
@@ -164,15 +203,74 @@
     function drawEdge(e, p) { // draw first p (0..1) of edge using split bezier
       if (p <= 0) return;
       var cx = e.x0 + (e.cx - e.x0) * p, cy = e.y0 + (e.cy - e.y0) * p, end = q(e, p);
+      var mul = 1, widthMul = 1, glow = 0;
+      if (e.b != null && maxAmp > 0.001) {
+        var amp = branchAmp[e.b] || 0;
+        mul = 1 - maxAmp * 0.28 + amp * 0.85;
+        widthMul = 1 + amp * 0.4;
+        glow = amp;
+      }
       ctx.beginPath(); ctx.moveTo(e.x0, e.y0); ctx.quadraticCurveTo(cx, cy, end.x, end.y);
-      ctx.strokeStyle = e.color; ctx.lineWidth = e.w; ctx.globalAlpha = e.depth === 0 ? 0.85 : (e.depth === 1 ? 0.6 : (e.depth === 2 ? 0.4 : 0.28));
-      ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.strokeStyle = e.color;
+      ctx.lineWidth = e.w * widthMul;
+      ctx.globalAlpha = Math.min(1, (e.depth === 0 ? 0.85 : (e.depth === 1 ? 0.6 : (e.depth === 2 ? 0.4 : 0.28))) * mul);
+      ctx.shadowBlur = 0;
+      if (glow > 0.04) { ctx.shadowColor = hexA(e.color, 0.85); ctx.shadowBlur = 14 * glow; }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    }
+    function labelLayout(t) {
+      ctx.font = '500 11px "Geist Mono", ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      var lab = t.b.label.toUpperCase();
+      var lines = ctx.measureText(lab).width > 108 && lab.indexOf(' ') !== -1 ? lab.split(' ') : [lab];
+      var half = 0;
+      lines.forEach(function (line) { half = Math.max(half, ctx.measureText(line).width / 2 + 8); });
+      return { lines: lines, x: Math.max(half, Math.min(W - half, t.x)), half: half };
+    }
+    function positionHits() {
+      if (!tips) return;
+      while (hits.children.length < tips.length) hits.appendChild(document.createElement('a'));
+      while (hits.children.length > tips.length) hits.removeChild(hits.lastChild);
+      var showLabels = W >= 820;
+      tips.forEach(function (t, i) {
+        var a = hits.children[i];
+        a.className = 'tree-hit';
+        a.href = '#' + t.b.id;
+        a.setAttribute('data-i', String(i));
+        a.setAttribute('aria-label', 'Scroll to ' + t.b.label);
+        var left = t.x - 18, right = t.x + 18, top = t.y - 18, bottom = t.y + 18;
+        if (showLabels) {
+          var lay = labelLayout(t);
+          var labelTop = t.y - 18 - (lay.lines.length - 1) * 13 - 12;
+          left = Math.min(left, lay.x - lay.half);
+          right = Math.max(right, lay.x + lay.half);
+          top = Math.min(top, labelTop);
+        }
+        a.style.left = (left - 4) + 'px';
+        a.style.top = (top - 4) + 'px';
+        a.style.width = Math.max(12, right - left + 8) + 'px';
+        a.style.height = Math.max(12, bottom - top + 8) + 'px';
+      });
     }
 
     function frame(now) {
       if (!built) build();
       if (!start) start = now;
       var g = reduce ? 1 : Math.min(1, (now - start) / GROW);
+      if (branchAmp.length !== BR.length) branchAmp = BR.map(function () { return 0; });
+      var dt = lastNow ? Math.min(48, now - lastNow) : 16;
+      lastNow = now;
+      var step = reduce ? 1 : (1 - Math.pow(0.0015, dt / 260));
+      var goalIndex = fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null;
+      maxAmp = 0;
+      for (var bi = 0; bi < branchAmp.length; bi++) {
+        var goal = goalIndex === bi ? 1 : 0;
+        branchAmp[bi] += (goal - branchAmp[bi]) * step;
+        if (Math.abs(branchAmp[bi] - goal) < 0.01) branchAmp[bi] = goal;
+        if (branchAmp[bi] > maxAmp) maxAmp = branchAmp[bi];
+      }
       ctx.clearRect(0, 0, W, H);
       // stars and faint links
       stars.forEach(function (s) {
@@ -196,17 +294,20 @@
         var showLabels = W >= 820;
         tips.forEach(function (t) {
           var pulse = reduce ? 0 : Math.sin(now / 900 + t.i) * 0.5 + 0.5;
-          var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6);
-          grd.addColorStop(0, hexA(t.b.color, 0.55 * tipP)); grd.addColorStop(1, hexA(t.b.color, 0));
-          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 28, 0, 6.283); ctx.fill();
-          ctx.fillStyle = hexA(t.b.color, tipP); ctx.beginPath(); ctx.arc(t.x, t.y, 3.6, 0, 6.283); ctx.fill();
-          ctx.strokeStyle = hexA(t.b.color, 0.5 * tipP); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2, 0, 6.283); ctx.stroke();
+          var amp = branchAmp[t.i] || 0;
+          var glowMul = maxAmp > 0.001 ? (1 - maxAmp * 0.28 + amp * 0.7) : 1;
+          var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6 + amp * 12);
+          grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.b.color, 0));
+          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 28 + amp * 8, 0, 6.283); ctx.fill();
+          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * (maxAmp > 0.001 ? glowMul : 1))); ctx.beginPath(); ctx.arc(t.x, t.y, 3.6 + amp * 0.8, 0, 6.283); ctx.fill();
+          ctx.strokeStyle = hexA(t.b.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
           if (showLabels) {
-            ctx.font = '500 11px "Geist Mono", ui-monospace, monospace';
-            ctx.fillStyle = 'rgba(203,203,203,' + (0.75 * tipP) + ')';
-            ctx.textAlign = 'center';
-            var lab = t.b.label.toUpperCase(), lw = ctx.measureText(lab).width / 2 + 8;
-            ctx.fillText(lab, Math.max(lw, Math.min(W - lw, t.x)), t.y - 18);
+            var lay = labelLayout(t);
+            var labelA = 0.75 * tipP * (maxAmp > 0.001 ? (1 - maxAmp * 0.3 + amp * 0.4) : 1);
+            ctx.fillStyle = 'rgba(203,203,203,' + Math.min(1, labelA) + ')';
+            lay.lines.forEach(function (line, li) {
+              ctx.fillText(line, lay.x, t.y - 18 - (lay.lines.length - 1 - li) * 13);
+            });
           }
         });
       }
@@ -216,7 +317,12 @@
       // pulses travelling from root to tips
       if (!reduce && g >= 1) {
         if (pulses.length < 14 && Math.random() < 0.08) {
-          var p = paths[(Math.random() * paths.length) | 0];
+          var pool = paths;
+          if (fineHover && hoverTarget !== null) {
+            var matched = paths.filter(function (p) { return p.b === hoverTarget; });
+            if (matched.length) pool = matched;
+          }
+          var p = pool[(Math.random() * pool.length) | 0];
           pulses.push({ path: p, t: 0, speed: 0.0045 + Math.random() * 0.004 });
         }
         pulses = pulses.filter(function (pl) {
@@ -246,7 +352,7 @@
     }
     document.addEventListener('visibilitychange', function () { running = !document.hidden; if (running) play(); });
     build();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(play); else play();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { positionHits(); play(); }); else play();
   }
 
   /* ---------- interactive showcase ---------- */
@@ -418,7 +524,7 @@
     } else select('rag', false, false);
   }
 
-  /* ---------- IOTA RAG interactive pipeline ---------- */
+  /* ---------- IOTA Orchestration interactive pipeline ---------- */
   function ragPipe() {
     var box = $('[data-ragpipe]'); if (!box) return;
     var items = $$('[data-rp]', box), detail = $('#rp-detail', box), cur = null, t = null;
