@@ -111,11 +111,67 @@
     var hits = document.createElement('div');
     hits.className = 'tree-hits';
     cv.parentNode.appendChild(hits);
+    var lineCatch = document.createElement('div');
+    lineCatch.className = 'tree-line-catch';
+    hits.appendChild(lineCatch);
+    var LINE_HIT = 16;
+    function nearestBranch(clientX, clientY) {
+      if (!edges) return null;
+      var rect = cv.getBoundingClientRect();
+      var x = clientX - rect.left, y = clientY - rect.top;
+      var bestI = null, bestD = LINE_HIT;
+      for (var ei = 0; ei < edges.length; ei++) {
+        var e = edges[ei];
+        if (e.depth !== 1 || e.b == null) continue;
+        var prev = q(e, 0);
+        for (var s = 1; s <= 28; s++) {
+          var p = q(e, s / 28);
+          var dx = p.x - prev.x, dy = p.y - prev.y, len2 = dx * dx + dy * dy;
+          var t = len2 ? ((x - prev.x) * dx + (y - prev.y) * dy) / len2 : 0;
+          if (t < 0) t = 0; else if (t > 1) t = 1;
+          var px = prev.x + dx * t, py = prev.y + dy * t;
+          var dist = Math.sqrt((x - px) * (x - px) + (y - py) * (y - py));
+          if (dist < bestD) { bestD = dist; bestI = e.b; }
+          prev = p;
+        }
+      }
+      return bestI;
+    }
+    var tipAnchors = [];
+    function hitLink(i) { return tipAnchors[i] || null; }
+    function setLineHover(i) {
+      if (!fineHover) return;
+      lineCatch.classList.toggle('is-branch', i != null);
+      if (hoverTarget === i) return;
+      hoverTarget = i;
+      if (reduce) frame(performance.now());
+    }
+    lineCatch.addEventListener('pointermove', function (e) {
+      if (!fineHover) return;
+      setLineHover(nearestBranch(e.clientX, e.clientY));
+    });
+    lineCatch.addEventListener('pointerleave', function (e) {
+      if (!fineHover) return;
+      var to = e.relatedTarget;
+      var tip = to && to.closest && to.closest('.tree-hit');
+      if (tip && hits.contains(tip)) return;
+      setLineHover(null);
+    });
+    lineCatch.addEventListener('click', function (e) {
+      if (e.button !== 0) return;
+      var i = nearestBranch(e.clientX, e.clientY);
+      if (i == null) return;
+      var a = hitLink(i);
+      if (!a) return;
+      if (e.metaKey || e.ctrlKey) { window.open(a.href, '_blank', 'noopener'); return; }
+      a.click();
+    });
     hits.addEventListener('pointerover', function (e) {
       if (!fineHover) return;
       var a = e.target.closest && e.target.closest('a');
       if (!a || !hits.contains(a)) return;
       hoverTarget = +a.getAttribute('data-i');
+      lineCatch.classList.toggle('is-branch', true);
       if (reduce) frame(performance.now());
     });
     hits.addEventListener('pointerout', function (e) {
@@ -123,7 +179,9 @@
       if (!a || !hits.contains(a)) return;
       var to = e.relatedTarget;
       if (to && a.contains(to)) return;
+      if (to === lineCatch || (to && lineCatch.contains(to))) return;
       if (hoverTarget === +a.getAttribute('data-i')) hoverTarget = null;
+      if (!lineCatch.matches(':hover')) lineCatch.classList.remove('is-branch');
       if (reduce) frame(performance.now());
     });
     hits.addEventListener('focusin', function (e) {
@@ -231,11 +289,15 @@
     }
     function positionHits() {
       if (!tips) return;
-      while (hits.children.length < tips.length) hits.appendChild(document.createElement('a'));
-      while (hits.children.length > tips.length) hits.removeChild(hits.lastChild);
+      while (tipAnchors.length < tips.length) {
+        var created = document.createElement('a');
+        hits.appendChild(created);
+        tipAnchors.push(created);
+      }
+      while (tipAnchors.length > tips.length) hits.removeChild(tipAnchors.pop());
       var showLabels = W >= 820;
       tips.forEach(function (t, i) {
-        var a = hits.children[i];
+        var a = tipAnchors[i];
         a.className = 'tree-hit';
         var dest = t.b.id;
         var pageLink = dest.charAt(0) !== '#' && (dest.indexOf('.') !== -1 || dest.indexOf('/') !== -1);
