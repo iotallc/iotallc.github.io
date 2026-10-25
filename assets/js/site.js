@@ -95,7 +95,7 @@
     var ctx = cv.getContext('2d');
     var css = getComputedStyle(document.documentElement);
     var BR = [
-      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
+      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Skills', '--c-win', 'skills'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
       ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment.html']
     ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0', id: b[2] }; });
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
