@@ -76,6 +76,7 @@
       <li><a href="#rag" style="--c:var(--c-rag)"><i></i>IOTA Orchestration</a></li>
       <li><a href="investment.html" style="--c:var(--c-inv)"><i></i>Investment Management</a></li>
     </ul>
+    <p class="tree-readout" data-tree-readout>Eight branches. Point at one to see what it covers.</p>
   </div>
   <a class="scroll-hint" href="#offerings">Scroll</a>
 </section>
@@ -164,10 +165,16 @@
       <div><b>Built-in skills</b><span><code>/chart</code> <code>/deck</code> <code>/pdf</code> <code>/ocr</code> <code>/transcribe</code> <code>/units</code> <code>/fin</code><br><a href="#skills">See Skills</a></span></div>
     </div>
 
-    <h3 class="reveal" id="editions" style="font-size:26px;margin-bottom:8px">Two editions</h3>
-    <p class="muted reveal" style="margin-bottom:22px">Choose the edition that fits how you work. Both run from the USB kit.</p>
+    <h3 class="block-title reveal" id="editions">Two editions</h3>
+    <div class="edition-pick reveal" data-editions>
+      <div class="unit-toggle" role="group" aria-label="What do you need from IOTA for Windows?">
+        <button type="button" data-ed="ps" aria-pressed="false">Stay offline</button>
+        <button type="button" data-ed="exe" aria-pressed="false">Use cloud models</button>
+      </div>
+      <p class="muted" data-ed-note>Both editions run from the USB kit. Pick what you need.</p>
+    </div>
     <div class="grid g2 editions reveal">
-      <article class="card edition">
+      <article class="card edition" data-ed-card="ps">
         <span class="k">Strictly offline</span>
         <h3>PowerShell edition</h3>
         <p>Driven by PowerShell for increased security and easier updates.</p>
@@ -177,7 +184,7 @@
           <li><span><b>Protects the model.</b> Staying offline is a security measure that protects the active model on the USB drive.</span></li>
         </ul>
       </article>
-      <article class="card edition">
+      <article class="card edition" data-ed-card="exe">
         <span class="k">Local or cloud</span>
         <h3>EXE edition</h3>
         <p>Faster, with enhanced animations.</p>
@@ -189,7 +196,7 @@
       </article>
     </div>
 
-    <h3 class="reveal" id="showcase" style="font-size:26px;margin:56px 0 8px">Parts of IOTA for Windows</h3>
+    <h3 class="block-title reveal" id="showcase">Parts of IOTA for Windows</h3>
     <p class="muted reveal" style="margin-bottom:26px">Select any part of the tree to see what it is and how it works.</p>
 
     <div class="showcase reveal" data-showcase>
@@ -300,8 +307,19 @@
     <div class="grid g2">
       <article class="card reveal">
         <h3>Skill packages</h3>
-        <p>A skill package is a zip of the skill files that ship with IOTA for Windows. These seven are ready to download:</p>
-        <p><code>/chart</code> <code>/deck</code> <code>/pdf</code> <code>/ocr</code> <code>/transcribe</code> <code>/units</code> <code>/fin</code></p>
+        <p>A skill package is a zip of the skill files that ship with IOTA for Windows. Select a command to see what it does. These seven are ready to download:</p>
+        <div class="skill-pick" data-skillpick>
+          <div class="skill-cmds" role="listbox" aria-label="Skill commands">
+            <button type="button" role="option" data-cmd="/chart" aria-selected="true">/chart</button>
+            <button type="button" role="option" data-cmd="/deck" aria-selected="false">/deck</button>
+            <button type="button" role="option" data-cmd="/pdf" aria-selected="false">/pdf</button>
+            <button type="button" role="option" data-cmd="/ocr" aria-selected="false">/ocr</button>
+            <button type="button" role="option" data-cmd="/transcribe" aria-selected="false">/transcribe</button>
+            <button type="button" role="option" data-cmd="/units" aria-selected="false">/units</button>
+            <button type="button" role="option" data-cmd="/fin" aria-selected="false">/fin</button>
+          </div>
+          <p class="skill-detail" data-skill-detail></p>
+        </div>
         <p class="muted">Diagram, table, summarize, and files are in the library and are not ready to download yet.</p>
       </article>
       <article class="card reveal" style="--d:.08s">
@@ -322,7 +340,6 @@
 <section class="section" id="mobile" style="--accent:var(--c-mob)" aria-labelledby="mob-title">
   <div class="wrap split rev">
     <div class="phone-pair reveal">
-      <span class="glow-dot"></span>
       <div class="phone"><div class="scr"><picture><source srcset="assets/img/mobile-research.webp" type="image/webp"><img src="assets/img/mobile-research.jpg" alt="IOTA Mobile chat screen with the researcher personality active" width="540" height="1080" loading="lazy"></picture></div></div>
       <div class="phone" aria-hidden="true"><div class="scr"><picture><source srcset="assets/img/mobile-chat.webp" type="image/webp"><img src="assets/img/mobile-chat.jpg" alt="" width="540" height="1080" loading="lazy"></picture></div></div>
     </div>
@@ -364,7 +381,7 @@
         <li><span><b>Fine-tuned for the game.</b> Each model is trained on the game's own characters, rules, and tone.</span></li>
         <li><span><b>Content guardrails.</b> Game text is filtered for safe-for-work output, and players can report anything that slips through.</span></li>
       </ul>
-      <div class="card" style="margin-top:34px">
+      <div class="inset" style="margin-top:28px">
         <div class="tales">
           <img class="icon" src="assets/img/iota-tales-icon.png" alt="Iota Tales app icon" width="96" height="96" loading="lazy">
           <div>
@@ -423,7 +440,10 @@
       <p class="lead">IOTA Orchestration is our proprietary RAG approach. We set it up on your documents and data and support it in use. It finds the right passages before the model answers, so a smaller model can give grounded answers with less computing power.</p>
     </div>
     <div class="card rag-pipe reveal" data-ragpipe>
-      <p class="rp-hint">Select a stage to see what it does.</p>
+      <div class="rp-bar">
+        <p class="rp-hint">Select a stage, scrub the line, or play the sequence.</p>
+        <button type="button" class="btn" data-rp-play>Play sequence</button>
+      </div>
       <ol class="rp-stages">
         <li class="rp-item" data-rp="ingest"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg></span><span class="rp-n">01</span><b>Ingest</b><small>Your files</small></button><p class="rp-desc"><b>Ingest.</b> Files such as documents, notes, and reports are read and converted to plain text.</p></li>
         <li class="rp-item" data-rp="chunk"><button type="button" class="rp-stage" aria-pressed="false" aria-controls="rp-detail"><span class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h13"/></svg></span><span class="rp-n">02</span><b>Chunk</b><small>Short passages</small></button><p class="rp-desc"><b>Chunk.</b> The text is split into short passages, each about one idea, so each can be found on its own.</p></li>
@@ -510,6 +530,7 @@
             <p class="race-meta"><span data-read>0 tokens read</span><span data-proj>Projected</span></p>
           </li>
         </ul>
+        <p class="footnote" data-race-sum hidden></p>
         <p class="footnote" id="race-note">The race is shown at real speed and stops at 10 seconds. Projected time is how long that row would take to read the full corpus. If motion is reduced, the 10 second result is shown right away.</p>
       </div>
 
@@ -520,6 +541,9 @@
           <label class="calc-size" for="doc-size">Document size
             <input id="doc-size" type="number" min="0" step="any" value="20" inputmode="decimal" autocomplete="off" data-calc-input>
           </label>
+          <label class="calc-range">Scrub
+            <input type="range" min="0" max="400" step="1" value="20" data-calc-range aria-label="Scrub document size">
+          </label>
           <div class="unit-toggle" role="group" aria-label="Size unit">
             <button type="button" data-unit="tokens" aria-pressed="false">Tokens</button>
             <button type="button" data-unit="pages" aria-pressed="true">Pages</button>
@@ -527,14 +551,15 @@
         </div>
         <p class="muted calc-echo" data-calc-echo></p>
         <p class="footnote calc-msg" data-calc-msg hidden>Enter a size of zero or more.</p>
-        <p class="footnote">One page is about 500 tokens.</p>
+        <p class="footnote">One page is about 500 tokens. Bars use a log scale of the measured tokens per second.</p>
         <ul class="calc-rows">
-          <li data-calc-row data-tps="551"><b>Pre IOTA Orchestration (Slowest)</b><span data-time></span></li>
-          <li data-calc-row data-tps="495"><b>Gemini Argon 4 (cloud)</b><span data-time></span></li>
-          <li data-calc-row data-tps="1095"><b>Gemini Flash 3.8 (cloud)</b><span data-time></span></li>
-          <li data-calc-row data-tps="9700"><b>Embedding speed</b><span data-time></span></li>
-          <li class="is-tuned" data-calc-row data-tps="20783"><b class="chrome">IOTA Orchestration (Embedding tuned)</b><span data-time></span></li>
+          <li data-calc-row data-tps="551"><b>Pre IOTA Orchestration (Slowest)</b><span data-time></span><span class="track" aria-hidden="true"><span class="fill" data-bar></span></span></li>
+          <li data-calc-row data-tps="495"><b>Gemini Argon 4 (cloud)</b><span data-time></span><span class="track" aria-hidden="true"><span class="fill" data-bar></span></span></li>
+          <li data-calc-row data-tps="1095"><b>Gemini Flash 3.8 (cloud)</b><span data-time></span><span class="track" aria-hidden="true"><span class="fill" data-bar></span></span></li>
+          <li data-calc-row data-tps="9700"><b>Embedding speed</b><span data-time></span><span class="track" aria-hidden="true"><span class="fill" data-bar></span></span></li>
+          <li class="is-tuned" data-calc-row data-tps="20783"><b class="chrome">IOTA Orchestration (Embedding tuned)</b><span data-time></span><span class="track" aria-hidden="true"><span class="fill" data-bar></span></span></li>
         </ul>
+        <p class="calc-fast" data-calc-fast></p>
         <p class="footnote">Local rows were measured on an NVIDIA RTX 3060 Ti 8 GB. Cloud rows were measured in each provider's web interface.</p>
       </div>
     </div>

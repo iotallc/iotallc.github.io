@@ -19,6 +19,9 @@
         &&(!net.value||c.getAttribute('data-net')===net.value);
       c.hidden=!ok; if(ok)any=true;
     });
+    var shown=cards.filter(function(c){return !c.hidden;}).length;
+    var count=document.getElementById('sk-count');
+    if(count)count.textContent=shown+' '+(shown===1?'skill':'skills');
     empty.hidden=any;
     var s=new URLSearchParams();
     if(q.value.trim())s.set('q',q.value.trim()); if(cat.value)s.set('category',cat.value); if(ed.value)s.set('edition',ed.value); if(net.value)s.set('network',net.value);
@@ -139,6 +142,17 @@
       if((e.key==='Escape'||e.key==='Esc')&&cur&&(card.contains(document.activeElement)||document.activeElement===document.body)){e.preventDefault();show(null,true);}
     });
     var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){moveTo(target(cur),true);},120);});
+    stage.addEventListener('pointerover',function(e){
+      var b=e.target.closest&&e.target.closest('button');
+      if(!b||!stage.contains(b))return;
+      var key=b.cardId?b.key:(b.classList.contains('branch')?b.key:null);
+      [].forEach.call(svg.querySelectorAll('path'),function(pth){
+        pth.classList.toggle('hot',!!key&&pth.getAttribute('data-k')===key);
+      });
+    });
+    stage.addEventListener('pointerleave',function(){
+      [].forEach.call(svg.querySelectorAll('path.hot'),function(p){p.classList.remove('hot');});
+    });
     place(cam);
     return{show:show};
   }

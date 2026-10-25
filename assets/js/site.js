@@ -77,18 +77,6 @@
     $$('#nav-links a').forEach(function (a) { a.addEventListener('click', function () { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); b.textContent = 'Menu'; }); });
   }
 
-  /* ---------- pointer spotlight on cards ---------- */
-  function spotlight() {
-    if (window.matchMedia && !window.matchMedia('(hover: hover)').matches) return;
-    document.addEventListener('pointermove', function (e) {
-      var c = e.target.closest && e.target.closest('.card');
-      if (!c) return;
-      var r = c.getBoundingClientRect();
-      c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-      c.style.setProperty('--my', (e.clientY - r.top) + 'px');
-    }, { passive: true });
-  }
-
   /* ---------- hero: growing tree canvas ---------- */
   function heroTree() {
     var cv = $('#tree'); if (!cv || !cv.getContext) return;
@@ -98,6 +86,29 @@
       ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Skills', '--c-win', 'skills'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
       ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment.html']
     ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0', id: b[2] }; });
+    var BLURB = {
+      'Enterprise AI': 'Platforms for companies, hosted in the cloud or on infrastructure you control.',
+      'Windows': 'A desktop AI app organized as one core with branches.',
+      'Skills': 'Slash-command add-ons. The downloadable library stays at /skills.',
+      'Mobile': 'A free assistant that runs on the phone, including offline.',
+      'Games': 'Fine-tuned models for safe-for-work mobile games.',
+      'Models': 'Public, fine-tuned, or custom models connected to business systems.',
+      'IOTA Orchestration': 'Proprietary RAG, set up on your documents and data.',
+      'Investment': 'Sector allocation strategies. Opens the investment page.'
+    };
+    var readout = $('[data-tree-readout]');
+    function updateReadout(i) {
+      if (!readout) return;
+      if (i == null || !BR[i]) {
+        readout.textContent = fineHover ? 'Eight branches. Point at one to see what it covers.' : 'Tap a branch, or use the list above.';
+        return;
+      }
+      readout.textContent = '';
+      var strong = document.createElement('b');
+      strong.textContent = BR[i].label;
+      readout.appendChild(strong);
+      readout.appendChild(document.createTextNode('. ' + (BLURB[BR[i].label] || '')));
+    }
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
     var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
@@ -139,15 +150,22 @@
     }
     var tipAnchors = [];
     function hitLink(i) { return tipAnchors[i] || null; }
+    function armPointer(e) {
+      if (!e || e.pointerType === 'touch') return false;
+      if (e.pointerType === 'mouse' || e.pointerType === 'pen' || fineHover) fineHover = true;
+      return fineHover;
+    }
     function setLineHover(i) {
       if (!fineHover) return;
       lineCatch.classList.toggle('is-branch', i != null);
       if (hoverTarget === i) return;
       hoverTarget = i;
+      updateReadout(i);
       if (reduce) frame(performance.now());
+      else play();
     }
     lineCatch.addEventListener('pointermove', function (e) {
-      if (!fineHover) return;
+      if (!armPointer(e)) return;
       setLineHover(nearestBranch(e.clientX, e.clientY));
     });
     lineCatch.addEventListener('pointerleave', function (e) {
@@ -167,12 +185,14 @@
       a.click();
     });
     hits.addEventListener('pointerover', function (e) {
-      if (!fineHover) return;
+      if (!armPointer(e)) return;
       var a = e.target.closest && e.target.closest('a');
       if (!a || !hits.contains(a)) return;
       hoverTarget = +a.getAttribute('data-i');
       lineCatch.classList.toggle('is-branch', true);
+      updateReadout(hoverTarget);
       if (reduce) frame(performance.now());
+      else play();
     });
     hits.addEventListener('pointerout', function (e) {
       var a = e.target.closest && e.target.closest('a');
@@ -182,19 +202,25 @@
       if (to === lineCatch || (to && lineCatch.contains(to))) return;
       if (hoverTarget === +a.getAttribute('data-i')) hoverTarget = null;
       if (!lineCatch.matches(':hover')) lineCatch.classList.remove('is-branch');
+      updateReadout(hoverTarget);
       if (reduce) frame(performance.now());
+      else play();
     });
     hits.addEventListener('focusin', function (e) {
       var a = e.target.closest && e.target.closest('a');
       if (!a) return;
       focusIndex = +a.getAttribute('data-i');
+      updateReadout(focusIndex);
       if (reduce) frame(performance.now());
+      else play();
     });
     hits.addEventListener('focusout', function (e) {
       var a = e.target.closest && e.target.closest('a');
       if (!a) return;
       if (focusIndex === +a.getAttribute('data-i')) focusIndex = null;
+      updateReadout(hoverTarget != null ? hoverTarget : focusIndex);
       if (reduce) frame(performance.now());
+      else play();
     });
 
     function rand(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
@@ -247,7 +273,7 @@
       });
       // background constellation
       stars = [];
-      var n = Math.round(W * H / 14000);
+      var n = Math.round(W * H / 32000);
       for (var s = 0; s < n; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
       pulses = [];
       built = true;
@@ -261,21 +287,19 @@
     function drawEdge(e, p) { // draw first p (0..1) of edge using split bezier
       if (p <= 0) return;
       var cx = e.x0 + (e.cx - e.x0) * p, cy = e.y0 + (e.cy - e.y0) * p, end = q(e, p);
-      var mul = 1, widthMul = 1, glow = 0;
+      var mul = 1, widthMul = 1;
       if (e.b != null && maxAmp > 0.001) {
         var amp = branchAmp[e.b] || 0;
-        mul = 1 - maxAmp * 0.28 + amp * 0.85;
-        widthMul = 1 + amp * 0.4;
-        glow = amp;
+        mul = 1 - maxAmp * 0.75 + amp * 1.35;
+        if (mul < 0.14) mul = 0.14;
+        widthMul = 1 + amp * 0.7;
       }
       ctx.beginPath(); ctx.moveTo(e.x0, e.y0); ctx.quadraticCurveTo(cx, cy, end.x, end.y);
       ctx.strokeStyle = e.color;
       ctx.lineWidth = e.w * widthMul;
-      ctx.globalAlpha = Math.min(1, (e.depth === 0 ? 0.85 : (e.depth === 1 ? 0.6 : (e.depth === 2 ? 0.4 : 0.28))) * mul);
+      ctx.globalAlpha = Math.min(1, (e.depth === 0 ? 0.9 : (e.depth === 1 ? 0.72 : (e.depth === 2 ? 0.4 : 0.26))) * mul);
       ctx.shadowBlur = 0;
-      if (glow > 0.04) { ctx.shadowColor = hexA(e.color, 0.85); ctx.shadowBlur = 14 * glow; }
       ctx.stroke();
-      ctx.shadowBlur = 0;
       ctx.globalAlpha = 1;
     }
     function labelLayout(t) {
@@ -338,14 +362,12 @@
       ctx.clearRect(0, 0, W, H);
       // stars and faint links
       stars.forEach(function (s) {
-        var tw = reduce ? 1 : (0.6 + 0.4 * Math.sin(now / 1400 + s.p));
-        ctx.globalAlpha = s.a * tw; ctx.fillStyle = '#C0C0C0';
+        ctx.globalAlpha = s.a * 0.4; ctx.fillStyle = '#C0C0C0';
         ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
       });
       ctx.globalAlpha = 1;
-      // glow under root
-      var rg = ctx.createRadialGradient(edges[0].x0, H, 0, edges[0].x0, H, Math.max(W, H) * 0.45);
-      rg.addColorStop(0, 'rgba(192,192,192,0.10)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+      var rg = ctx.createRadialGradient(edges[0].x0, H, 0, edges[0].x0, H, Math.max(W, H) * 0.35);
+      rg.addColorStop(0, 'rgba(192,192,192,0.04)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
       ctx.lineCap = 'round';
       edges.forEach(function (e) {
@@ -357,18 +379,19 @@
       if (tipP > 0) {
         var showLabels = W >= 820;
         tips.forEach(function (t) {
-          var pulse = reduce ? 0 : Math.sin(now / 900 + t.i) * 0.5 + 0.5;
           var amp = branchAmp[t.i] || 0;
-          var glowMul = maxAmp > 0.001 ? (1 - maxAmp * 0.28 + amp * 0.7) : 1;
-          var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6 + amp * 12);
-          grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.b.color, 0));
-          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 28 + amp * 8, 0, 6.283); ctx.fill();
-          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * (maxAmp > 0.001 ? glowMul : 1))); ctx.beginPath(); ctx.arc(t.x, t.y, 3.6 + amp * 0.8, 0, 6.283); ctx.fill();
-          ctx.strokeStyle = hexA(t.b.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
+          var glowMul = maxAmp > 0.001 ? (0.22 + amp * 0.78) : 1;
+          if (amp > 0.05) {
+            var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 14 + amp * 8);
+            grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.28 * tipP * amp))); grd.addColorStop(1, hexA(t.b.color, 0));
+            ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 18, 0, 6.283); ctx.fill();
+          }
+          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * glowMul)); ctx.beginPath(); ctx.arc(t.x, t.y, 3.2 + amp * 1.1, 0, 6.283); ctx.fill();
+          ctx.strokeStyle = hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.5; ctx.beginPath(); ctx.arc(t.x, t.y, 7 + amp * 2, 0, 6.283); ctx.stroke();
           if (showLabels) {
             var lay = labelLayout(t);
-            var labelA = 0.75 * tipP * (maxAmp > 0.001 ? (1 - maxAmp * 0.3 + amp * 0.4) : 1);
-            ctx.fillStyle = 'rgba(203,203,203,' + Math.min(1, labelA) + ')';
+            var labelA = tipP * (maxAmp > 0.001 ? (0.28 + amp * 0.72) : 0.82);
+            ctx.fillStyle = 'rgba(224,224,224,' + Math.min(1, labelA) + ')';
             lay.lines.forEach(function (line, li) {
               ctx.fillText(line, lay.x, t.y - 18 - (lay.lines.length - 1 - li) * 13);
             });
@@ -379,15 +402,13 @@
       var r0 = edges[0];
       ctx.fillStyle = '#E0E0E0'; ctx.beginPath(); ctx.arc(r0.x1, r0.y1, 4.5 * Math.min(1, g * 4), 0, 6.283); ctx.fill();
       // pulses travelling from root to tips
-      if (!reduce && g >= 1) {
-        if (pulses.length < 14 && Math.random() < 0.08) {
-          var pool = paths;
-          if (fineHover && hoverTarget !== null) {
-            var matched = paths.filter(function (p) { return p.b === hoverTarget; });
-            if (matched.length) pool = matched;
+      if (!reduce && g >= 1 && goalIndex !== null) {
+        if (pulses.length < 4 && Math.random() < 0.16) {
+          var matched = paths.filter(function (p) { return p.b === goalIndex; });
+          if (matched.length) {
+            var p = matched[(Math.random() * matched.length) | 0];
+            pulses.push({ path: p, t: 0, speed: 0.007 + Math.random() * 0.004 });
           }
-          var p = pool[(Math.random() * pool.length) | 0];
-          pulses.push({ path: p, t: 0, speed: 0.0045 + Math.random() * 0.004 });
         }
         pulses = pulses.filter(function (pl) {
           pl.t += pl.speed;
@@ -401,8 +422,12 @@
           return true;
         });
       }
-      if (running && !reduce) raf = requestAnimationFrame(frame);
-      else if (!reduce && g < 1) raf = requestAnimationFrame(frame);
+      var settling = false;
+      for (var si = 0; si < branchAmp.length; si++) {
+        if (branchAmp[si] !== (goalIndex === si ? 1 : 0)) settling = true;
+      }
+      var idle = g >= 1 && !settling && pulses.length === 0;
+      if (running && !reduce && !idle) raf = requestAnimationFrame(frame);
     }
     function hexA(hex, a) {
       var h = hex.replace('#', ''); if (h.length === 3) h = h.split('').map(function (c) { return c + c; }).join('');
@@ -410,12 +435,13 @@
     }
     function play() { cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); }
 
-    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { build(); if (reduce) frame(performance.now()); }, 120); });
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { build(); play(); }, 120); });
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (en) { running = en[0].isIntersecting && !document.hidden; if (running) play(); }).observe(cv);
     }
     document.addEventListener('visibilitychange', function () { running = !document.hidden; if (running) play(); });
     build();
+    updateReadout(null);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { positionHits(); play(); }); else play();
   }
 
@@ -472,7 +498,19 @@
     panel.id = 'showcase-panel';
 
     // Camera: view centre (cx, cy) and scale s, in the stage's 0..100 coordinates.
-    var cam = { x: 50, y: 50, s: 1 }, anim = null, zoomedKey = null, DUR = 620;
+    var cam = { x: 50, y: 50, s: 1 }, anim = null, zoomedKey = null, DUR = 460;
+    var fineNode = window.matchMedia('(hover: hover) and (pointer: fine)');
+    stage.addEventListener('pointerover', function (e) {
+      if (!fineNode.matches) return;
+      var b = e.target.closest && e.target.closest('button.node');
+      if (!b || !stage.contains(b)) return;
+      var key = null;
+      Object.keys(buttons).forEach(function (k) { if (buttons[k] === b) key = k; });
+      Object.keys(lines).forEach(function (k) { lines[k][0].classList.toggle('hot', key && k === key); });
+    });
+    stage.addEventListener('pointerleave', function () {
+      Object.keys(lines).forEach(function (k) { lines[k][0].classList.remove('hot'); });
+    });
     function apply(c) {
       var w = 100 / c.s, vx = c.x - w / 2, vy = c.y - w / 2;
       svg.setAttribute('viewBox', vx + ' ' + vy + ' ' + w + ' ' + w);
@@ -592,39 +630,89 @@
   function ragPipe() {
     var box = $('[data-ragpipe]'); if (!box) return;
     var items = $$('[data-rp]', box), detail = $('#rp-detail', box), cur = null, t = null;
+    var stages = $$('.rp-item', box);
+    var playBtn = $('[data-rp-play]', box);
+    var playing = false, stepTimer = null, stepAt = 0;
     box.classList.add('live');
-    function show(it, user) {
-      if (it === cur) return;
+    function show(it) {
+      if (!it || it === cur) return;
       cur = it;
       items.forEach(function (x) {
         var on = x === it;
         x.classList.toggle('on', on);
         $('.rp-stage', x).setAttribute('aria-pressed', on ? 'true' : 'false');
       });
-      var idx = items.indexOf(it);
-      box.style.setProperty('--prog', it.getAttribute('data-rp') === 'expanded' ? 1 : idx / (items.length - 2));
-      box.classList.toggle('xon', it.getAttribute('data-rp') === 'expanded');
+      var idx = stages.indexOf(it);
+      var expanded = it.getAttribute('data-rp') === 'expanded';
+      box.style.setProperty('--prog', expanded || idx < 0 ? 1 : idx / Math.max(1, stages.length - 1));
+      box.classList.toggle('xon', expanded);
       var html = $('.rp-desc', it).innerHTML;
       clearTimeout(t);
       if (reduce) { detail.innerHTML = html; return; }
       detail.classList.add('out');
-      t = setTimeout(function () { detail.innerHTML = html; detail.classList.remove('out'); }, 160);
+      t = setTimeout(function () { detail.innerHTML = html; detail.classList.remove('out'); }, 120);
+    }
+    function stopPlay() {
+      playing = false;
+      clearTimeout(stepTimer);
+      if (playBtn) playBtn.textContent = reduce ? 'Next stage' : 'Play sequence';
+    }
+    function playFrom(i) {
+      if (!stages.length) return;
+      if (reduce) {
+        var next = stages[Math.min(stages.length - 1, (stages.indexOf(cur) + 1) % stages.length)];
+        if (stages.indexOf(cur) === stages.length - 1) next = stages[0];
+        show(next);
+        return;
+      }
+      playing = true;
+      stepAt = i;
+      cur = null;
+      if (playBtn) playBtn.textContent = 'Stop';
+      show(stages[stepAt]);
+      stepTimer = setTimeout(function tick() {
+        stepAt += 1;
+        if (stepAt >= stages.length) { stopPlay(); return; }
+        show(stages[stepAt]);
+        stepTimer = setTimeout(tick, 720);
+      }, 720);
     }
     items.forEach(function (it, i) {
       var b = $('.rp-stage', it);
-      b.addEventListener('click', function () { show(it, true); });
-      b.addEventListener('mouseenter', function () { if (window.matchMedia('(hover:hover)').matches) show(it); });
-      b.addEventListener('focus', function () { show(it); });
+      b.addEventListener('click', function () { stopPlay(); show(it); });
+      b.addEventListener('mouseenter', function () {
+        if (playing) return;
+        if (window.matchMedia('(hover:hover)').matches) show(it);
+      });
+      b.addEventListener('focus', function () { if (!playing) show(it); });
       b.addEventListener('keydown', function (e) {
         var n = null;
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = items[(i + 1) % items.length];
         if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = items[(i - 1 + items.length) % items.length];
         if (e.key === 'Home') n = items[0];
         if (e.key === 'End') n = items[items.length - 1];
-        if (n) { e.preventDefault(); $('.rp-stage', n).focus(); }
+        if (n) { e.preventDefault(); stopPlay(); $('.rp-stage', n).focus(); }
       });
     });
-    show(items[0]);
+    var track = $('.rp-stages', box);
+    if (track) track.addEventListener('pointermove', function (e) {
+      if (playing || e.pointerType === 'touch') return;
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      var r = track.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      var vertical = r.height > r.width * 1.2;
+      var ratio = vertical ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width;
+      var idx = Math.max(0, Math.min(stages.length - 1, Math.floor(ratio * stages.length)));
+      show(stages[idx]);
+    });
+    if (playBtn) {
+      playBtn.textContent = reduce ? 'Next stage' : 'Play sequence';
+      playBtn.addEventListener('click', function () {
+        if (playing) { stopPlay(); return; }
+        playFrom(0);
+      });
+    }
+    show(stages[0] || items[0]);
   }
 
   /* ---------- duration labels from measured tok/s ---------- */
@@ -666,6 +754,8 @@
     var CAP = 10;
     var rows = $$('[data-race-row]', root).map(function (el) {
       return {
+        el: el,
+        name: ($('.read-name', el) || {}).textContent || '',
         tps: parseFloat(el.getAttribute('data-tps')),
         fill: $('.fill', el),
         read: $('[data-read]', el),
@@ -679,6 +769,24 @@
     var btn = $('[data-race-btn]', root);
     var elapsed = 0, last = 0, raf = 0, running = false, started = false, onScreen = false;
 
+    function summarize(t) {
+      var sum = $('[data-race-sum]', root);
+      if (!sum) return;
+      if (t + 1e-9 < CAP) { sum.hidden = true; return; }
+      var tuned = null, slow = null;
+      rows.forEach(function (row) {
+        if (!tuned || row.tps > tuned.tps) tuned = row;
+        if (!slow || row.tps < slow.tps) slow = row;
+      });
+      if (!tuned || !slow) return;
+      var slowRead = Math.min(corpus, Math.floor(slow.tps * Math.min(CAP, t) + 1e-6));
+      var tunedDoneAt = corpus / tuned.tps;
+      sum.hidden = false;
+      sum.textContent = tuned.name + (tunedDoneAt <= CAP
+        ? ' finished the corpus in ' + formatDuration(tunedDoneAt) + '. '
+        : ' has read ' + Math.min(corpus, Math.floor(tuned.tps * CAP)).toLocaleString('en-US') + ' tokens. ')
+        + slow.name + ' has read ' + slowRead.toLocaleString('en-US') + ' of ' + corpus.toLocaleString('en-US') + ' tokens.';
+    }
     function paint(t) {
       if (clock) clock.textContent = 'Elapsed ' + (Math.round(Math.min(CAP, t) * 10) / 10).toFixed(1) + ' s';
       rows.forEach(function (row) {
@@ -691,8 +799,10 @@
           row.read.textContent = readN.toLocaleString('en-US') + ' tokens read';
           row.proj.textContent = done ? ('Finished in ' + formatDuration(doneAt)) : ('Projected ' + formatDuration(doneAt));
         }
+        row.el.classList.toggle('is-done', done);
         row.fill.style.width = Math.min(100, (readN / corpus) * 100) + '%';
       });
+      summarize(t);
     }
     function halt() {
       cancelAnimationFrame(raf);
@@ -765,8 +875,10 @@
     var per = parseFloat(root.getAttribute('data-per-page'));
     if (!isFinite(per) || per <= 0) per = 500;
     var input = $('[data-calc-input]', root);
+    var range = $('[data-calc-range]', root);
     var echo = $('[data-calc-echo]', root);
     var msg = $('[data-calc-msg]', root);
+    var fast = $('[data-calc-fast]', root);
     var buttons = $$('[data-unit]', root);
     var rows = $$('[data-calc-row]', root);
     if (!input || !rows.length) return;
@@ -779,16 +891,33 @@
       });
     }
     function word(n, one, many) { return Math.abs(n - 1) < 1e-9 ? one : many; }
+    function logWidth(tps) {
+      var logs = rows.map(function (row) { return Math.log(parseFloat(row.getAttribute('data-tps'))); }).filter(function (x) { return isFinite(x); });
+      var min = Math.min.apply(null, logs), max = Math.max.apply(null, logs), x = Math.log(tps);
+      if (!logs.length || !isFinite(x) || max === min) return 0;
+      return 8 + 92 * (x - min) / (max - min);
+    }
+    function syncRange(n) {
+      if (!range || !isFinite(n)) return;
+      if (unit === 'pages') { range.max = '400'; range.step = '1'; }
+      else { range.max = '200000'; range.step = '500'; }
+      range.value = String(Math.max(0, Math.min(Number(range.max), n)));
+    }
     function render() {
       var raw = input.value.trim();
       var n = raw === '' ? NaN : Number(raw);
       if (raw === '' || !isFinite(n) || n < 0) {
         if (msg) msg.hidden = false;
         if (echo) echo.textContent = '';
-        rows.forEach(function (row) { var t = $('[data-time]', row); if (t) t.textContent = ''; });
+        if (fast) fast.textContent = '';
+        rows.forEach(function (row) {
+          var slot = $('[data-time]', row); if (slot) slot.textContent = '';
+          var bar = $('[data-bar]', row); if (bar) bar.style.width = '0%';
+        });
         return;
       }
       if (msg) msg.hidden = true;
+      syncRange(n);
       var tokens = unit === 'pages' ? n * per : n;
       var pages = tokens / per;
       if (echo) {
@@ -796,11 +925,17 @@
           ? formatCount(n) + ' ' + word(n, 'page', 'pages') + ' ' + word(n, 'equals', 'equal') + ' ' + formatCount(tokens) + ' tokens.'
           : formatCount(n) + ' ' + word(n, 'token', 'tokens') + ' ' + word(n, 'equals', 'equal') + ' ' + formatCount(pages) + ' ' + word(pages, 'page', 'pages') + '.';
       }
+      var best = null;
       rows.forEach(function (row) {
         var tps = parseFloat(row.getAttribute('data-tps'));
         var slot = $('[data-time]', row);
         if (slot) slot.textContent = isFinite(tps) && tps > 0 ? formatDuration(tokens / tps) : '';
+        var bar = $('[data-bar]', row);
+        if (bar) bar.style.width = (isFinite(tps) ? logWidth(tps) : 0) + '%';
+        var name = ($('b', row) || {}).textContent || '';
+        if (isFinite(tps) && tps > 0 && (!best || tps > best.tps)) best = { tps: tps, name: name };
       });
+      if (fast) fast.textContent = best ? 'Shortest time at this size: ' + best.name + ', ' + formatDuration(tokens / best.tps) + '.' : '';
     }
     buttons.forEach(function (b) {
       b.addEventListener('click', function () {
@@ -820,9 +955,152 @@
       });
     });
     input.addEventListener('input', render);
+    if (range) range.addEventListener('input', function () { input.value = range.value; render(); });
     setPressed();
     render();
   }
 
-  applyConfig(); nav(); spotlight(); reveals(); heroTree(); showcase(); ragPipe(); speedRace(); speedCalc();
+  /* ---------- edition compare ---------- */
+  function editions() {
+    var root = $('[data-editions]');
+    if (!root) return;
+    var note = $('[data-ed-note]', root);
+    var grid = $('.editions');
+    var cards = $$('[data-ed-card]');
+    var copy = {
+      ps: 'PowerShell edition stays offline. It does not connect to the internet, and RAG uses local databases only.',
+      exe: 'EXE edition can connect to cloud models and switch between local and cloud hosting with one click.',
+      none: 'Both editions run from the USB kit. Pick what you need.'
+    };
+    function pick(ed) {
+      cards.forEach(function (c) { c.classList.toggle('is-match', !!ed && c.getAttribute('data-ed-card') === ed); });
+      if (grid) grid.classList.toggle('is-chosen', !!ed);
+      $$('[data-ed]', root).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-ed') === ed ? 'true' : 'false'); });
+      if (note) note.textContent = copy[ed] || copy.none;
+    }
+    $$('[data-ed]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var ed = b.getAttribute('data-ed');
+        pick(b.getAttribute('aria-pressed') === 'true' ? '' : ed);
+      });
+    });
+  }
+
+  /* ---------- home skills command picker ---------- */
+  function skillPick() {
+    var root = $('[data-skillpick]');
+    if (!root) return;
+    var detail = $('[data-skill-detail]', root);
+    var copy = {
+      '/chart': 'Build a chart from numbers or a table.',
+      '/deck': 'Make a slide deck.',
+      '/pdf': 'Create a PDF document.',
+      '/ocr': 'Read the text in an image or scan.',
+      '/transcribe': 'Turn an audio recording into text.',
+      '/units': 'Convert units exactly.',
+      '/fin': 'Run finance calculations.'
+    };
+    var buttons = $$('[data-cmd]', root);
+    function show(btn) {
+      buttons.forEach(function (b) { b.setAttribute('aria-selected', b === btn ? 'true' : 'false'); });
+      if (!detail) return;
+      var cmd = btn.getAttribute('data-cmd');
+      detail.textContent = '';
+      var strong = document.createElement('b');
+      strong.textContent = cmd + '.';
+      detail.appendChild(strong);
+      detail.appendChild(document.createTextNode(' ' + (copy[cmd] || '')));
+    }
+    buttons.forEach(function (b, i) {
+      b.addEventListener('click', function () { show(b); });
+      b.addEventListener('mouseenter', function () {
+        if (window.matchMedia('(hover:hover)').matches) show(b);
+      });
+      b.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = buttons[(i + 1) % buttons.length];
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = buttons[(i - 1 + buttons.length) % buttons.length];
+        if (n) { e.preventDefault(); n.focus(); show(n); }
+      });
+    });
+    if (buttons[0]) show(buttons[0]);
+  }
+
+  /* ---------- investment illustration: read the drawn weight ---------- */
+  function allocInspect() {
+    var card = $('.alloc');
+    if (!card) return;
+    var rows = $$('.row', card);
+    if (!rows.length) return;
+    var note = document.createElement('p');
+    note.className = 'alloc-note';
+    note.setAttribute('aria-live', 'polite');
+    var foot = $('.foot', card);
+    if (foot) card.insertBefore(note, foot); else card.appendChild(note);
+    function weight(row) {
+      var fill = $('.fill', row);
+      return fill ? (fill.style.getPropertyValue('--w') || '').trim() : '';
+    }
+    function show(row) {
+      rows.forEach(function (r) { r.classList.toggle('is-on', r === row); });
+      if (!row) {
+        note.textContent = 'Illustration only. Select a row to read the weight drawn on the track.';
+        return;
+      }
+      var name = (row.querySelector('span') || {}).textContent || 'This row';
+      note.textContent = name + ' is drawn at ' + weight(row) + ' of the track. This is an illustration, not a portfolio.';
+    }
+    rows.forEach(function (row) {
+      row.tabIndex = 0;
+      row.setAttribute('role', 'button');
+      row.addEventListener('pointerenter', function () {
+        if (window.matchMedia('(hover:hover)').matches) show(row);
+      });
+      row.addEventListener('focus', function () { show(row); });
+      row.addEventListener('click', function () { show(row); });
+      row.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(row); }
+      });
+    });
+    card.addEventListener('pointerleave', function (e) {
+      if (!window.matchMedia('(hover:hover)').matches) return;
+      if (e.relatedTarget && card.contains(e.relatedTarget)) return;
+      show(null);
+    });
+    show(null);
+  }
+
+  function sameDoc(a) {
+    if (!a.hash) return false;
+    try {
+      var u = new URL(a.getAttribute('href') || '', location.href);
+      return u.pathname === location.pathname && !!document.getElementById(a.hash.slice(1));
+    } catch (err) { return false; }
+  }
+  function markHere(selector) {
+    var links = $$(selector).filter(sameDoc);
+    if (links.length < 2 || !('IntersectionObserver' in window)) return;
+    var map = {};
+    links.forEach(function (a) { var id = a.hash.slice(1); if (!map[id]) map[id] = a; });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var a = map[en.target.id];
+        if (!a || !en.isIntersecting) return;
+        links.forEach(function (l) { l.classList.remove('is-here'); });
+        a.classList.add('is-here');
+      });
+    }, { rootMargin: '-18% 0px -68% 0px', threshold: 0 });
+    Object.keys(map).forEach(function (id) { io.observe(document.getElementById(id)); });
+  }
+
+  function guideSteps() {
+    var items = $$('.steps-list > li');
+    if (items.length < 2 || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { en.target.classList.toggle('is-current', en.isIntersecting); });
+    }, { rootMargin: '-20% 0px -58% 0px', threshold: 0 });
+    items.forEach(function (li) { io.observe(li); });
+  }
+
+  applyConfig(); nav(); reveals(); heroTree(); showcase(); ragPipe(); speedRace(); speedCalc(); editions(); skillPick(); allocInspect(); markHere('#nav-links a'); markHere('.toc a'); guideSteps();
 })();
