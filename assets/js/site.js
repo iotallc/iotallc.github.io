@@ -111,12 +111,12 @@
     }
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
-    var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
+    var hoverTarget = null, hoverEdge = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     var fineHover = !!(fineMq && fineMq.matches);
     function syncFine() {
       fineHover = !!(fineMq && fineMq.matches);
-      if (!fineHover) { hoverTarget = null; focusIndex = null; }
+      if (!fineHover) { hoverTarget = null; hoverEdge = null; focusIndex = null; }
     }
     if (fineMq && fineMq.addEventListener) fineMq.addEventListener('change', syncFine);
     var hits = document.createElement('div');
@@ -125,28 +125,72 @@
     var lineCatch = document.createElement('div');
     lineCatch.className = 'tree-line-catch';
     hits.appendChild(lineCatch);
-    var LINE_HIT = 16;
-    function nearestBranch(clientX, clientY) {
-      if (!edges) return null;
+    // A few pixels of slop, about three times the main stroke. A 16px corridor
+    // overlapped the next branch and the shared fork, so a near miss lit the tree.
+    var LINE_HIT = 6;
+    var LINE_AMBIG = 1.75;
+    var forkQuiet = 20;
+    var tipRects = [];
+    function segDist(px, py, ax, ay, bx, by) {
+      var dx = bx - ax, dy = by - ay, len2 = dx * dx + dy * dy;
+      var t = len2 ? ((px - ax) * dx + (py - ay) * dy) / len2 : 0;
+      if (t < 0) t = 0; else if (t > 1) t = 1;
+      var x = ax + dx * t, y = ay + dy * t;
+      return Math.sqrt((px - x) * (px - x) + (py - y) * (py - y));
+    }
+    function edgeDist(e, x, y) {
+      var prev = q(e, 0), best = 1e9, steps = 24;
+      for (var s = 1; s <= steps; s++) {
+        var p = q(e, s / steps);
+        var d = segDist(x, y, prev.x, prev.y, p.x, p.y);
+        if (d < best) best = d;
+        prev = p;
+      }
+      return best;
+    }
+    function canvasPoint(clientX, clientY) {
       var rect = cv.getBoundingClientRect();
-      var x = clientX - rect.left, y = clientY - rect.top;
-      var bestI = null, bestD = LINE_HIT;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+    function nearestLine(clientX, clientY) {
+      if (!edges || !edges.length) return null;
+      var pt = canvasPoint(clientX, clientY);
+      var fork = edges[0];
+      var fdx = pt.x - fork.x1, fdy = pt.y - fork.y1;
+      if (fdx * fdx + fdy * fdy < forkQuiet * forkQuiet) return null;
+      var bestBy = [];
       for (var ei = 0; ei < edges.length; ei++) {
         var e = edges[ei];
-        if (e.depth !== 1 || e.b == null) continue;
-        var prev = q(e, 0);
-        for (var s = 1; s <= 28; s++) {
-          var p = q(e, s / 28);
-          var dx = p.x - prev.x, dy = p.y - prev.y, len2 = dx * dx + dy * dy;
-          var t = len2 ? ((x - prev.x) * dx + (y - prev.y) * dy) / len2 : 0;
-          if (t < 0) t = 0; else if (t > 1) t = 1;
-          var px = prev.x + dx * t, py = prev.y + dy * t;
-          var dist = Math.sqrt((x - px) * (x - px) + (y - py) * (y - py));
-          if (dist < bestD) { bestD = dist; bestI = e.b; }
-          prev = p;
-        }
+        if (e.depth < 1 || e.b == null) continue;
+        var d = edgeDist(e, pt.x, pt.y);
+        var cur = bestBy[e.b];
+        if (!cur || d < cur.d) bestBy[e.b] = { d: d, b: e.b, edge: e };
       }
-      return bestI;
+      var ranked = [];
+      for (var bi = 0; bi < bestBy.length; bi++) if (bestBy[bi]) ranked.push(bestBy[bi]);
+      ranked.sort(function (a, b) { return a.d - b.d; });
+      if (!ranked.length || ranked[0].d > LINE_HIT) return null;
+      if (ranked.length > 1 && ranked[1].d - ranked[0].d < LINE_AMBIG) return null;
+      return { b: ranked[0].b, edge: ranked[0].edge };
+    }
+    function nearestTip(clientX, clientY) {
+      if (!tipRects.length) return null;
+      var pt = canvasPoint(clientX, clientY);
+      var best = null, bestD = 1e9;
+      for (var i = 0; i < tipRects.length; i++) {
+        var r = tipRects[i];
+        if (pt.x < r.l || pt.x > r.r || pt.y < r.t || pt.y > r.b) continue;
+        var dx = pt.x - r.cx, dy = pt.y - r.cy, d = dx * dx + dy * dy;
+        if (d < bestD) { bestD = d; best = r.i; }
+      }
+      return best;
+    }
+    function pickHover(clientX, clientY) {
+      var line = nearestLine(clientX, clientY);
+      if (line) return line;
+      var tip = nearestTip(clientX, clientY);
+      if (tip == null) return null;
+      return { b: tip, edge: null };
     }
     var tipAnchors = [];
     function hitLink(i) { return tipAnchors[i] || null; }
@@ -155,56 +199,38 @@
       if (e.pointerType === 'mouse' || e.pointerType === 'pen' || fineHover) fineHover = true;
       return fineHover;
     }
-    function setLineHover(i) {
+    function setHover(hit) {
       if (!fineHover) return;
-      lineCatch.classList.toggle('is-branch', i != null);
-      if (hoverTarget === i) return;
-      hoverTarget = i;
-      updateReadout(i);
+      var b = hit ? hit.b : null;
+      var edge = hit ? hit.edge : null;
+      lineCatch.classList.toggle('is-branch', b != null);
+      if (hoverTarget === b && hoverEdge === edge) return;
+      var branchChanged = hoverTarget !== b;
+      hoverTarget = b;
+      hoverEdge = edge;
+      if (branchChanged) updateReadout(b);
       if (reduce) frame(performance.now());
       else play();
     }
     lineCatch.addEventListener('pointermove', function (e) {
       if (!armPointer(e)) return;
-      setLineHover(nearestBranch(e.clientX, e.clientY));
+      setHover(pickHover(e.clientX, e.clientY));
     });
     lineCatch.addEventListener('pointerleave', function (e) {
       if (!fineHover) return;
       var to = e.relatedTarget;
       var tip = to && to.closest && to.closest('.tree-hit');
       if (tip && hits.contains(tip)) return;
-      setLineHover(null);
+      setHover(null);
     });
     lineCatch.addEventListener('click', function (e) {
       if (e.button !== 0) return;
-      var i = nearestBranch(e.clientX, e.clientY);
-      if (i == null) return;
-      var a = hitLink(i);
+      var hit = pickHover(e.clientX, e.clientY);
+      if (!hit) return;
+      var a = hitLink(hit.b);
       if (!a) return;
       if (e.metaKey || e.ctrlKey) { window.open(a.href, '_blank', 'noopener'); return; }
       a.click();
-    });
-    hits.addEventListener('pointerover', function (e) {
-      if (!armPointer(e)) return;
-      var a = e.target.closest && e.target.closest('a');
-      if (!a || !hits.contains(a)) return;
-      hoverTarget = +a.getAttribute('data-i');
-      lineCatch.classList.toggle('is-branch', true);
-      updateReadout(hoverTarget);
-      if (reduce) frame(performance.now());
-      else play();
-    });
-    hits.addEventListener('pointerout', function (e) {
-      var a = e.target.closest && e.target.closest('a');
-      if (!a || !hits.contains(a)) return;
-      var to = e.relatedTarget;
-      if (to && a.contains(to)) return;
-      if (to === lineCatch || (to && lineCatch.contains(to))) return;
-      if (hoverTarget === +a.getAttribute('data-i')) hoverTarget = null;
-      if (!lineCatch.matches(':hover')) lineCatch.classList.remove('is-branch');
-      updateReadout(hoverTarget);
-      if (reduce) frame(performance.now());
-      else play();
     });
     hits.addEventListener('focusin', function (e) {
       var a = e.target.closest && e.target.closest('a');
@@ -232,6 +258,7 @@
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       var R = rand(7);
       var narrow = W < 820;
+      forkQuiet = narrow ? 16 : 20;
       var rootX = narrow ? W * 0.5 : W * 0.785, rootY = H + 4;
       var forkY = narrow ? H - 90 : H * 0.64;
       var spanL = W * 0.06, spanR = W * 0.94, topY = H - 230;
@@ -273,7 +300,7 @@
       });
       // background constellation
       stars = [];
-      var n = Math.round(W * H / 32000);
+      var n = Math.round(W * H / 14000);
       for (var s = 0; s < n; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
       pulses = [];
       built = true;
@@ -287,19 +314,22 @@
     function drawEdge(e, p) { // draw first p (0..1) of edge using split bezier
       if (p <= 0) return;
       var cx = e.x0 + (e.cx - e.x0) * p, cy = e.y0 + (e.cy - e.y0) * p, end = q(e, p);
-      var mul = 1, widthMul = 1;
+      var mul = 1, widthMul = 1, glow = 0;
       if (e.b != null && maxAmp > 0.001) {
         var amp = branchAmp[e.b] || 0;
         mul = 1 - maxAmp * 0.75 + amp * 1.35;
         if (mul < 0.14) mul = 0.14;
-        widthMul = 1 + amp * 0.7;
+        widthMul = 1 + amp * 0.55;
+        glow = amp;
       }
       ctx.beginPath(); ctx.moveTo(e.x0, e.y0); ctx.quadraticCurveTo(cx, cy, end.x, end.y);
       ctx.strokeStyle = e.color;
       ctx.lineWidth = e.w * widthMul;
-      ctx.globalAlpha = Math.min(1, (e.depth === 0 ? 0.9 : (e.depth === 1 ? 0.72 : (e.depth === 2 ? 0.4 : 0.26))) * mul);
+      ctx.globalAlpha = Math.min(1, (e.depth === 0 ? 0.85 : (e.depth === 1 ? 0.6 : (e.depth === 2 ? 0.4 : 0.28))) * mul);
       ctx.shadowBlur = 0;
+      if (glow > 0.04) { ctx.shadowColor = hexA(e.color, 0.85); ctx.shadowBlur = 14 * glow; }
       ctx.stroke();
+      ctx.shadowBlur = 0;
       ctx.globalAlpha = 1;
     }
     function labelLayout(t) {
@@ -319,6 +349,7 @@
         tipAnchors.push(created);
       }
       while (tipAnchors.length > tips.length) hits.removeChild(tipAnchors.pop());
+      tipRects = [];
       var showLabels = W >= 820;
       tips.forEach(function (t, i) {
         var a = tipAnchors[i];
@@ -336,10 +367,12 @@
           right = Math.max(right, lay.x + lay.half);
           top = Math.min(top, labelTop);
         }
+        var bw = Math.max(12, right - left + 8), bh = Math.max(12, bottom - top + 8);
         a.style.left = (left - 4) + 'px';
         a.style.top = (top - 4) + 'px';
-        a.style.width = Math.max(12, right - left + 8) + 'px';
-        a.style.height = Math.max(12, bottom - top + 8) + 'px';
+        a.style.width = bw + 'px';
+        a.style.height = bh + 'px';
+        tipRects[i] = { l: left - 4, t: top - 4, r: left - 4 + bw, b: top - 4 + bh, cx: t.x, cy: t.y, i: i };
       });
     }
 
@@ -362,12 +395,13 @@
       ctx.clearRect(0, 0, W, H);
       // stars and faint links
       stars.forEach(function (s) {
-        ctx.globalAlpha = s.a * 0.4; ctx.fillStyle = '#C0C0C0';
+        var tw = reduce ? 0.4 : (0.6 + 0.4 * Math.sin(now / 1400 + s.p));
+        ctx.globalAlpha = s.a * tw; ctx.fillStyle = '#C0C0C0';
         ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
       });
       ctx.globalAlpha = 1;
-      var rg = ctx.createRadialGradient(edges[0].x0, H, 0, edges[0].x0, H, Math.max(W, H) * 0.35);
-      rg.addColorStop(0, 'rgba(192,192,192,0.04)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+      var rg = ctx.createRadialGradient(edges[0].x0, H, 0, edges[0].x0, H, Math.max(W, H) * 0.45);
+      rg.addColorStop(0, 'rgba(192,192,192,0.10)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
       ctx.lineCap = 'round';
       edges.forEach(function (e) {
@@ -379,18 +413,17 @@
       if (tipP > 0) {
         var showLabels = W >= 820;
         tips.forEach(function (t) {
+          var pulse = reduce ? 0 : Math.sin(now / 900 + t.i) * 0.5 + 0.5;
           var amp = branchAmp[t.i] || 0;
-          var glowMul = maxAmp > 0.001 ? (0.22 + amp * 0.78) : 1;
-          if (amp > 0.05) {
-            var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 14 + amp * 8);
-            grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.28 * tipP * amp))); grd.addColorStop(1, hexA(t.b.color, 0));
-            ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 18, 0, 6.283); ctx.fill();
-          }
-          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * glowMul)); ctx.beginPath(); ctx.arc(t.x, t.y, 3.2 + amp * 1.1, 0, 6.283); ctx.fill();
-          ctx.strokeStyle = hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.5; ctx.beginPath(); ctx.arc(t.x, t.y, 7 + amp * 2, 0, 6.283); ctx.stroke();
+          var glowMul = maxAmp > 0.001 ? Math.max(0.18, 1 - maxAmp * 0.75 + amp * 0.85) : 1;
+          var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6 + amp * 12);
+          grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.b.color, 0));
+          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 28 + amp * 8, 0, 6.283); ctx.fill();
+          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * glowMul)); ctx.beginPath(); ctx.arc(t.x, t.y, 3.6 + amp * 0.8, 0, 6.283); ctx.fill();
+          ctx.strokeStyle = hexA(t.b.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
           if (showLabels) {
             var lay = labelLayout(t);
-            var labelA = tipP * (maxAmp > 0.001 ? (0.28 + amp * 0.72) : 0.82);
+            var labelA = tipP * (maxAmp > 0.001 ? (0.32 + amp * 0.62) : 0.75);
             ctx.fillStyle = 'rgba(224,224,224,' + Math.min(1, labelA) + ')';
             lay.lines.forEach(function (line, li) {
               ctx.fillText(line, lay.x, t.y - 18 - (lay.lines.length - 1 - li) * 13);
@@ -401,13 +434,26 @@
       // root node
       var r0 = edges[0];
       ctx.fillStyle = '#E0E0E0'; ctx.beginPath(); ctx.arc(r0.x1, r0.y1, 4.5 * Math.min(1, g * 4), 0, 6.283); ctx.fill();
-      // pulses travelling from root to tips
-      if (!reduce && g >= 1 && goalIndex !== null) {
-        if (pulses.length < 4 && Math.random() < 0.16) {
-          var matched = paths.filter(function (p) { return p.b === goalIndex; });
-          if (matched.length) {
-            var p = matched[(Math.random() * matched.length) | 0];
-            pulses.push({ path: p, t: 0, speed: 0.007 + Math.random() * 0.004 });
+      // pulses travelling from root to tips; idle covers the whole tree,
+      // a hovered stroke keeps new pulses on that line only
+      if (!reduce && g >= 1) {
+        var aimed = goalIndex !== null;
+        var onAim = function (p) {
+          if (!aimed) return true;
+          if (p.b !== goalIndex) return false;
+          if (hoverTarget === null || !hoverEdge) return true;
+          for (var pi = 0; pi < p.list.length; pi++) if (p.list[pi] === hoverEdge) return true;
+          return false;
+        };
+        pulses = pulses.filter(onAim);
+        var cap = aimed ? 6 : 14;
+        var chance = aimed ? 0.14 : 0.08;
+        var speed0 = aimed ? 0.0055 : 0.0045;
+        if (pulses.length < cap && Math.random() < chance) {
+          var pool = aimed ? paths.filter(onAim) : paths;
+          if (pool.length) {
+            var pth = pool[(Math.random() * pool.length) | 0];
+            pulses.push({ path: pth, t: 0, speed: speed0 + Math.random() * 0.004 });
           }
         }
         pulses = pulses.filter(function (pl) {
@@ -422,12 +468,7 @@
           return true;
         });
       }
-      var settling = false;
-      for (var si = 0; si < branchAmp.length; si++) {
-        if (branchAmp[si] !== (goalIndex === si ? 1 : 0)) settling = true;
-      }
-      var idle = g >= 1 && !settling && pulses.length === 0;
-      if (running && !reduce && !idle) raf = requestAnimationFrame(frame);
+      if (running && !reduce) raf = requestAnimationFrame(frame);
     }
     function hexA(hex, a) {
       var h = hex.replace('#', ''); if (h.length === 3) h = h.split('').map(function (c) { return c + c; }).join('');
