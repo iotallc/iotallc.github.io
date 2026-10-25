@@ -36,6 +36,6 @@ links keep working. Commit and push to the default branch.
 ## Palette
 
 Background #000000 to #141414, surfaces #121212 / #1A1A1A, borders #2A2A2A, text #E0E0E0 / #CBCBCB,
-muted #9A9A9A / #707070, chrome text gradient in silver tones.
+muted #9A9A9A / #707070, emphasis in solid silver.
 Branch accents: Investment #D4B86A, Enterprise #8EB8D4, Windows #B5A4C9, Mobile #6BCB8E,
 Games #E09A8C, Models #7EBBC7, RAG #8FCBB5.

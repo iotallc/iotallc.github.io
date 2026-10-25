@@ -105,6 +105,7 @@
       <label><span>Network</span>
         <select id="sk-net"><option value="">Offline and online</option><option value="offline">Offline</option><option value="online">Online</option></select></label>
     </form>
+    <p class="sk-count muted small" id="sk-count" aria-live="polite"></p>
     <div class="grid sk-grid" id="sk-grid">
       <article class="card skill" id="skill-chart" data-cat="everyday" data-kind="package" data-ed="powershell exe" data-net="offline" data-status="available" data-q="chart /chart makes a bar, line, pie, or scatter chart from your data or from a dropped csv or xlsx file. saves a png in the iota theme. everyday documents and visuals powershell edition exe edition offline ">
         <div class="sk-top"><code class="slash">/chart</code><span class="ver">Version 1.2</span></div>
@@ -379,11 +380,7 @@
     <p>&copy; 2026 IOTA. <a href="../">Home</a> &middot; <a href="../tutorials/">Tutorials</a> &middot; <a href="../iota-mobile/privacy.html">IOTA Mobile privacy policy</a> &middot; <a href="../iota-tales/">Iota Tales privacy policy</a> &middot; IOTA.LLC.Business.Inquiries@gmail.com</p>
   </div>
 </footer>
-<script>
-(function(){var n=document.querySelector('.nav'),b=document.querySelector('.menu-btn');if(!n||!b)return;
-b.addEventListener('click',function(){var o=n.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Close':'Menu';});
-Array.prototype.forEach.call(document.querySelectorAll('#nav-links a'),function(a){a.addEventListener('click',function(){n.classList.remove('open');b.textContent='Menu';b.setAttribute('aria-expanded','false');});});})();
-</script>
+<script src="../assets/js/site.js"></script>
 <script src="skills.js"></script>
 </body>
 </html>
