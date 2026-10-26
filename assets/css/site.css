@@ -10,7 +10,7 @@
   --chrome-grad:linear-gradient(102deg,#F7F7F8 0%,#B4B6BC 42%,#F4F5F7 68%,#9C9EA4 100%);
   --sky:#8EB8D4;
   /* branch accents (IOTA accent set) */
-  --c-inv:#D4B86A; --c-ent:#8EB8D4; --c-win:#B5A4C9; --c-mob:#6BCB8E; --c-game:#E09A8C; --c-model:#7EBBC7; --c-rag:#8FCBB5;
+  --c-inv:#D4B86A; --c-ent:#8EB8D4; --c-win:#B5A4C9; --c-skill:#70C0AE; --c-mob:#6BCB8E; --c-game:#E09A8C; --c-model:#7EBBC7; --c-rag:#8FCBB5;
   --glass:rgba(22,22,24,.55); --glass-2:rgba(30,30,33,.6); --hair:rgba(255,255,255,.08); --hair-2:rgba(255,255,255,.14);
   --radius:12px; --max:1200px;
   --ease-out:cubic-bezier(.22,1,.36,1);
