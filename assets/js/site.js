@@ -83,7 +83,7 @@
     var ctx = cv.getContext('2d');
     var css = getComputedStyle(document.documentElement);
     var BR = [
-      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Skills', '--c-skill', 'skills'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
+      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Skills', '--c-win', 'skills'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
       ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment.html']
     ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0', id: b[2] }; });
     var BLURB = {
@@ -109,15 +109,18 @@
       readout.appendChild(strong);
       readout.appendChild(document.createTextNode('. ' + (BLURB[BR[i].label] || '')));
     }
+    function syncReadout() {
+      updateReadout(fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null);
+    }
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
-    var hoverTarget = null, hoverEdge = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
-    var pulseAim = null;
+    var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     var fineHover = !!(fineMq && fineMq.matches);
     function syncFine() {
       fineHover = !!(fineMq && fineMq.matches);
-      if (!fineHover) { hoverTarget = null; hoverEdge = null; focusIndex = null; }
+      if (!fineHover) { hoverTarget = null; focusIndex = null; }
+      syncReadout();
     }
     if (fineMq && fineMq.addEventListener) fineMq.addEventListener('change', syncFine);
     var hits = document.createElement('div');
@@ -126,128 +129,92 @@
     var lineCatch = document.createElement('div');
     lineCatch.className = 'tree-line-catch';
     hits.appendChild(lineCatch);
-    // A few pixels of slop, about three times the main stroke. A 16px corridor
-    // overlapped the next branch and the shared fork, so a near miss lit the tree.
-    var LINE_HIT = 6;
-    var LINE_AMBIG = 1.75;
-    var forkQuiet = 20;
-    var tipRects = [];
-    function segDist(px, py, ax, ay, bx, by) {
-      var dx = bx - ax, dy = by - ay, len2 = dx * dx + dy * dy;
-      var t = len2 ? ((px - ax) * dx + (py - ay) * dy) / len2 : 0;
-      if (t < 0) t = 0; else if (t > 1) t = 1;
-      var x = ax + dx * t, y = ay + dy * t;
-      return Math.sqrt((px - x) * (px - x) + (py - y) * (py - y));
-    }
-    function edgeDist(e, x, y) {
-      var prev = q(e, 0), best = 1e9, steps = 24;
-      for (var s = 1; s <= steps; s++) {
-        var p = q(e, s / steps);
-        var d = segDist(x, y, prev.x, prev.y, p.x, p.y);
-        if (d < best) best = d;
-        prev = p;
-      }
-      return best;
-    }
-    function canvasPoint(clientX, clientY) {
+    var LINE_HIT = 16;
+    function nearestBranch(clientX, clientY) {
+      if (!edges) return null;
       var rect = cv.getBoundingClientRect();
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-    function nearestLine(clientX, clientY) {
-      if (!edges || !edges.length) return null;
-      var pt = canvasPoint(clientX, clientY);
-      var fork = edges[0];
-      var fdx = pt.x - fork.x1, fdy = pt.y - fork.y1;
-      if (fdx * fdx + fdy * fdy < forkQuiet * forkQuiet) return null;
-      var bestBy = [];
+      var x = clientX - rect.left, y = clientY - rect.top;
+      var bestI = null, bestD = LINE_HIT;
       for (var ei = 0; ei < edges.length; ei++) {
         var e = edges[ei];
-        if (e.depth < 1 || e.b == null) continue;
-        var d = edgeDist(e, pt.x, pt.y);
-        var cur = bestBy[e.b];
-        if (!cur || d < cur.d) bestBy[e.b] = { d: d, b: e.b, edge: e };
+        if (e.depth !== 1 || e.b == null) continue;
+        var prev = q(e, 0);
+        for (var s = 1; s <= 28; s++) {
+          var p = q(e, s / 28);
+          var dx = p.x - prev.x, dy = p.y - prev.y, len2 = dx * dx + dy * dy;
+          var t = len2 ? ((x - prev.x) * dx + (y - prev.y) * dy) / len2 : 0;
+          if (t < 0) t = 0; else if (t > 1) t = 1;
+          var px = prev.x + dx * t, py = prev.y + dy * t;
+          var dist = Math.sqrt((x - px) * (x - px) + (y - py) * (y - py));
+          if (dist < bestD) { bestD = dist; bestI = e.b; }
+          prev = p;
+        }
       }
-      var ranked = [];
-      for (var bi = 0; bi < bestBy.length; bi++) if (bestBy[bi]) ranked.push(bestBy[bi]);
-      ranked.sort(function (a, b) { return a.d - b.d; });
-      if (!ranked.length || ranked[0].d > LINE_HIT) return null;
-      if (ranked.length > 1 && ranked[1].d - ranked[0].d < LINE_AMBIG) return null;
-      return { b: ranked[0].b, edge: ranked[0].edge };
-    }
-    function nearestTip(clientX, clientY) {
-      if (!tipRects.length) return null;
-      var pt = canvasPoint(clientX, clientY);
-      var best = null, bestD = 1e9;
-      for (var i = 0; i < tipRects.length; i++) {
-        var r = tipRects[i];
-        if (pt.x < r.l || pt.x > r.r || pt.y < r.t || pt.y > r.b) continue;
-        var dx = pt.x - r.cx, dy = pt.y - r.cy, d = dx * dx + dy * dy;
-        if (d < bestD) { bestD = d; best = r.i; }
-      }
-      return best;
-    }
-    function pickHover(clientX, clientY) {
-      var line = nearestLine(clientX, clientY);
-      if (line) return line;
-      var tip = nearestTip(clientX, clientY);
-      if (tip == null) return null;
-      return { b: tip, edge: null };
+      return bestI;
     }
     var tipAnchors = [];
     function hitLink(i) { return tipAnchors[i] || null; }
-    function armPointer(e) {
-      if (!e || e.pointerType === 'touch') return false;
-      if (e.pointerType === 'mouse' || e.pointerType === 'pen' || fineHover) fineHover = true;
-      return fineHover;
-    }
-    function setHover(hit) {
+    function setLineHover(i) {
       if (!fineHover) return;
-      var b = hit ? hit.b : null;
-      var edge = hit ? hit.edge : null;
-      lineCatch.classList.toggle('is-branch', b != null);
-      if (hoverTarget === b && hoverEdge === edge) return;
-      var branchChanged = hoverTarget !== b;
-      hoverTarget = b;
-      hoverEdge = edge;
-      if (branchChanged) updateReadout(b);
+      lineCatch.classList.toggle('is-branch', i != null);
+      if (hoverTarget === i) return;
+      hoverTarget = i;
+      syncReadout();
       if (reduce) frame(performance.now());
-      else play();
     }
     lineCatch.addEventListener('pointermove', function (e) {
-      if (!armPointer(e)) return;
-      setHover(pickHover(e.clientX, e.clientY));
+      if (!fineHover) return;
+      setLineHover(nearestBranch(e.clientX, e.clientY));
     });
     lineCatch.addEventListener('pointerleave', function (e) {
       if (!fineHover) return;
       var to = e.relatedTarget;
       var tip = to && to.closest && to.closest('.tree-hit');
       if (tip && hits.contains(tip)) return;
-      setHover(null);
+      setLineHover(null);
     });
     lineCatch.addEventListener('click', function (e) {
       if (e.button !== 0) return;
-      var hit = pickHover(e.clientX, e.clientY);
-      if (!hit) return;
-      var a = hitLink(hit.b);
+      var i = nearestBranch(e.clientX, e.clientY);
+      if (i == null) return;
+      var a = hitLink(i);
       if (!a) return;
       if (e.metaKey || e.ctrlKey) { window.open(a.href, '_blank', 'noopener'); return; }
       a.click();
+    });
+    hits.addEventListener('pointerover', function (e) {
+      if (!fineHover) return;
+      var a = e.target.closest && e.target.closest('a');
+      if (!a || !hits.contains(a)) return;
+      hoverTarget = +a.getAttribute('data-i');
+      lineCatch.classList.toggle('is-branch', true);
+      syncReadout();
+      if (reduce) frame(performance.now());
+    });
+    hits.addEventListener('pointerout', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a || !hits.contains(a)) return;
+      var to = e.relatedTarget;
+      if (to && a.contains(to)) return;
+      if (to === lineCatch || (to && lineCatch.contains(to))) return;
+      if (hoverTarget === +a.getAttribute('data-i')) hoverTarget = null;
+      if (!lineCatch.matches(':hover')) lineCatch.classList.remove('is-branch');
+      syncReadout();
+      if (reduce) frame(performance.now());
     });
     hits.addEventListener('focusin', function (e) {
       var a = e.target.closest && e.target.closest('a');
       if (!a) return;
       focusIndex = +a.getAttribute('data-i');
-      updateReadout(focusIndex);
+      syncReadout();
       if (reduce) frame(performance.now());
-      else play();
     });
     hits.addEventListener('focusout', function (e) {
       var a = e.target.closest && e.target.closest('a');
       if (!a) return;
       if (focusIndex === +a.getAttribute('data-i')) focusIndex = null;
-      updateReadout(hoverTarget != null ? hoverTarget : focusIndex);
+      syncReadout();
       if (reduce) frame(performance.now());
-      else play();
     });
 
     function rand(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
@@ -259,7 +226,6 @@
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       var R = rand(7);
       var narrow = W < 820;
-      forkQuiet = narrow ? 16 : 20;
       var rootX = narrow ? W * 0.5 : W * 0.785, rootY = H + 4;
       var forkY = narrow ? H - 90 : H * 0.64;
       var spanL = W * 0.06, spanR = W * 0.94, topY = H - 230;
@@ -304,8 +270,6 @@
       var n = Math.round(W * H / 14000);
       for (var s = 0; s < n; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
       pulses = [];
-      pulseAim = null;
-      hoverEdge = null;
       built = true;
       positionHits();
     }
@@ -320,9 +284,8 @@
       var mul = 1, widthMul = 1, glow = 0;
       if (e.b != null && maxAmp > 0.001) {
         var amp = branchAmp[e.b] || 0;
-        mul = 1 - maxAmp * 0.75 + amp * 1.35;
-        if (mul < 0.14) mul = 0.14;
-        widthMul = 1 + amp * 0.55;
+        mul = 1 - maxAmp * 0.28 + amp * 0.85;
+        widthMul = 1 + amp * 0.4;
         glow = amp;
       }
       ctx.beginPath(); ctx.moveTo(e.x0, e.y0); ctx.quadraticCurveTo(cx, cy, end.x, end.y);
@@ -352,7 +315,6 @@
         tipAnchors.push(created);
       }
       while (tipAnchors.length > tips.length) hits.removeChild(tipAnchors.pop());
-      tipRects = [];
       var showLabels = W >= 820;
       tips.forEach(function (t, i) {
         var a = tipAnchors[i];
@@ -370,12 +332,10 @@
           right = Math.max(right, lay.x + lay.half);
           top = Math.min(top, labelTop);
         }
-        var bw = Math.max(12, right - left + 8), bh = Math.max(12, bottom - top + 8);
         a.style.left = (left - 4) + 'px';
         a.style.top = (top - 4) + 'px';
-        a.style.width = bw + 'px';
-        a.style.height = bh + 'px';
-        tipRects[i] = { l: left - 4, t: top - 4, r: left - 4 + bw, b: top - 4 + bh, cx: t.x, cy: t.y, i: i };
+        a.style.width = Math.max(12, right - left + 8) + 'px';
+        a.style.height = Math.max(12, bottom - top + 8) + 'px';
       });
     }
 
@@ -398,11 +358,12 @@
       ctx.clearRect(0, 0, W, H);
       // stars and faint links
       stars.forEach(function (s) {
-        var tw = reduce ? 0.4 : (0.6 + 0.4 * Math.sin(now / 1400 + s.p));
+        var tw = reduce ? 1 : (0.6 + 0.4 * Math.sin(now / 1400 + s.p));
         ctx.globalAlpha = s.a * tw; ctx.fillStyle = '#C0C0C0';
         ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
       });
       ctx.globalAlpha = 1;
+      // glow under root
       var rg = ctx.createRadialGradient(edges[0].x0, H, 0, edges[0].x0, H, Math.max(W, H) * 0.45);
       rg.addColorStop(0, 'rgba(192,192,192,0.10)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
@@ -418,16 +379,16 @@
         tips.forEach(function (t) {
           var pulse = reduce ? 0 : Math.sin(now / 900 + t.i) * 0.5 + 0.5;
           var amp = branchAmp[t.i] || 0;
-          var glowMul = maxAmp > 0.001 ? (0.72 + amp * 0.4) : 1;
+          var glowMul = maxAmp > 0.001 ? (1 - maxAmp * 0.28 + amp * 0.7) : 1;
           var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6 + amp * 12);
           grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.b.color, 0));
           ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 28 + amp * 8, 0, 6.283); ctx.fill();
-          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * glowMul)); ctx.beginPath(); ctx.arc(t.x, t.y, 3.6 + amp * 0.8, 0, 6.283); ctx.fill();
+          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * (maxAmp > 0.001 ? glowMul : 1))); ctx.beginPath(); ctx.arc(t.x, t.y, 3.6 + amp * 0.8, 0, 6.283); ctx.fill();
           ctx.strokeStyle = hexA(t.b.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
           if (showLabels) {
             var lay = labelLayout(t);
-            var labelA = tipP * (maxAmp > 0.001 ? (0.32 + amp * 0.62) : 0.75);
-            ctx.fillStyle = 'rgba(224,224,224,' + Math.min(1, labelA) + ')';
+            var labelA = 0.75 * tipP * (maxAmp > 0.001 ? (1 - maxAmp * 0.3 + amp * 0.4) : 1);
+            ctx.fillStyle = 'rgba(203,203,203,' + Math.min(1, labelA) + ')';
             lay.lines.forEach(function (line, li) {
               ctx.fillText(line, lay.x, t.y - 18 - (lay.lines.length - 1 - li) * 13);
             });
@@ -437,67 +398,31 @@
       // root node
       var r0 = edges[0];
       ctx.fillStyle = '#E0E0E0'; ctx.beginPath(); ctx.arc(r0.x1, r0.y1, 4.5 * Math.min(1, g * 4), 0, 6.283); ctx.fill();
-      // Pulses are the white neurons. Idle, they drift the whole tree.
-      // A highlighted branch keeps travel on that branch only. A pulse is
-      // {path, t, speed}; the branch id is path.b. Checking the pulse object
-      // itself matches nothing and used to wipe the field.
+      // pulses travelling from root to tips
       if (!reduce && g >= 1) {
-        var aimed = goalIndex !== null;
-        var aimChanged = pulseAim !== goalIndex;
-        pulseAim = goalIndex;
-        var speed0 = 0.0036;
-        var speedJitter = 0.0012;
-        var stepScale = dt / 16.667;
-        var onLit = function (pl) {
-          return pl.path && pl.path.b === goalIndex;
-        };
-        var moving = function (pl) { return !aimed || onLit(pl); };
-        var activeCount = function () {
-          var n = 0;
-          for (var ai = 0; ai < pulses.length; ai++) if (moving(pulses[ai])) n++;
-          return n;
-        };
-        var branchPool = function () {
-          var pool = [];
-          for (var i = 0; i < paths.length; i++) if (paths[i].b === goalIndex) pool.push(paths[i]);
-          return pool;
-        };
-        var cap = aimed ? 5 : 11;
-        var spawn = function (pool, tOf) {
-          if (!pool.length || activeCount() >= cap) return;
-          var pth = pool[(Math.random() * pool.length) | 0];
-          var t0 = typeof tOf === 'function' ? tOf(pth) : tOf;
-          pulses.push({ path: pth, t: t0, speed: speed0 + Math.random() * speedJitter });
-        };
-        // Past the shared trunk, so a newly lit branch shows neurons on its own stroke.
-        var onBranchT = function (pth) {
-          var nSeg = pth.list.length;
-          if (nSeg < 2) return 0;
-          var start = 1 / nSeg;
-          return start + Math.random() * ((nSeg - 1) / nSeg) * 0.72;
-        };
-        if (aimed && aimChanged) {
-          var burst = branchPool();
-          var guard = 0;
-          while (activeCount() < 3 && guard < 3) { spawn(burst, onBranchT); guard++; }
+        if (pulses.length < 14 && Math.random() < 0.08) {
+          var pool = paths;
+          if (fineHover && hoverTarget !== null) {
+            var matched = paths.filter(function (p) { return p.b === hoverTarget; });
+            if (matched.length) pool = matched;
+          }
+          var p = pool[(Math.random() * pool.length) | 0];
+          pulses.push({ path: p, t: 0, speed: 0.0045 + Math.random() * 0.004 });
         }
-        if (activeCount() < cap && Math.random() < (aimed ? 0.06 : 0.05)) spawn(aimed ? branchPool() : paths, 0);
         pulses = pulses.filter(function (pl) {
-          if (!moving(pl)) return true;
-          pl.t += pl.speed * stepScale;
-          if (pl.t >= 1) return false;
+          pl.t += pl.speed;
           var n = pl.path.list.length, seg = Math.min(n - 1, Math.floor(pl.t * n)), lt = pl.t * n - seg;
+          if (pl.t >= 1) return false;
           var pt = q(pl.path.list[seg], lt);
-          var col = seg === 0 ? '#F4F5F7' : pl.path.color;
-          var gl = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 12);
-          gl.addColorStop(0, 'rgba(255,255,255,0.98)');
-          gl.addColorStop(0.32, hexA(col, 0.88));
-          gl.addColorStop(1, hexA(col, 0));
-          ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(pt.x, pt.y, 12, 0, 6.283); ctx.fill();
+          var gl = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 9);
+          var col = seg === 0 ? '#E0E0E0' : pl.path.color;
+          gl.addColorStop(0, hexA(col, 0.95)); gl.addColorStop(1, hexA(col, 0));
+          ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(pt.x, pt.y, 9, 0, 6.283); ctx.fill();
           return true;
         });
       }
       if (running && !reduce) raf = requestAnimationFrame(frame);
+      else if (!reduce && g < 1) raf = requestAnimationFrame(frame);
     }
     function hexA(hex, a) {
       var h = hex.replace('#', ''); if (h.length === 3) h = h.split('').map(function (c) { return c + c; }).join('');
@@ -505,13 +430,13 @@
     }
     function play() { cancelAnimationFrame(raf); raf = requestAnimationFrame(frame); }
 
-    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { build(); play(); }, 120); });
+    var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { build(); if (reduce) frame(performance.now()); }, 120); });
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (en) { running = en[0].isIntersecting && !document.hidden; if (running) play(); }).observe(cv);
     }
     document.addEventListener('visibilitychange', function () { running = !document.hidden; if (running) play(); });
     build();
-    updateReadout(null);
+    syncReadout();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { positionHits(); play(); }); else play();
   }
 
