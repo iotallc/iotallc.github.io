@@ -407,7 +407,7 @@
             if (matched.length) pool = matched;
           }
           var p = pool[(Math.random() * pool.length) | 0];
-          pulses.push({ path: p, t: 0, speed: 0.0045 + Math.random() * 0.004 });
+          pulses.push({ path: p, t: 0, speed: 0.0025 + Math.random() * 0.0022 });
         }
         pulses = pulses.filter(function (pl) {
           pl.t += pl.speed;
