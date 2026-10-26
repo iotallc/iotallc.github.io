@@ -83,7 +83,7 @@
     var ctx = cv.getContext('2d');
     var css = getComputedStyle(document.documentElement);
     var BR = [
-      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Skills', '--c-win', 'skills'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
+      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Skills', '--c-skill', 'skills'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
       ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment.html']
     ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0', id: b[2] }; });
     var BLURB = {
@@ -437,44 +437,56 @@
       // root node
       var r0 = edges[0];
       ctx.fillStyle = '#E0E0E0'; ctx.beginPath(); ctx.arc(r0.x1, r0.y1, 4.5 * Math.min(1, g * 4), 0, 6.283); ctx.fill();
-      // Pulses are the white neurons. Idle keeps them traveling the whole tree.
-      // Highlighting a branch never deletes one: the field stays lit, and extra
-      // pulses head down that branch so neurons are seen firing toward it.
+      // Pulses are the white neurons. Idle, they drift the whole tree.
+      // A highlighted branch keeps travel on that branch only. A pulse is
+      // {path, t, speed}; the branch id is path.b. Checking the pulse object
+      // itself matches nothing and used to wipe the field.
       if (!reduce && g >= 1) {
         var aimed = goalIndex !== null;
         var aimChanged = pulseAim !== goalIndex;
         pulseAim = goalIndex;
-        var aimPool = function () {
-          var pool = paths.filter(function (p) { return p.b === goalIndex; });
-          if (!pool.length) return paths;
-          if (!hoverEdge) return pool;
-          if (hoverEdge.depth <= 1) {
-            var toTip = pool.filter(function (p) { return p.toTip; });
-            if (toTip.length) return toTip;
-          }
-          var along = pool.filter(function (p) {
-            var list = p.list;
-            for (var pi = 0; pi < list.length; pi++) if (list[pi] === hoverEdge) return true;
-            return false;
-          });
-          return along.length ? along : pool;
+        var speed0 = 0.0036;
+        var speedJitter = 0.0012;
+        var stepScale = dt / 16.667;
+        var onLit = function (pl) {
+          return pl.path && pl.path.b === goalIndex;
         };
-        var spawn = function (pool, t0, fast) {
-          if (!pool.length) return;
+        var moving = function (pl) { return !aimed || onLit(pl); };
+        var activeCount = function () {
+          var n = 0;
+          for (var ai = 0; ai < pulses.length; ai++) if (moving(pulses[ai])) n++;
+          return n;
+        };
+        var branchPool = function () {
+          var pool = [];
+          for (var i = 0; i < paths.length; i++) if (paths[i].b === goalIndex) pool.push(paths[i]);
+          return pool;
+        };
+        var cap = aimed ? 5 : 11;
+        var spawn = function (pool, tOf) {
+          if (!pool.length || activeCount() >= cap) return;
           var pth = pool[(Math.random() * pool.length) | 0];
-          var speed0 = fast ? 0.0075 : 0.0045;
-          pulses.push({ path: pth, t: t0, speed: speed0 + Math.random() * 0.004 });
+          var t0 = typeof tOf === 'function' ? tOf(pth) : tOf;
+          pulses.push({ path: pth, t: t0, speed: speed0 + Math.random() * speedJitter });
+        };
+        // Past the shared trunk, so a newly lit branch shows neurons on its own stroke.
+        var onBranchT = function (pth) {
+          var nSeg = pth.list.length;
+          if (nSeg < 2) return 0;
+          var start = 1 / nSeg;
+          return start + Math.random() * ((nSeg - 1) / nSeg) * 0.72;
         };
         if (aimed && aimChanged) {
-          var burst = aimPool();
-          for (var nSpawn = 0; nSpawn < 3; nSpawn++) spawn(burst, Math.random() * 0.28, true);
+          var burst = branchPool();
+          var guard = 0;
+          while (activeCount() < 3 && guard < 3) { spawn(burst, onBranchT); guard++; }
         }
-        if (pulses.length < 18 && Math.random() < 0.08) spawn(paths, 0, false);
-        if (aimed && pulses.length < 18 && Math.random() < 0.2) spawn(aimPool(), 0, true);
+        if (activeCount() < cap && Math.random() < (aimed ? 0.06 : 0.05)) spawn(aimed ? branchPool() : paths, 0);
         pulses = pulses.filter(function (pl) {
-          pl.t += pl.speed;
-          var n = pl.path.list.length, seg = Math.min(n - 1, Math.floor(pl.t * n)), lt = pl.t * n - seg;
+          if (!moving(pl)) return true;
+          pl.t += pl.speed * stepScale;
           if (pl.t >= 1) return false;
+          var n = pl.path.list.length, seg = Math.min(n - 1, Math.floor(pl.t * n)), lt = pl.t * n - seg;
           var pt = q(pl.path.list[seg], lt);
           var col = seg === 0 ? '#F4F5F7' : pl.path.color;
           var gl = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 12);
