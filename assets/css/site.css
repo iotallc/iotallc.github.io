@@ -7,6 +7,7 @@
   --black:#000000; --bg:#050506; --near:#141414; --well:#121212; --input:#1A1A1A; --rail:#161616;
   --border:#2A2A2A; --steel:#3A3A3A; --silver:#929294; --highlight:#CBCBCB; --chrome:#E0E0E0;
   --line:#C0C0C0; --dim:#9A9A9A; --muted:#707070;
+  --chrome-grad:linear-gradient(102deg,#F7F7F8 0%,#B4B6BC 42%,#F4F5F7 68%,#9C9EA4 100%);
   --sky:#8EB8D4;
   /* branch accents (IOTA accent set) */
   --c-inv:#D4B86A; --c-ent:#8EB8D4; --c-win:#B5A4C9; --c-mob:#6BCB8E; --c-game:#E09A8C; --c-model:#7EBBC7; --c-rag:#8FCBB5;
@@ -41,7 +42,7 @@ h1,h2,h3,h4{color:var(--chrome);margin:0;font-weight:600;letter-spacing:-.02em;l
 h2{font-size:clamp(32px,4.4vw,54px);font-weight:600}
 h3{font-size:22px;letter-spacing:-.01em;line-height:1.25}
 p{margin:0 0 1em}
-.chrome{color:#F4F5F7;background:none;-webkit-text-fill-color:currentColor}
+.chrome{color:var(--chrome);background:var(--chrome-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver);display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
 .eyebrow .dot{width:6px;height:6px;border-radius:1px;background:var(--accent,var(--line));box-shadow:none}
 .lead{font-size:clamp(17px,1.5vw,20px);color:var(--highlight);max-width:760px;line-height:1.6}
@@ -80,8 +81,8 @@ code{background:rgba(255,255,255,.06);border:1px solid var(--hair);padding:1px 6
   transition:background .14s var(--ease-out),border-color .14s var(--ease-out),color .14s var(--ease-out),transform .14s var(--ease-out)}
 .btn:hover{background:rgba(255,255,255,.05);border-color:#6a6a6e}
 .btn:active{transform:scale(.98)}
-.btn.primary{color:#0B0B0C;border-color:transparent;background:#E6E6E8;box-shadow:none}
-.btn.primary:hover{background:#F4F5F7;box-shadow:none}
+.btn.primary{color:#0B0B0C;border-color:transparent;background:linear-gradient(180deg,#F6F6F8,#C5C6CB);box-shadow:inset 0 1px 0 #fff}
+.btn.primary:hover{background:linear-gradient(180deg,#FFFFFF,#D4D5D9);box-shadow:inset 0 1px 0 #fff}
 .btn.ghost{background:transparent}
 .btn svg{width:16px;height:16px}
 

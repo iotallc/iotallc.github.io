@@ -112,6 +112,7 @@
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
     var hoverTarget = null, hoverEdge = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
+    var pulseAim = null;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     var fineHover = !!(fineMq && fineMq.matches);
     function syncFine() {
@@ -303,6 +304,8 @@
       var n = Math.round(W * H / 14000);
       for (var s = 0; s < n; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
       pulses = [];
+      pulseAim = null;
+      hoverEdge = null;
       built = true;
       positionHits();
     }
@@ -415,7 +418,7 @@
         tips.forEach(function (t) {
           var pulse = reduce ? 0 : Math.sin(now / 900 + t.i) * 0.5 + 0.5;
           var amp = branchAmp[t.i] || 0;
-          var glowMul = maxAmp > 0.001 ? Math.max(0.18, 1 - maxAmp * 0.75 + amp * 0.85) : 1;
+          var glowMul = maxAmp > 0.001 ? (0.72 + amp * 0.4) : 1;
           var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6 + amp * 12);
           grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.b.color, 0));
           ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 28 + amp * 8, 0, 6.283); ctx.fill();
@@ -434,37 +437,51 @@
       // root node
       var r0 = edges[0];
       ctx.fillStyle = '#E0E0E0'; ctx.beginPath(); ctx.arc(r0.x1, r0.y1, 4.5 * Math.min(1, g * 4), 0, 6.283); ctx.fill();
-      // pulses travelling from root to tips; idle covers the whole tree,
-      // a hovered stroke keeps new pulses on that line only
+      // Pulses are the white neurons. Idle keeps them traveling the whole tree.
+      // Highlighting a branch never deletes one: the field stays lit, and extra
+      // pulses head down that branch so neurons are seen firing toward it.
       if (!reduce && g >= 1) {
         var aimed = goalIndex !== null;
-        var onAim = function (p) {
-          if (!aimed) return true;
-          if (p.b !== goalIndex) return false;
-          if (hoverTarget === null || !hoverEdge) return true;
-          for (var pi = 0; pi < p.list.length; pi++) if (p.list[pi] === hoverEdge) return true;
-          return false;
-        };
-        pulses = pulses.filter(onAim);
-        var cap = aimed ? 6 : 14;
-        var chance = aimed ? 0.14 : 0.08;
-        var speed0 = aimed ? 0.0055 : 0.0045;
-        if (pulses.length < cap && Math.random() < chance) {
-          var pool = aimed ? paths.filter(onAim) : paths;
-          if (pool.length) {
-            var pth = pool[(Math.random() * pool.length) | 0];
-            pulses.push({ path: pth, t: 0, speed: speed0 + Math.random() * 0.004 });
+        var aimChanged = pulseAim !== goalIndex;
+        pulseAim = goalIndex;
+        var aimPool = function () {
+          var pool = paths.filter(function (p) { return p.b === goalIndex; });
+          if (!pool.length) return paths;
+          if (!hoverEdge) return pool;
+          if (hoverEdge.depth <= 1) {
+            var toTip = pool.filter(function (p) { return p.toTip; });
+            if (toTip.length) return toTip;
           }
+          var along = pool.filter(function (p) {
+            var list = p.list;
+            for (var pi = 0; pi < list.length; pi++) if (list[pi] === hoverEdge) return true;
+            return false;
+          });
+          return along.length ? along : pool;
+        };
+        var spawn = function (pool, t0, fast) {
+          if (!pool.length) return;
+          var pth = pool[(Math.random() * pool.length) | 0];
+          var speed0 = fast ? 0.0075 : 0.0045;
+          pulses.push({ path: pth, t: t0, speed: speed0 + Math.random() * 0.004 });
+        };
+        if (aimed && aimChanged) {
+          var burst = aimPool();
+          for (var nSpawn = 0; nSpawn < 3; nSpawn++) spawn(burst, Math.random() * 0.28, true);
         }
+        if (pulses.length < 18 && Math.random() < 0.08) spawn(paths, 0, false);
+        if (aimed && pulses.length < 18 && Math.random() < 0.2) spawn(aimPool(), 0, true);
         pulses = pulses.filter(function (pl) {
           pl.t += pl.speed;
           var n = pl.path.list.length, seg = Math.min(n - 1, Math.floor(pl.t * n)), lt = pl.t * n - seg;
           if (pl.t >= 1) return false;
           var pt = q(pl.path.list[seg], lt);
-          var gl = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 9);
-          var col = seg === 0 ? '#E0E0E0' : pl.path.color;
-          gl.addColorStop(0, hexA(col, 0.95)); gl.addColorStop(1, hexA(col, 0));
-          ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(pt.x, pt.y, 9, 0, 6.283); ctx.fill();
+          var col = seg === 0 ? '#F4F5F7' : pl.path.color;
+          var gl = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 12);
+          gl.addColorStop(0, 'rgba(255,255,255,0.98)');
+          gl.addColorStop(0.32, hexA(col, 0.88));
+          gl.addColorStop(1, hexA(col, 0));
+          ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(pt.x, pt.y, 12, 0, 6.283); ctx.fill();
           return true;
         });
       }
