@@ -112,6 +112,7 @@
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
     var GROW = 2600;
     var hoverTarget = null, hoverEdge = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
+    var pulseAim = null;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     var fineHover = !!(fineMq && fineMq.matches);
     function syncFine() {
@@ -303,6 +304,8 @@
       var n = Math.round(W * H / 14000);
       for (var s = 0; s < n; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
       pulses = [];
+      pulseAim = null;
+      hoverEdge = null;
       built = true;
       positionHits();
     }
@@ -434,28 +437,48 @@
       // root node
       var r0 = edges[0];
       ctx.fillStyle = '#E0E0E0'; ctx.beginPath(); ctx.arc(r0.x1, r0.y1, 4.5 * Math.min(1, g * 4), 0, 6.283); ctx.fill();
-      // pulses travelling from root to tips; idle covers the whole tree,
-      // a hovered stroke keeps new pulses on that line only
+      // Pulses travel from the root toward the tips. Idle covers the whole tree.
+      // A highlighted branch drops pulses on every other branch and spawns along
+      // that branch. A hovered stroke prefers the path that rides that line, so
+      // the neurons are seen on the line that is lit, not only as a static glow.
       if (!reduce && g >= 1) {
         var aimed = goalIndex !== null;
-        var onAim = function (p) {
-          if (!aimed) return true;
-          if (p.b !== goalIndex) return false;
-          if (hoverTarget === null || !hoverEdge) return true;
-          for (var pi = 0; pi < p.list.length; pi++) if (p.list[pi] === hoverEdge) return true;
-          return false;
-        };
-        pulses = pulses.filter(onAim);
-        var cap = aimed ? 6 : 14;
-        var chance = aimed ? 0.14 : 0.08;
-        var speed0 = aimed ? 0.0055 : 0.0045;
-        if (pulses.length < cap && Math.random() < chance) {
-          var pool = aimed ? paths.filter(onAim) : paths;
-          if (pool.length) {
-            var pth = pool[(Math.random() * pool.length) | 0];
-            pulses.push({ path: pth, t: 0, speed: speed0 + Math.random() * 0.004 });
-          }
+        if (aimed) {
+          pulses = pulses.filter(function (pl) { return pl.path && pl.path.b === goalIndex; });
         }
+        var aimChanged = pulseAim !== goalIndex;
+        pulseAim = goalIndex;
+        var poolFor = function () {
+          if (!aimed) return paths;
+          var pool = paths.filter(function (p) { return p.b === goalIndex; });
+          if (!hoverEdge || !pool.length) return pool;
+          // The main stem sits on every path of the branch, so a stem hover
+          // would still scatter into twigs. Run those pulses out to the tip.
+          if (hoverEdge.depth <= 1) {
+            var toTip = pool.filter(function (p) { return p.toTip; });
+            if (toTip.length) return toTip;
+          }
+          var along = pool.filter(function (p) {
+            var list = p.list;
+            for (var pi = 0; pi < list.length; pi++) if (list[pi] === hoverEdge) return true;
+            return false;
+          });
+          return along.length ? along : pool;
+        };
+        var spawn = function (pool, t0) {
+          if (!pool.length) return;
+          var pth = pool[(Math.random() * pool.length) | 0];
+          var speed0 = aimed ? 0.008 : 0.0045;
+          var spread = aimed ? 0.005 : 0.004;
+          pulses.push({ path: pth, t: t0, speed: speed0 + Math.random() * spread });
+        };
+        if (aimed && aimChanged) {
+          var burst = poolFor();
+          for (var nSpawn = pulses.length; nSpawn < 4; nSpawn++) spawn(burst, Math.random() * 0.2);
+        }
+        var cap = aimed ? 7 : 14;
+        var chance = aimed ? 0.32 : 0.08;
+        if (pulses.length < cap && Math.random() < chance) spawn(poolFor(), 0);
         pulses = pulses.filter(function (pl) {
           pl.t += pl.speed;
           var n = pl.path.list.length, seg = Math.min(n - 1, Math.floor(pl.t * n)), lt = pl.t * n - seg;
