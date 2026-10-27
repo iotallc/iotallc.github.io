@@ -97,17 +97,46 @@
       'Investment': 'Sector allocation strategies. Opens the investment page.'
     };
     var readout = $('[data-tree-readout]');
-    function updateReadout(i) {
-      if (!readout) return;
+    var IDLE_FINE = 'Eight branches. Point at one to see what it covers.';
+    var IDLE_COARSE = 'Tap a branch, or use the list above.';
+    function readoutText() {
+      return readout ? (readout.querySelector('.tree-readout-text') || readout) : null;
+    }
+    function fillReadout(el, i) {
       if (i == null || !BR[i]) {
-        readout.textContent = fineHover ? 'Eight branches. Point at one to see what it covers.' : 'Tap a branch, or use the list above.';
+        el.textContent = fineHover ? IDLE_FINE : IDLE_COARSE;
         return;
       }
-      readout.textContent = '';
+      el.textContent = '';
       var strong = document.createElement('b');
       strong.textContent = BR[i].label;
-      readout.appendChild(strong);
-      readout.appendChild(document.createTextNode('. ' + (BLURB[BR[i].label] || '')));
+      el.appendChild(strong);
+      el.appendChild(document.createTextNode('. ' + (BLURB[BR[i].label] || '')));
+    }
+    function prepareReadout() {
+      if (!readout || readout.querySelector('.tree-readout-text')) return;
+      var initial = readout.textContent;
+      readout.textContent = '';
+      function addSizer(fill) {
+        var s = document.createElement('span');
+        s.className = 'tree-readout-sizer';
+        s.setAttribute('aria-hidden', 'true');
+        fill(s);
+        readout.appendChild(s);
+      }
+      [IDLE_FINE, IDLE_COARSE].forEach(function (t) {
+        addSizer(function (s) { s.textContent = t; });
+      });
+      BR.forEach(function (b, i) { addSizer(function (s) { fillReadout(s, i); }); });
+      var text = document.createElement('span');
+      text.className = 'tree-readout-text';
+      text.textContent = initial;
+      readout.appendChild(text);
+    }
+    function updateReadout(i) {
+      var el = readoutText();
+      if (!el) return;
+      fillReadout(el, i);
     }
     function syncReadout() {
       updateReadout(fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null);
@@ -117,6 +146,7 @@
     var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     var fineHover = !!(fineMq && fineMq.matches);
+    prepareReadout();
     function syncFine() {
       fineHover = !!(fineMq && fineMq.matches);
       if (!fineHover) { hoverTarget = null; focusIndex = null; }
