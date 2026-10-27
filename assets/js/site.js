@@ -370,9 +370,12 @@
           };
           edges.push(e2);
           tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, ux: 1, uy: 0, pad: 0, shift: 0, maxWidth: maxLeafW + 24 });
+          // Full route: core → hub → leaf. Hubs are waypoints, not terminals.
           paths.push({ list: [e1, e2], color: hub.color, targets: [hub.i, leaf.i] });
         });
-        paths.push({ list: [e1], color: hub.color, targets: [hub.i], toTip: true });
+        // A childless hub is the tip of its branch. Hubs that have leaves are
+        // not destinations, or idle orbs die on the first ring.
+        if (!hub.leaves.length) paths.push({ list: [e1], color: hub.color, targets: [hub.i] });
       });
       relaxLabels();
       // background constellation
@@ -616,7 +619,8 @@
         ctx.strokeText('IOTA', core.x, coreLabY);
         ctx.fillText('IOTA', core.x, coreLabY);
       }
-      // pulses travelling the full graph; hover does not clear the ones already in flight
+      // Idle orbs cover every core → hub → leaf route. Hover only narrows
+      // spawns that start after the pointer lands; in-flight orbs keep their path.
       if (!reduce && g >= 1) {
         if (pulses.length < 14 && Math.random() < 0.08) {
           var pool = paths;
