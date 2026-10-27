@@ -118,34 +118,79 @@
     });
     var BLURB = {
       'Enterprise AI': 'Platforms for companies, hosted in the cloud or on infrastructure you control.',
-      'Skills': 'Slash-command add-ons. The downloadable library stays at /skills.',
+      'Skills': 'Slash-command add-ons, with the downloadable library at /skills.',
       'Models': 'Public, fine-tuned, or custom models connected to business systems.',
       'Windows': 'A desktop AI app in two editions: Exe and PowerShell.',
       'Exe': 'The EXE edition is faster and can connect to cloud models.',
       'PowerShell': 'The PowerShell edition is strictly offline.',
       'Mobile': 'IOTA Mobile, a free assistant in closed alpha on Android.',
-      'App': 'The IOTA Mobile app. Closed alpha for invited testers.',
+      'App': 'The IOTA Mobile app, in closed alpha for invited testers.',
       'Games': 'Fine-tuned models for safe-for-work mobile games.',
-      'Investments': 'Sector allocation strategies. Opens the investment page.',
-      'Portfolio': 'How a portfolio is weighted across market sectors. Opens the investment page.',
-      'Research': 'How those sector strategies are built. Opens the investment page.'
+      'Investments': 'Sector allocation strategies across market sectors.',
+      'Portfolio': 'How a portfolio is weighted across market sectors.',
+      'Research': 'How those sector strategies are built.'
+    };
+    var GO = {
+      'Enterprise AI': 'See Enterprise AI',
+      'Skills': 'See Skills',
+      'Models': 'See model integration',
+      'Windows': 'See IOTA for Windows',
+      'Exe': 'See the Exe edition',
+      'PowerShell': 'See the PowerShell edition',
+      'Mobile': 'See IOTA Mobile',
+      'App': 'See the mobile app',
+      'Games': 'See AI for games',
+      'Investments': 'Open the investment page',
+      'Portfolio': 'Open the investment page',
+      'Research': 'Open the investment page'
     };
     var readout = $('[data-tree-readout]');
     var IDLE_FINE = 'Point at a hub or a leaf.';
-    var IDLE_COARSE = 'Tap a hub or a leaf, or use the list above.';
+    var IDLE_COARSE = 'Tap a hub or a leaf.';
+    var readoutHold = false, pinned = null, clearTimer = 0;
     function readoutText() {
       return readout ? (readout.querySelector('.tree-readout-text') || readout) : null;
     }
-    function fillReadout(el, i) {
+    function destHref(id) {
+      var page = id.charAt(0) !== '#' && (id.indexOf('.') !== -1 || id.indexOf('/') !== -1);
+      return page ? id : '#' + id;
+    }
+    function goArrow() {
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 16 16');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '1.5');
+      svg.setAttribute('aria-hidden', 'true');
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M5 11 11 5M6 5h5v5');
+      svg.appendChild(path);
+      return svg;
+    }
+    function fillReadout(el, i, live) {
+      el.textContent = '';
       if (i == null || !NODES[i]) {
-        el.textContent = fineHover ? IDLE_FINE : IDLE_COARSE;
+        var prompt = document.createElement('span');
+        prompt.className = 'tree-readout-prompt';
+        prompt.textContent = fineHover ? IDLE_FINE : IDLE_COARSE;
+        el.appendChild(prompt);
         return;
       }
-      el.textContent = '';
-      var strong = document.createElement('b');
-      strong.textContent = NODES[i].label;
-      el.appendChild(strong);
-      el.appendChild(document.createTextNode('. ' + (BLURB[NODES[i].label] || '')));
+      var node = NODES[i];
+      var name = document.createElement('span');
+      name.className = 'tree-readout-name';
+      name.textContent = node.label;
+      var line = document.createElement('span');
+      line.className = 'tree-readout-line';
+      line.textContent = BLURB[node.label] || '';
+      var go = document.createElement(live ? 'a' : 'span');
+      go.className = 'tree-readout-go';
+      go.appendChild(document.createTextNode(GO[node.label] || node.label));
+      go.appendChild(goArrow());
+      if (live) go.href = destHref(node.id);
+      el.appendChild(name);
+      el.appendChild(line);
+      el.appendChild(go);
     }
     function prepareReadout() {
       if (!readout || readout.querySelector('.tree-readout-text')) return;
@@ -159,10 +204,15 @@
         readout.appendChild(s);
       }
       [IDLE_FINE, IDLE_COARSE].forEach(function (t) {
-        addSizer(function (s) { s.textContent = t; });
+        addSizer(function (s) {
+          var prompt = document.createElement('span');
+          prompt.className = 'tree-readout-prompt';
+          prompt.textContent = t;
+          s.appendChild(prompt);
+        });
       });
-      NODES.forEach(function (b, i) { addSizer(function (s) { fillReadout(s, i); }); });
-      var text = document.createElement('span');
+      NODES.forEach(function (b, i) { addSizer(function (s) { fillReadout(s, i, false); }); });
+      var text = document.createElement('div');
       text.className = 'tree-readout-text';
       text.textContent = initial;
       readout.appendChild(text);
@@ -170,10 +220,44 @@
     function updateReadout(i) {
       var el = readoutText();
       if (!el) return;
-      fillReadout(el, i);
+      fillReadout(el, i, true);
+      if (!readout) return;
+      if (i == null || !NODES[i]) readout.style.removeProperty('--accent');
+      else readout.style.setProperty('--accent', NODES[i].color);
     }
     function syncReadout() {
-      updateReadout(fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null);
+      clearTimeout(clearTimer);
+      var i = fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null;
+      if (!fineHover) { pinned = null; readoutHold = false; updateReadout(null); return; }
+      if (i != null) { pinned = i; updateReadout(i); return; }
+      if (readoutHold && pinned != null) { updateReadout(pinned); return; }
+      if (pinned == null) { updateReadout(null); return; }
+      clearTimer = setTimeout(function () {
+        if (hoverTarget == null && focusIndex == null && !readoutHold) {
+          pinned = null;
+          updateReadout(null);
+        }
+      }, 800);
+    }
+    if (readout) {
+      readout.addEventListener('pointerenter', function () {
+        readoutHold = true;
+        clearTimeout(clearTimer);
+        if (pinned != null) updateReadout(pinned);
+      });
+      readout.addEventListener('pointerleave', function () {
+        readoutHold = false;
+        syncReadout();
+      });
+      readout.addEventListener('focusin', function () {
+        readoutHold = true;
+        clearTimeout(clearTimer);
+      });
+      readout.addEventListener('focusout', function (e) {
+        if (e.relatedTarget && readout.contains(e.relatedTarget)) return;
+        readoutHold = false;
+        syncReadout();
+      });
     }
     var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false, labelGutter = 0, labelTop = 12, labelPx = 11, core = { x: 0, y: 0 };
     var GROW = 2600;
@@ -295,7 +379,7 @@
       labelTop = 14;
       var cvBox = cv.getBoundingClientRect();
       var copyBottom = 0, copyRight = 0;
-      ['.hero h1', '.hero .lead', '.hero-chips', '[data-tree-readout]'].forEach(function (sel) {
+      ['.hero h1', '.hero .lead', '[data-tree-readout]'].forEach(function (sel) {
         var el = document.querySelector(sel);
         if (!el) return;
         var b = el.getBoundingClientRect();
