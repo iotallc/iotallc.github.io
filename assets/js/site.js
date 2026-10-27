@@ -170,7 +170,7 @@
     function syncReadout() {
       updateReadout(fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null);
     }
-    var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false;
+    var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false, labelGutter = 0;
     var GROW = 2600;
     var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -285,69 +285,82 @@
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       var R = rand(7);
       var narrow = W < 820;
-      var rootX = narrow ? W * 0.5 : W * 0.785, rootY = H + 4;
-      var forkY = narrow ? H - 90 : H * 0.64;
-      var spanL = W * 0.06, spanR = W * 0.94;
-      var rx = W * 0.155, ry = Math.min(H * 0.34, (forkY - 180));
-      edges = []; tips = []; paths = [];
-      var trunk = { x0: rootX, y0: rootY, cx: rootX + (narrow ? 0 : -6), cy: (rootY + forkY) / 2, x1: rootX, y1: forkY, w: 3.2, color: '#D6D6D8', t0: 0, t1: 0.28, depth: 0 };
-      edges.push(trunk);
-      var hubs = NODES.filter(function (n) { return n.hub; });
-      // Hand-placed so each leaf sits on a different side of its hub and the names do not stack.
-      var SPEC = [
-        { fx: 0.66, fy: 0.58, ux: -0.2, uy: 1, leaves: [{ dx: -96, dy: -18, ux: -1, uy: 0 }, { dx: -18, dy: -102, ux: 0, uy: -1 }] },
-        { fx: 0.76, fy: 0.30, ux: 1, uy: 0.15, leaves: [{ dx: -112, dy: -6, ux: -1, uy: 0 }, { dx: 8, dy: -108, ux: 0.1, uy: -1 }] },
-        { fx: 0.89, fy: 0.28, ux: -1, uy: 0.15, leaves: [{ dx: -8, dy: -108, ux: -0.1, uy: -1 }, { dx: 116, dy: -4, ux: 1, uy: 0 }] },
-        { fx: 0.93, fy: 0.56, ux: 1, uy: 0.35, leaves: [] }
-      ];
-      var scale = Math.max(0.8, Math.min(1.15, W / 1440));
-      hubs.forEach(function (hub, hi) {
-        var f = hubs.length === 1 ? 0.5 : hi / (hubs.length - 1);
-        var hx, hy, hux, huy, leafPos = [];
-        var spec = !narrow && hubs.length === SPEC.length ? SPEC[hi] : null;
-        if (spec) {
-          hx = W * spec.fx;
-          hy = H * spec.fy;
-          hux = spec.ux; huy = spec.uy;
-          spec.leaves.forEach(function (p, j) {
-            if (!hub.leaves[j]) return;
-            leafPos.push({ leaf: hub.leaves[j], x: hx + p.dx * scale, y: hy + p.dy * scale, ux: p.ux, uy: p.uy });
-          });
-        } else if (narrow) {
-          hx = spanL + (spanR - spanL) * f;
-          hy = H * 0.58;
-          hux = 0; huy = 1;
-          hub.leaves.forEach(function (leaf, j) {
-            var n = hub.leaves.length;
-            leafPos.push({ leaf: leaf, x: hx + (j - (n - 1) / 2) * 56, y: hy - 68, ux: 0, uy: -1 });
-          });
-        } else {
-          var th = Math.PI * (1.07 + 0.86 * f);
-          hx = rootX + Math.cos(th) * rx;
-          hy = forkY + Math.sin(th) * ry;
-          hux = 0; huy = 1;
-          hub.leaves.forEach(function (leaf, j) {
-            var n = hub.leaves.length;
-            var a = th + (j - (n - 1) / 2) * 0.7;
-            var len = 88;
-            leafPos.push({ leaf: leaf, x: hx + Math.cos(a) * len, y: hy + Math.sin(a) * len, ux: Math.cos(a), uy: Math.sin(a) });
-          });
-        }
-        hx = Math.max(18, Math.min(W - 18, hx));
-        hy = Math.max(36, Math.min(H - 28, hy));
-        var e1 = { x0: trunk.x1, y0: trunk.y1, cx: trunk.x1 + (hx - trunk.x1) * 0.28, cy: hy + (trunk.y1 - hy) * 0.72, x1: hx, y1: hy, w: 2.2, color: hub.color, t0: 0.26, t1: 0.62, depth: 1, node: hub.i, lit: [hub.i] };
-        edges.push(e1);
-        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, ux: hux, uy: huy });
-        leafPos.forEach(function (lp) {
-          var lx = Math.max(16, Math.min(W - 16, lp.x));
-          var ly = Math.max(28, Math.min(H - 24, lp.y));
-          var e2 = { x0: hx, y0: hy, cx: hx + (lx - hx) * 0.4, cy: hy + (ly - hy) * 0.25, x1: lx, y1: ly, w: 1.45, color: hub.color, t0: 0.58, t1: 0.9, depth: 2, node: lp.leaf.i, lit: [hub.i, lp.leaf.i] };
-          edges.push(e2);
-          tips.push({ x: lx, y: ly, label: lp.leaf.label, color: lp.leaf.color, id: lp.leaf.id, i: lp.leaf.i, hub: false, ux: lp.ux, uy: lp.uy });
-          paths.push({ list: [trunk, e1, e2], color: hub.color, targets: [hub.i, lp.leaf.i] });
+      labelGutter = 12;
+      if (!narrow) {
+        var cvBox = cv.getBoundingClientRect();
+        ['.hero h1', '.hero .lead', '.hero-chips', '[data-tree-readout]'].forEach(function (sel) {
+          var el = document.querySelector(sel);
+          if (!el) return;
+          labelGutter = Math.max(labelGutter, el.getBoundingClientRect().right - cvBox.left + 36);
         });
-        paths.push({ list: [trunk, e1], color: hub.color, targets: [hub.i], toTip: true });
-      });
+      }
+      var hubs = NODES.filter(function (n) { return n.hub; });
+      function unit(x, y) {
+        var l = Math.sqrt(x * x + y * y) || 1;
+        return { x: x / l, y: y / l };
+      }
+      function place(scale) {
+        var forkX = narrow ? W * 0.5 : Math.min(W - 150, Math.max(labelGutter + 180, (labelGutter + W - 24) / 2 + 20));
+        var forkY = narrow ? H * 0.78 : Math.min(H * 0.74, H - 96);
+        var rx = (narrow ? W * 0.28 : Math.min(230, (W - 28 - labelGutter) * 0.34)) * scale;
+        var ry = narrow ? H * 0.16 : Math.min(H * 0.40, forkY - 48);
+        var leafLen = (narrow ? 42 : Math.max(70, Math.min(92, Math.min(W, H) * 0.075))) * Math.max(0.8, scale);
+        var leafSpread = 0.36;
+        var a0 = Math.PI * (narrow ? 1.18 : 1.12);
+        var a1 = Math.PI * (narrow ? 1.82 : 1.88);
+        edges = []; tips = []; paths = [];
+        var trunk = { x0: forkX, y0: H + 4, cx: forkX, cy: (H + 4 + forkY) / 2, x1: forkX, y1: forkY, w: 3.2, color: '#D6D6D8', t0: 0, t1: 0.28, depth: 0 };
+        edges.push(trunk);
+        hubs.forEach(function (hub, hi) {
+          var th = hubs.length === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * (hi + 0.5) / hubs.length;
+          var hx = forkX + Math.cos(th) * rx;
+          var hy = forkY + Math.sin(th) * ry;
+          var mx = (forkX + hx) / 2, my = (forkY + hy) / 2;
+          var e1 = { x0: forkX, y0: forkY, cx: mx, cy: my - Math.min(42, ry * 0.12), x1: hx, y1: hy, w: 2.15, color: hub.color, t0: 0.26, t1: 0.62, depth: 1, node: hub.i, lit: [hub.i] };
+          edges.push(e1);
+          var out = unit(hx - forkX, hy - forkY);
+          tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, ux: out.x, uy: out.y, pad: 0, shift: 0, terminal: !hub.leaves.length });
+          var tangent = unit(hx - e1.cx, hy - e1.cy);
+          var tang = Math.atan2(tangent.y, tangent.x);
+          hub.leaves.forEach(function (leaf, j) {
+            var n = hub.leaves.length;
+            var dir = tang + (j - (n - 1) / 2) * leafSpread;
+            var len = leafLen;
+            var lx = hx + Math.cos(dir) * len;
+            var ly = hy + Math.sin(dir) * len;
+            if (lx < 20 || lx > W - 20 || ly < 20) {
+              len *= 0.72;
+              lx = hx + Math.cos(dir) * len;
+              ly = hy + Math.sin(dir) * len;
+            }
+            var e2 = { x0: hx, y0: hy, cx: hx + Math.cos(dir) * len * 0.42, cy: hy + Math.sin(dir) * len * 0.42, x1: lx, y1: ly, w: 1.35, color: hub.color, t0: 0.58, t1: 0.9, depth: 2, node: leaf.i, lit: [hub.i, leaf.i] };
+            edges.push(e2);
+            var leafDir = unit(lx - hx, ly - hy);
+            tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, ux: leafDir.x, uy: leafDir.y, pad: 0, shift: 0, terminal: true });
+            paths.push({ list: [trunk, e1, e2], color: hub.color, targets: [hub.i, leaf.i] });
+          });
+          paths.push({ list: [trunk, e1], color: hub.color, targets: [hub.i], toTip: true });
+        });
+        tips.forEach(function (t) {
+          if (t.terminal) return;
+          var ox = t.ux, oy = t.uy;
+          t.ax = t.x - ox * 50;
+          t.ay = t.y - oy * 50;
+          var a = { x: -oy, y: ox }, b = { x: oy, y: -ox };
+          t.ux = a.x; t.uy = a.y;
+          var ca = labelClearance(t);
+          t.ux = b.x; t.uy = b.y;
+          var cb = labelClearance(t);
+          if (ca >= cb) { t.ux = a.x; t.uy = a.y; }
+        });
+      }
+      var scale = 1;
+      for (var fit = 0; fit < 8; fit++) {
+        place(scale);
+        relaxLabels();
+        if (narrow || labelsFit()) break;
+        scale *= 0.9;
+      }
       // background constellation
       stars = [];
       var n = Math.round(W * H / 14000);
@@ -393,23 +406,85 @@
       var half = 0;
       lines.forEach(function (line) { half = Math.max(half, ctx.measureText(line).width / 2 + 8); });
       var n = lines.length;
-      var ux = t.ux == null ? 0 : t.ux, uy = t.uy == null ? -1 : t.uy;
-      var x, ys = [];
-      if (uy < -0.45) {
-        x = t.x + ux * 8;
-        for (var i = 0; i < n; i++) ys.push(t.y - 16 - (n - 1 - i) * 13);
-      } else if (uy > 0.45) {
-        x = t.x + ux * 8;
-        for (var j = 0; j < n; j++) ys.push(t.y + 18 + j * 13);
-      } else if (ux < 0) {
-        x = t.x - half - 12;
-        for (var k = 0; k < n; k++) ys.push(t.y + 4 + (k - (n - 1) / 2) * 13);
-      } else {
-        x = t.x + half + 12;
-        for (var m = 0; m < n; m++) ys.push(t.y + 4 + (m - (n - 1) / 2) * 13);
-      }
-      x = Math.max(half, Math.min(W - half, x));
+      var ux = t.ux || 0, uy = t.uy == null ? -1 : t.uy;
+      var ul = Math.sqrt(ux * ux + uy * uy) || 1;
+      ux /= ul; uy /= ul;
+      var boxH = n * 13;
+      var along = (t.pad || 0) + 16 + Math.abs(ux) * half + Math.abs(uy) * boxH * 0.5;
+      var ox = t.ax != null ? t.ax : t.x, oy = t.ay != null ? t.ay : t.y;
+      var x = Math.max(half + 2, Math.min(W - half - 2, ox + ux * along + (t.shift || 0)));
+      var cy = oy + uy * along;
+      var top = cy - boxH / 2;
+      var ys = [];
+      for (var i = 0; i < n; i++) ys.push(top + i * 13 + 10);
       return { lines: lines, x: x, half: half, ys: ys };
+    }
+    function labelBox(t) {
+      var lay = labelLayout(t);
+      var y0 = 1e9, y1 = -1e9;
+      lay.ys.forEach(function (y) { if (y - 11 < y0) y0 = y - 11; if (y + 3 > y1) y1 = y + 3; });
+      return { x0: lay.x - lay.half, x1: lay.x + lay.half, y0: y0, y1: y1 };
+    }
+    function boxesOverlap(a, b) {
+      return a.x0 < b.x1 + 10 && a.x1 > b.x0 - 10 && a.y0 < b.y1 + 8 && a.y1 > b.y0 - 8;
+    }
+    function pointBoxDist(p, box) {
+      var dx = p.x < box.x0 ? box.x0 - p.x : (p.x > box.x1 ? p.x - box.x1 : 0);
+      var dy = p.y < box.y0 ? box.y0 - p.y : (p.y > box.y1 ? p.y - box.y1 : 0);
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    function labelClearance(t) {
+      var box = labelBox(t);
+      var minD = 1e9;
+      for (var ei = 0; ei < edges.length; ei++) {
+        for (var s = 0; s <= 16; s++) {
+          var d = pointBoxDist(q(edges[ei], s / 16), box);
+          if (d < minD) minD = d;
+        }
+      }
+      for (var ti = 0; ti < tips.length; ti++) {
+        if (tips[ti] === t) continue;
+        var nd = pointBoxDist(tips[ti], { x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1 });
+        if (nd < minD) minD = nd;
+      }
+      if (box.x0 < labelGutter || box.x1 > W - 8 || box.y0 < 16 || box.y1 > H - 10) minD = -80;
+      return minD;
+    }
+    function labelsFit() {
+      for (var i = 0; i < tips.length; i++) {
+        var box = labelBox(tips[i]);
+        if (box.x0 < labelGutter - 2 || box.x1 > W - 6 || box.y0 < 12 || box.y1 > H - 8) return false;
+      }
+      return true;
+    }
+    function relaxLabels() {
+      if (W < 820) return;
+      var pass, i, j, boxes, hit;
+      for (pass = 0; pass < 14; pass++) {
+        boxes = tips.map(labelBox);
+        hit = false;
+        for (i = 0; i < tips.length; i++) {
+          var crowded = labelClearance(tips[i]) < 14;
+          if (!crowded) {
+            for (j = 0; j < tips.length; j++) {
+              if (i !== j && boxesOverlap(boxes[i], boxes[j])) { crowded = true; break; }
+            }
+          }
+          if (crowded && (tips[i].pad || 0) < 64) {
+            tips[i].pad = (tips[i].pad || 0) + 6;
+            hit = true;
+          }
+          for (j = i + 1; j < tips.length; j++) {
+            if (!boxesOverlap(boxes[i], boxes[j])) continue;
+            var ic = (boxes[i].x0 + boxes[i].x1) / 2, jc = (boxes[j].x0 + boxes[j].x1) / 2;
+            var push = ic <= jc ? -7 : 7;
+            tips[i].shift = Math.max(-42, Math.min(42, (tips[i].shift || 0) + push));
+            tips[j].shift = Math.max(-42, Math.min(42, (tips[j].shift || 0) - push));
+            hit = true;
+          }
+        }
+        if (!hit) break;
+      }
     }
     function positionHits() {
       if (!tips) return;
@@ -493,9 +568,14 @@
           ctx.strokeStyle = hexA(t.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
           if (showLabels) {
             var lay = labelLayout(t);
-            var labelA = 0.75 * tipP * (maxAmp > 0.001 ? (1 - maxAmp * 0.3 + amp * 0.4) : 1);
-            ctx.fillStyle = 'rgba(203,203,203,' + Math.min(1, labelA) + ')';
+            var labelA = 0.92 * tipP * (maxAmp > 0.001 ? (1 - maxAmp * 0.3 + amp * 0.4) : 1);
+            ctx.lineJoin = 'round';
+            ctx.miterLimit = 2;
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(5,5,6,' + Math.min(0.92, labelA) + ')';
+            ctx.fillStyle = 'rgba(214,214,216,' + Math.min(1, labelA) + ')';
             lay.lines.forEach(function (line, li) {
+              ctx.strokeText(line, lay.x, lay.ys[li]);
               ctx.fillText(line, lay.x, lay.ys[li]);
             });
           }
