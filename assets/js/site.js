@@ -82,36 +82,65 @@
     var cv = $('#tree'); if (!cv || !cv.getContext) return;
     var ctx = cv.getContext('2d');
     var css = getComputedStyle(document.documentElement);
-    var BR = [
-      ['Enterprise AI', '--c-ent', 'enterprise'], ['Windows', '--c-win', 'windows'], ['Skills', '--c-win', 'skills'], ['Mobile', '--c-mob', 'mobile'], ['Games', '--c-game', 'games'],
-      ['Models', '--c-model', 'models'], ['IOTA Orchestration', '--c-rag', 'rag'], ['Investment', '--c-inv', 'investment.html']
-    ].filter(function (b) { return (cv.getAttribute('data-skip') || '').split(',').indexOf(b[0]) < 0; }).map(function (b) { return { label: b[0], color: css.getPropertyValue(b[1]).trim() || '#C0C0C0', id: b[2] }; });
+    var skipList = (cv.getAttribute('data-skip') || '').split(',');
+    function skipped(label) { return skipList.indexOf(label) >= 0; }
+    function token(name) { return css.getPropertyValue(name).trim() || '#C0C0C0'; }
+    // Two layers. Hub colors are tree-only: Mobile is yellow, Investments is green.
+    // Page sections keep their own accents (mobile green, investment gold, skills teal).
+    var HUBS = [
+      { label: 'Enterprise AI', color: token('--c-ent'), id: 'enterprise', leaves: [
+        { label: 'Skills', id: 'skills' }, { label: 'Models', id: 'models' }
+      ] },
+      { label: 'Windows', color: token('--c-win'), id: 'windows', leaves: [
+        { label: 'Exe', id: 'editions' }, { label: 'PowerShell', id: 'editions' }
+      ] },
+      { label: 'Mobile', color: token('--c-inv'), id: 'mobile', leaves: [
+        { label: 'App', id: 'mobile' }, { label: 'Games', id: 'games' }
+      ] },
+      { label: 'Investments', color: token('--c-mob'), id: 'investment.html', leaves: [] }
+    ];
+    var NODES = [];
+    HUBS.forEach(function (h) {
+      if (skipped(h.label)) return;
+      var hub = { label: h.label, color: h.color, id: h.id, hub: true, parent: null, leaves: [] };
+      hub.i = NODES.length;
+      NODES.push(hub);
+      h.leaves.forEach(function (leaf) {
+        if (skipped(leaf.label)) return;
+        var node = { label: leaf.label, color: h.color, id: leaf.id, hub: false, parent: hub.i };
+        node.i = NODES.length;
+        NODES.push(node);
+        hub.leaves.push(node);
+      });
+    });
     var BLURB = {
       'Enterprise AI': 'Platforms for companies, hosted in the cloud or on infrastructure you control.',
-      'Windows': 'A desktop AI app organized as one core with branches.',
       'Skills': 'Slash-command add-ons. The downloadable library stays at /skills.',
-      'Mobile': 'A free assistant that runs on the phone, including offline.',
-      'Games': 'Fine-tuned models for safe-for-work mobile games.',
       'Models': 'Public, fine-tuned, or custom models connected to business systems.',
-      'IOTA Orchestration': 'Proprietary RAG, set up on your documents and data.',
-      'Investment': 'Sector allocation strategies. Opens the investment page.'
+      'Windows': 'A desktop AI app in two editions: Exe and PowerShell.',
+      'Exe': 'The EXE edition is faster and can connect to cloud models.',
+      'PowerShell': 'The PowerShell edition is strictly offline.',
+      'Mobile': 'IOTA Mobile, a free assistant in closed alpha on Android.',
+      'App': 'The IOTA Mobile app. Closed alpha for invited testers.',
+      'Games': 'Fine-tuned models for safe-for-work mobile games.',
+      'Investments': 'Sector allocation strategies. Opens the investment page.'
     };
     var readout = $('[data-tree-readout]');
-    var IDLE_FINE = 'Eight branches. Point at one to see what it covers.';
-    var IDLE_COARSE = 'Tap a branch, or use the list above.';
+    var IDLE_FINE = 'Four hubs. Point at one to see what it covers.';
+    var IDLE_COARSE = 'Tap a hub or a leaf, or use the list above.';
     function readoutText() {
       return readout ? (readout.querySelector('.tree-readout-text') || readout) : null;
     }
     function fillReadout(el, i) {
-      if (i == null || !BR[i]) {
+      if (i == null || !NODES[i]) {
         el.textContent = fineHover ? IDLE_FINE : IDLE_COARSE;
         return;
       }
       el.textContent = '';
       var strong = document.createElement('b');
-      strong.textContent = BR[i].label;
+      strong.textContent = NODES[i].label;
       el.appendChild(strong);
-      el.appendChild(document.createTextNode('. ' + (BLURB[BR[i].label] || '')));
+      el.appendChild(document.createTextNode('. ' + (BLURB[NODES[i].label] || '')));
     }
     function prepareReadout() {
       if (!readout || readout.querySelector('.tree-readout-text')) return;
@@ -127,7 +156,7 @@
       [IDLE_FINE, IDLE_COARSE].forEach(function (t) {
         addSizer(function (s) { s.textContent = t; });
       });
-      BR.forEach(function (b, i) { addSizer(function (s) { fillReadout(s, i); }); });
+      NODES.forEach(function (b, i) { addSizer(function (s) { fillReadout(s, i); }); });
       var text = document.createElement('span');
       text.className = 'tree-readout-text';
       text.textContent = initial;
@@ -167,7 +196,7 @@
       var bestI = null, bestD = LINE_HIT;
       for (var ei = 0; ei < edges.length; ei++) {
         var e = edges[ei];
-        if (e.depth !== 1 || e.b == null) continue;
+        if ((e.depth !== 1 && e.depth !== 2) || e.node == null) continue;
         var prev = q(e, 0);
         for (var s = 1; s <= 28; s++) {
           var p = q(e, s / 28);
@@ -176,7 +205,7 @@
           if (t < 0) t = 0; else if (t > 1) t = 1;
           var px = prev.x + dx * t, py = prev.y + dy * t;
           var dist = Math.sqrt((x - px) * (x - px) + (y - py) * (y - py));
-          if (dist < bestD) { bestD = dist; bestI = e.b; }
+          if (dist < bestD) { bestD = dist; bestI = e.node; }
           prev = p;
         }
       }
@@ -258,42 +287,66 @@
       var narrow = W < 820;
       var rootX = narrow ? W * 0.5 : W * 0.785, rootY = H + 4;
       var forkY = narrow ? H - 90 : H * 0.64;
-      var spanL = W * 0.06, spanR = W * 0.94, topY = H - 230;
-      var rx = W * 0.185, ry = Math.min(H * 0.42, (forkY - 150));
+      var spanL = W * 0.06, spanR = W * 0.94;
+      var rx = W * 0.155, ry = Math.min(H * 0.34, (forkY - 180));
       edges = []; tips = []; paths = [];
       var trunk = { x0: rootX, y0: rootY, cx: rootX + (narrow ? 0 : -6), cy: (rootY + forkY) / 2, x1: rootX, y1: forkY, w: 3.2, color: '#D6D6D8', t0: 0, t1: 0.28, depth: 0 };
       edges.push(trunk);
-      BR.forEach(function (b, i) {
-        var f = BR.length === 1 ? 0.5 : i / (BR.length - 1);
-        var ang, ex, ey, th = null;
-        if (narrow) {
-          ang = Math.PI * (0.06 + 0.88 * f);
-          ex = spanL + (spanR - spanL) * f;
-          ey = topY + Math.pow(Math.abs(f - 0.5) * 2, 1.6) * (forkY - topY) * 0.55 + R() * 18;
+      var hubs = NODES.filter(function (n) { return n.hub; });
+      // Hand-placed so each leaf sits on a different side of its hub and the names do not stack.
+      var SPEC = [
+        { fx: 0.66, fy: 0.58, ux: -0.2, uy: 1, leaves: [{ dx: -96, dy: -18, ux: -1, uy: 0 }, { dx: -18, dy: -102, ux: 0, uy: -1 }] },
+        { fx: 0.76, fy: 0.30, ux: 1, uy: 0.15, leaves: [{ dx: -112, dy: -6, ux: -1, uy: 0 }, { dx: 8, dy: -108, ux: 0.1, uy: -1 }] },
+        { fx: 0.89, fy: 0.28, ux: -1, uy: 0.15, leaves: [{ dx: -8, dy: -108, ux: -0.1, uy: -1 }, { dx: 116, dy: -4, ux: 1, uy: 0 }] },
+        { fx: 0.93, fy: 0.56, ux: 1, uy: 0.35, leaves: [] }
+      ];
+      var scale = Math.max(0.8, Math.min(1.15, W / 1440));
+      hubs.forEach(function (hub, hi) {
+        var f = hubs.length === 1 ? 0.5 : hi / (hubs.length - 1);
+        var hx, hy, hux, huy, leafPos = [];
+        var spec = !narrow && hubs.length === SPEC.length ? SPEC[hi] : null;
+        if (spec) {
+          hx = W * spec.fx;
+          hy = H * spec.fy;
+          hux = spec.ux; huy = spec.uy;
+          spec.leaves.forEach(function (p, j) {
+            if (!hub.leaves[j]) return;
+            leafPos.push({ leaf: hub.leaves[j], x: hx + p.dx * scale, y: hy + p.dy * scale, ux: p.ux, uy: p.uy });
+          });
+        } else if (narrow) {
+          hx = spanL + (spanR - spanL) * f;
+          hy = H * 0.58;
+          hux = 0; huy = 1;
+          hub.leaves.forEach(function (leaf, j) {
+            var n = hub.leaves.length;
+            leafPos.push({ leaf: leaf, x: hx + (j - (n - 1) / 2) * 56, y: hy - 68, ux: 0, uy: -1 });
+          });
         } else {
-          th = Math.PI * (1.07 + 0.86 * f); // fan above the fork, left to right
-          ex = rootX + Math.cos(th) * rx; ey = forkY + Math.sin(th) * ry + (R() - 0.5) * 14;
-          ang = Math.PI - (th - Math.PI);
+          var th = Math.PI * (1.07 + 0.86 * f);
+          hx = rootX + Math.cos(th) * rx;
+          hy = forkY + Math.sin(th) * ry;
+          hux = 0; huy = 1;
+          hub.leaves.forEach(function (leaf, j) {
+            var n = hub.leaves.length;
+            var a = th + (j - (n - 1) / 2) * 0.7;
+            var len = 88;
+            leafPos.push({ leaf: leaf, x: hx + Math.cos(a) * len, y: hy + Math.sin(a) * len, ux: Math.cos(a), uy: Math.sin(a) });
+          });
         }
-        var e1 = { x0: trunk.x1, y0: trunk.y1, cx: trunk.x1 + (ex - trunk.x1) * 0.25, cy: ey + (trunk.y1 - ey) * 0.75, x1: ex, y1: ey, w: 2.2, color: b.color, t0: 0.26, t1: 0.62, depth: 1, b: i };
+        hx = Math.max(18, Math.min(W - 18, hx));
+        hy = Math.max(36, Math.min(H - 28, hy));
+        var e1 = { x0: trunk.x1, y0: trunk.y1, cx: trunk.x1 + (hx - trunk.x1) * 0.28, cy: hy + (trunk.y1 - hy) * 0.72, x1: hx, y1: hy, w: 2.2, color: hub.color, t0: 0.26, t1: 0.62, depth: 1, node: hub.i, lit: [hub.i] };
         edges.push(e1);
-        tips.push({ x: ex, y: ey, b: b, i: i });
-        // sub branches
-        var kids = [];
-        for (var k = 0; k < 3; k++) {
-          var a = (th === null ? -Math.PI / 2 + (Math.cos(ang) * -0.9) : th) + (k - 1) * 0.55 + (R() - 0.5) * 0.3;
-          var len = (narrow ? 26 : 34) + R() * (narrow ? 18 : 30);
-          var x2 = ex + Math.cos(a) * len, y2 = ey + Math.sin(a) * len;
-          var e2 = { x0: ex, y0: ey, cx: ex + Math.cos(a - 0.3) * len * 0.5, cy: ey + Math.sin(a - 0.3) * len * 0.5, x1: x2, y1: y2, w: 1.2, color: b.color, t0: 0.58 + R() * 0.05, t1: 0.82, depth: 2, b: i };
+        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, ux: hux, uy: huy });
+        leafPos.forEach(function (lp) {
+          var lx = Math.max(16, Math.min(W - 16, lp.x));
+          var ly = Math.max(28, Math.min(H - 24, lp.y));
+          var e2 = { x0: hx, y0: hy, cx: hx + (lx - hx) * 0.4, cy: hy + (ly - hy) * 0.25, x1: lx, y1: ly, w: 1.45, color: hub.color, t0: 0.58, t1: 0.9, depth: 2, node: lp.leaf.i, lit: [hub.i, lp.leaf.i] };
           edges.push(e2);
-          for (var m = 0; m < 2; m++) {
-            var a2 = a + (m ? 0.5 : -0.5) + (R() - 0.5) * 0.4, l2 = len * (0.45 + R() * 0.25);
-            var e3 = { x0: x2, y0: y2, cx: x2 + Math.cos(a2) * l2 * 0.6, cy: y2 + Math.sin(a2) * l2 * 0.6, x1: x2 + Math.cos(a2) * l2, y1: y2 + Math.sin(a2) * l2, w: 0.7, color: b.color, t0: 0.78 + R() * 0.06, t1: 1, depth: 3, b: i };
-            edges.push(e3); kids.push([e2, e3]);
-          }
-        }
-        kids.forEach(function (kk) { paths.push({ list: [trunk, e1, kk[0], kk[1]], color: b.color, b: i }); });
-        paths.push({ list: [trunk, e1], color: b.color, b: i, toTip: true });
+          tips.push({ x: lx, y: ly, label: lp.leaf.label, color: lp.leaf.color, id: lp.leaf.id, i: lp.leaf.i, hub: false, ux: lp.ux, uy: lp.uy });
+          paths.push({ list: [trunk, e1, e2], color: hub.color, targets: [hub.i, lp.leaf.i] });
+        });
+        paths.push({ list: [trunk, e1], color: hub.color, targets: [hub.i], toTip: true });
       });
       // background constellation
       stars = [];
@@ -312,8 +365,12 @@
       if (p <= 0) return;
       var cx = e.x0 + (e.cx - e.x0) * p, cy = e.y0 + (e.cy - e.y0) * p, end = q(e, p);
       var mul = 1, widthMul = 1, glow = 0;
-      if (e.b != null && maxAmp > 0.001) {
-        var amp = branchAmp[e.b] || 0;
+      var amp = 0;
+      if (e.lit && maxAmp > 0.001) {
+        for (var li = 0; li < e.lit.length; li++) {
+          var a = branchAmp[e.lit[li]] || 0;
+          if (a > amp) amp = a;
+        }
         mul = 1 - maxAmp * 0.28 + amp * 0.85;
         widthMul = 1 + amp * 0.4;
         glow = amp;
@@ -331,11 +388,28 @@
     function labelLayout(t) {
       ctx.font = '500 11px "Geist Mono", ui-monospace, monospace';
       ctx.textAlign = 'center';
-      var lab = t.b.label.toUpperCase();
+      var lab = t.label.toUpperCase();
       var lines = ctx.measureText(lab).width > 108 && lab.indexOf(' ') !== -1 ? lab.split(' ') : [lab];
       var half = 0;
       lines.forEach(function (line) { half = Math.max(half, ctx.measureText(line).width / 2 + 8); });
-      return { lines: lines, x: Math.max(half, Math.min(W - half, t.x)), half: half };
+      var n = lines.length;
+      var ux = t.ux == null ? 0 : t.ux, uy = t.uy == null ? -1 : t.uy;
+      var x, ys = [];
+      if (uy < -0.45) {
+        x = t.x + ux * 8;
+        for (var i = 0; i < n; i++) ys.push(t.y - 16 - (n - 1 - i) * 13);
+      } else if (uy > 0.45) {
+        x = t.x + ux * 8;
+        for (var j = 0; j < n; j++) ys.push(t.y + 18 + j * 13);
+      } else if (ux < 0) {
+        x = t.x - half - 12;
+        for (var k = 0; k < n; k++) ys.push(t.y + 4 + (k - (n - 1) / 2) * 13);
+      } else {
+        x = t.x + half + 12;
+        for (var m = 0; m < n; m++) ys.push(t.y + 4 + (m - (n - 1) / 2) * 13);
+      }
+      x = Math.max(half, Math.min(W - half, x));
+      return { lines: lines, x: x, half: half, ys: ys };
     }
     function positionHits() {
       if (!tips) return;
@@ -349,18 +423,20 @@
       tips.forEach(function (t, i) {
         var a = tipAnchors[i];
         a.className = 'tree-hit';
-        var dest = t.b.id;
+        var dest = t.id;
         var pageLink = dest.charAt(0) !== '#' && (dest.indexOf('.') !== -1 || dest.indexOf('/') !== -1);
         a.href = pageLink ? dest : '#' + dest;
-        a.setAttribute('data-i', String(i));
-        a.setAttribute('aria-label', pageLink ? 'Open ' + t.b.label : 'Scroll to ' + t.b.label);
+        a.setAttribute('data-i', String(t.i));
+        a.setAttribute('aria-label', pageLink ? 'Open ' + t.label : 'Scroll to ' + t.label);
         var left = t.x - 18, right = t.x + 18, top = t.y - 18, bottom = t.y + 18;
         if (showLabels) {
           var lay = labelLayout(t);
-          var labelTop = t.y - 18 - (lay.lines.length - 1) * 13 - 12;
           left = Math.min(left, lay.x - lay.half);
           right = Math.max(right, lay.x + lay.half);
-          top = Math.min(top, labelTop);
+          lay.ys.forEach(function (y) {
+            top = Math.min(top, y - 12);
+            bottom = Math.max(bottom, y + 6);
+          });
         }
         a.style.left = (left - 4) + 'px';
         a.style.top = (top - 4) + 'px';
@@ -373,14 +449,14 @@
       if (!built) build();
       if (!start) start = now;
       var g = reduce ? 1 : Math.min(1, (now - start) / GROW);
-      if (branchAmp.length !== BR.length) branchAmp = BR.map(function () { return 0; });
+      if (branchAmp.length !== NODES.length) branchAmp = NODES.map(function () { return 0; });
       var dt = lastNow ? Math.min(48, now - lastNow) : 16;
       lastNow = now;
       var step = reduce ? 1 : (1 - Math.pow(0.0015, dt / 260));
       var goalIndex = fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null;
       maxAmp = 0;
       for (var bi = 0; bi < branchAmp.length; bi++) {
-        var goal = goalIndex === bi ? 1 : 0;
+        var goal = goalIndex != null && (bi === goalIndex || NODES[bi].parent === goalIndex) ? 1 : 0;
         branchAmp[bi] += (goal - branchAmp[bi]) * step;
         if (Math.abs(branchAmp[bi] - goal) < 0.01) branchAmp[bi] = goal;
         if (branchAmp[bi] > maxAmp) maxAmp = branchAmp[bi];
@@ -411,16 +487,16 @@
           var amp = branchAmp[t.i] || 0;
           var glowMul = maxAmp > 0.001 ? (1 - maxAmp * 0.28 + amp * 0.7) : 1;
           var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6 + amp * 12);
-          grd.addColorStop(0, hexA(t.b.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.b.color, 0));
-          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, 28 + amp * 8, 0, 6.283); ctx.fill();
-          ctx.fillStyle = hexA(t.b.color, Math.min(1, tipP * (maxAmp > 0.001 ? glowMul : 1))); ctx.beginPath(); ctx.arc(t.x, t.y, 3.6 + amp * 0.8, 0, 6.283); ctx.fill();
-          ctx.strokeStyle = hexA(t.b.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
+          grd.addColorStop(0, hexA(t.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.color, 0));
+          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, (t.hub ? 30 : 22) + amp * 8, 0, 6.283); ctx.fill();
+          ctx.fillStyle = hexA(t.color, Math.min(1, tipP * (maxAmp > 0.001 ? glowMul : 1))); ctx.beginPath(); ctx.arc(t.x, t.y, (t.hub ? 4.4 : 3.2) + amp * 0.8, 0, 6.283); ctx.fill();
+          ctx.strokeStyle = hexA(t.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
           if (showLabels) {
             var lay = labelLayout(t);
             var labelA = 0.75 * tipP * (maxAmp > 0.001 ? (1 - maxAmp * 0.3 + amp * 0.4) : 1);
             ctx.fillStyle = 'rgba(203,203,203,' + Math.min(1, labelA) + ')';
             lay.lines.forEach(function (line, li) {
-              ctx.fillText(line, lay.x, t.y - 18 - (lay.lines.length - 1 - li) * 13);
+              ctx.fillText(line, lay.x, lay.ys[li]);
             });
           }
         });
@@ -433,7 +509,7 @@
         if (pulses.length < 14 && Math.random() < 0.08) {
           var pool = paths;
           if (fineHover && hoverTarget !== null) {
-            var matched = paths.filter(function (p) { return p.b === hoverTarget; });
+            var matched = paths.filter(function (p) { return p.targets.indexOf(hoverTarget) !== -1; });
             if (matched.length) pool = matched;
           }
           var p = pool[(Math.random() * pool.length) | 0];
