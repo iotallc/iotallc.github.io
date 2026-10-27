@@ -80,6 +80,7 @@ code{background:rgba(255,255,255,.06);border:1px solid var(--hair);padding:1px 6
 
 /* buttons */
 .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero .btns{width:fit-content;max-width:100%}
 .btn{--b:var(--chrome);display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:8px;font-weight:500;font-size:15.5px;text-decoration:none;
   border:1px solid var(--steel);color:var(--chrome);background:transparent;cursor:pointer;
   transition:background .14s var(--ease-out),border-color .14s var(--ease-out),color .14s var(--ease-out),transform .14s var(--ease-out)}
@@ -106,26 +107,24 @@ code{background:rgba(255,255,255,.06);border:1px solid var(--hair);padding:1px 6
 .hero h1{font-size:clamp(40px,5.4vw,76px);font-weight:600;letter-spacing:-.035em;line-height:.98;max-width:560px;margin-bottom:20px}
 .hero h1 .chrome{display:inline}
 .hero .lead{max-width:500px;color:#D4D4D6}
-.hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;max-width:540px;list-style:none;padding:0}
-.hero-chips a{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:6px;border:1px solid var(--border);background:#101012;
-  color:var(--highlight);text-decoration:none;font-size:13.5px;transition:border-color .14s var(--ease-out),color .14s var(--ease-out)}
-.hero-chips a:hover{border-color:var(--c,var(--steel));color:#fff}
-.hero-chips i{width:6px;height:6px;border-radius:1px;background:var(--c);box-shadow:none}
-/* Sizers occupy the same cell as the live caption, so the box stays as tall as the
-   longest branch sentence and hover cannot shift the hero title. */
-.tree-readout{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;margin:16px 0 0;max-width:460px;min-height:calc(2 * 1.45em);font-size:14.5px;line-height:1.45;color:var(--silver)}
-.tree-readout-text,.tree-readout-sizer{grid-area:1/1}
-.tree-readout-sizer{visibility:hidden}
-.tree-readout b{color:var(--chrome);font-weight:600}
-/* Enterprise AI is the only caption that wraps to three lines, and only under this width. */
-@media (max-width:364px){.tree-readout{min-height:calc(3 * 1.45em)}}
+/* Sizers share a cell with the live panel, so the box stays as tall as the
+   longest path and hover cannot shift the hero title. */
+.tree-readout{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;margin:26px 0 0;max-width:440px;color:var(--silver);font-size:15px;line-height:1.45}
+.tree-readout-text,.tree-readout-sizer{grid-area:1/1;display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.tree-readout-sizer{visibility:hidden;pointer-events:none}
+html:not(.tree-fine) .tree-readout-sizer:not(.is-idle){display:none}
+.tree-readout-prompt{color:var(--silver);font-size:14.5px;line-height:1.45}
+.tree-readout-name{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,var(--chrome));line-height:1.3}
+.tree-readout-line{color:#D4D4D6;font-size:15px;line-height:1.45}
+.tree-readout-go{display:inline-flex;align-items:center;gap:6px;margin-top:4px;color:var(--chrome);font-size:14px;line-height:1.3;text-decoration:underline;text-decoration-color:rgba(224,224,224,.45);text-underline-offset:3px}
+.tree-readout-go svg{width:14px;height:14px;flex:none}
+a.tree-readout-go:hover{color:#fff;text-decoration-color:currentColor}
 .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:72px;background:linear-gradient(180deg,transparent,var(--bg));z-index:1;pointer-events:none}
 .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;text-decoration:none}
 @media (max-width:860px){
   .hero{min-height:0}
   /* Tall band under the copy so the constellation is a column, not a squeezed fan. */
   .hero .wrap{padding-top:32px;padding-bottom:720px}
-  .hero-chips{margin-top:22px}
   .scroll-hint{display:none}
 }
 
@@ -149,19 +148,21 @@ section{position:relative}
 @media (max-width:980px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
 
-/* offerings overview */
-.offer-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
-.offer{grid-column:span 4;text-decoration:none;color:inherit;display:flex;flex-direction:column;min-height:0;padding:18px 18px 16px;transition:border-color .14s var(--ease-out)}
-.offer:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))}
-.offer.wide{grid-column:span 6}
-.offer .idx{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.14em;margin-bottom:auto;display:flex;justify-content:space-between;align-items:center}
-.offer .idx svg{width:16px;height:16px;color:var(--silver);transition:color .14s var(--ease-out)}
+/* offerings overview: four constellation branches, hub then its leaves */
+.offer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:14px;row-gap:32px}
+.offer-branch{display:grid;grid-template-rows:subgrid;grid-row:span 3;row-gap:12px;min-width:0}
+.offer{text-decoration:none;color:inherit;display:flex;flex-direction:column;min-height:0;padding:18px 18px 16px;border-color:color-mix(in srgb,var(--accent) 42%,var(--border));transition:border-color .14s var(--ease-out)}
+.offer.is-hub{border-color:color-mix(in srgb,var(--accent) 64%,var(--border))}
+.offer:hover{border-color:color-mix(in srgb,var(--accent) 82%,var(--border))}
+.offer .idx{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:auto;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.offer .idx svg{width:16px;height:16px;color:var(--silver);flex:none;transition:color .14s var(--ease-out)}
 .offer:hover .idx svg{color:var(--accent)}
-.offer h3{margin-top:22px;font-size:20px}
+.offer h3{margin-top:18px;font-size:20px}
+.offer.is-leaf h3{font-size:18px}
 .offer p{color:var(--silver);font-size:15px}
 .offer .bar{position:absolute;left:0;top:0;bottom:0;width:2px;height:auto;background:var(--accent);opacity:1}
-@media (max-width:980px){.offer,.offer.wide{grid-column:span 6}}
-@media (max-width:640px){.offer,.offer.wide{grid-column:span 12;min-height:0}.offer h3{margin-top:22px}}
+@media (max-width:980px){.offer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.offer-grid{grid-template-columns:1fr}}
 
 /* split layouts */
 .split{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
@@ -540,7 +541,6 @@ html,body{overflow-x:clip}
 @media (max-width:430px){
   .hero h1{font-size:clamp(36px,11vw,48px)}
   .hero .wrap{padding-top:24px;padding-bottom:740px}
-  .hero-chips a{min-height:40px}
   .contact{padding:36px 16px}
   .about{gap:18px}
   .edition-pick .unit-toggle{width:100%}

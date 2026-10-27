@@ -66,17 +66,7 @@
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"/></svg></a>
       <a class="btn" href="#contact">Contact us</a>
     </div>
-    <ul class="hero-chips" aria-label="Areas of work">
-      <li><a href="#enterprise" style="--c:var(--hub-ent)"><i></i>Enterprise AI Platforms</a></li>
-      <li><a href="#windows" style="--c:var(--hub-win)"><i></i>IOTA for Windows</a></li>
-      <li><a href="#skills" style="--c:var(--c-skill)"><i></i>Skills</a></li>
-      <li><a href="#mobile" style="--c:var(--hub-mob)"><i></i>IOTA Mobile</a></li>
-      <li><a href="#games" style="--c:var(--c-game)"><i></i>AI for Games</a></li>
-      <li><a href="#models" style="--c:var(--c-model)"><i></i>Model Integration</a></li>
-      <li><a href="#rag" style="--c:var(--c-rag)"><i></i>IOTA Orchestration</a></li>
-      <li><a href="investment.html" style="--c:var(--hub-inv)"><i></i>Investment Management</a></li>
-    </ul>
-    <p class="tree-readout" data-tree-readout>Point at a hub or a leaf.</p>
+    <div class="tree-readout" data-tree-readout aria-live="polite">Point at a hub or a leaf.</div>
   </div>
   <a class="scroll-hint" href="#offerings">Scroll</a>
 </section>
@@ -90,27 +80,50 @@
       <p class="lead">IOTA builds AI software and services for companies and individuals, and also develops sector allocation investment strategies. Each area below shares the same engineering base of data pipelines, model testing, and software that can run in the cloud or on local hardware.</p>
     </div>
     <div class="offer-grid">
-      <a class="card offer wide reveal" href="#enterprise" style="--accent:var(--c-ent)"><span class="bar"></span>
-        <span class="idx">01 / ENTERPRISE<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
-        <h3>Enterprise AI Platforms</h3><p>Specialized AI platforms for companies, hosted in the public cloud or privately on infrastructure you control.</p></a>
-      <a class="card offer wide reveal" href="#windows" style="--accent:var(--c-win);--d:.08s"><span class="bar"></span>
-        <span class="idx">02 / DESKTOP<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
-        <h3>IOTA for Windows</h3><p>A desktop AI app organized like a tree, with local models, skills, connectors, and knowledge bases.</p></a>
-      <a class="card offer reveal" href="#mobile" style="--accent:var(--c-mob)"><span class="bar"></span>
-        <span class="idx">03 / MOBILE<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
-        <h3>IOTA Mobile</h3><p>A free AI assistant that runs on your own phone. No account, no fees, and it works offline.</p></a>
-      <a class="card offer reveal" href="#games" style="--accent:var(--c-game);--d:.08s"><span class="bar"></span>
-        <span class="idx">04 / GAMES<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
-        <h3>AI for Games</h3><p>Fine-tuned models that run small, safe-for-work mobile games on the device.</p></a>
-      <a class="card offer reveal" href="#models" style="--accent:var(--c-model);--d:.16s"><span class="bar"></span>
-        <span class="idx">05 / MODELS<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
-        <h3>Model Integration and Custom Models</h3><p>Connect publicly available models, fine-tuned models, or fully custom-trained models to the systems your business uses.</p></a>
-      <a class="card offer wide reveal" href="#rag" style="--accent:var(--c-rag)"><span class="bar"></span>
-        <span class="idx">06 / RETRIEVAL<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
-        <h3>IOTA Orchestration</h3><p>Our proprietary RAG approach, set up on your own documents and data.</p></a>
-      <a class="card offer wide reveal" href="investment.html" style="--accent:var(--c-inv);--d:.08s"><span class="bar"></span>
-        <span class="idx">07 / INVESTMENT<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
-        <h3>Investment Management</h3><p>Private investment strategies that allocate across market sectors using proprietary algorithms.</p></a>
+      <div class="offer-branch" style="--accent:var(--hub-ent)">
+        <a class="card offer is-hub reveal" href="#enterprise"><span class="bar"></span>
+          <span class="idx">Hub<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Enterprise AI</h3><p>Platforms for companies, hosted in the cloud or on infrastructure you control.</p></a>
+        <a class="card offer is-leaf reveal" href="#skills" style="--d:.05s"><span class="bar"></span>
+          <span class="idx">Enterprise AI<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Skills</h3><p>Slash-command add-ons, with the downloadable library at /skills.</p></a>
+        <a class="card offer is-leaf reveal" href="#models" style="--d:.1s"><span class="bar"></span>
+          <span class="idx">Enterprise AI<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Models</h3><p>Public, fine-tuned, or custom models connected to business systems.</p></a>
+      </div>
+      <div class="offer-branch" style="--accent:var(--hub-win)">
+        <a class="card offer is-hub reveal" href="#windows" style="--d:.04s"><span class="bar"></span>
+          <span class="idx">Hub<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Windows</h3><p>A desktop AI app in two editions: Exe and PowerShell.</p></a>
+        <a class="card offer is-leaf reveal" href="#editions" style="--d:.09s"><span class="bar"></span>
+          <span class="idx">Windows<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Exe</h3><p>The EXE edition is faster and can connect to cloud models.</p></a>
+        <a class="card offer is-leaf reveal" href="#editions" style="--d:.14s"><span class="bar"></span>
+          <span class="idx">Windows<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>PowerShell</h3><p>The PowerShell edition is strictly offline.</p></a>
+      </div>
+      <div class="offer-branch" style="--accent:var(--hub-mob)">
+        <a class="card offer is-hub reveal" href="#mobile" style="--d:.08s"><span class="bar"></span>
+          <span class="idx">Hub<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Mobile</h3><p>IOTA Mobile, a free assistant in closed alpha on Android.</p></a>
+        <a class="card offer is-leaf reveal" href="#mobile" style="--d:.13s"><span class="bar"></span>
+          <span class="idx">Mobile<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>App</h3><p>The IOTA Mobile app, in closed alpha for invited testers.</p></a>
+        <a class="card offer is-leaf reveal" href="#games" style="--d:.18s"><span class="bar"></span>
+          <span class="idx">Mobile<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Games</h3><p>Fine-tuned models for safe-for-work mobile games.</p></a>
+      </div>
+      <div class="offer-branch" style="--accent:var(--hub-inv)">
+        <a class="card offer is-hub reveal" href="investment.html" style="--d:.12s"><span class="bar"></span>
+          <span class="idx">Hub<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Investments</h3><p>Sector allocation strategies across market sectors.</p></a>
+        <a class="card offer is-leaf reveal" href="investment.html" style="--d:.17s"><span class="bar"></span>
+          <span class="idx">Investments<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Portfolio</h3><p>How a portfolio is weighted across market sectors.</p></a>
+        <a class="card offer is-leaf reveal" href="investment.html" style="--d:.22s"><span class="bar"></span>
+          <span class="idx">Investments<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></span>
+          <h3>Research</h3><p>How those sector strategies are built.</p></a>
+      </div>
     </div>
   </div>
 </section>
