@@ -143,19 +143,21 @@ section{position:relative}
 @media (max-width:980px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
 
-/* offerings overview */
-.offer-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
-.offer{grid-column:span 4;text-decoration:none;color:inherit;display:flex;flex-direction:column;min-height:0;padding:18px 18px 16px;transition:border-color .14s var(--ease-out)}
-.offer:hover{border-color:color-mix(in srgb,var(--accent) 55%,var(--border))}
-.offer.wide{grid-column:span 6}
-.offer .idx{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.14em;margin-bottom:auto;display:flex;justify-content:space-between;align-items:center}
-.offer .idx svg{width:16px;height:16px;color:var(--silver);transition:color .14s var(--ease-out)}
+/* offerings overview: four constellation branches, hub then its leaves */
+.offer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:14px;row-gap:32px}
+.offer-branch{display:grid;grid-template-rows:subgrid;grid-row:span 3;row-gap:12px;min-width:0}
+.offer{text-decoration:none;color:inherit;display:flex;flex-direction:column;min-height:0;padding:18px 18px 16px;border-color:color-mix(in srgb,var(--accent) 42%,var(--border));transition:border-color .14s var(--ease-out)}
+.offer.is-hub{border-color:color-mix(in srgb,var(--accent) 64%,var(--border))}
+.offer:hover{border-color:color-mix(in srgb,var(--accent) 82%,var(--border))}
+.offer .idx{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:auto;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.offer .idx svg{width:16px;height:16px;color:var(--silver);flex:none;transition:color .14s var(--ease-out)}
 .offer:hover .idx svg{color:var(--accent)}
-.offer h3{margin-top:22px;font-size:20px}
+.offer h3{margin-top:18px;font-size:20px}
+.offer.is-leaf h3{font-size:18px}
 .offer p{color:var(--silver);font-size:15px}
 .offer .bar{position:absolute;left:0;top:0;bottom:0;width:2px;height:auto;background:var(--accent);opacity:1}
-@media (max-width:980px){.offer,.offer.wide{grid-column:span 6}}
-@media (max-width:640px){.offer,.offer.wide{grid-column:span 12;min-height:0}.offer h3{margin-top:22px}}
+@media (max-width:980px){.offer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.offer-grid{grid-template-columns:1fr}}
 
 /* split layouts */
 .split{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
