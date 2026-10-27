@@ -205,6 +205,7 @@
       }
       [IDLE_FINE, IDLE_COARSE].forEach(function (t) {
         addSizer(function (s) {
+          s.classList.add('is-idle');
           var prompt = document.createElement('span');
           prompt.className = 'tree-readout-prompt';
           prompt.textContent = t;
@@ -264,11 +265,15 @@
     var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
     var fineHover = !!(fineMq && fineMq.matches);
+    function syncSizerMode() { document.documentElement.classList.toggle('tree-fine', !!fineHover); }
+    syncSizerMode();
     prepareReadout();
     function syncFine() {
       fineHover = !!(fineMq && fineMq.matches);
-      if (!fineHover) { hoverTarget = null; focusIndex = null; }
+      syncSizerMode();
+      if (!fineHover) { hoverTarget = null; focusIndex = null; pinned = null; }
       syncReadout();
+      if (built) build();
     }
     if (fineMq && fineMq.addEventListener) fineMq.addEventListener('change', syncFine);
     var hits = document.createElement('div');
