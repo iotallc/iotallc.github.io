@@ -295,7 +295,7 @@
       labelTop = 14;
       var cvBox = cv.getBoundingClientRect();
       var copyBottom = 0, copyRight = 0;
-      ['.hero h1', '.hero .lead', '.hero .btns', '.hero-chips', '[data-tree-readout]'].forEach(function (sel) {
+      ['.hero h1', '.hero .lead', '.hero-chips', '[data-tree-readout]'].forEach(function (sel) {
         var el = document.querySelector(sel);
         if (!el) return;
         var b = el.getBoundingClientRect();
@@ -312,32 +312,35 @@
         maxHubW = Math.max(maxHubW, textW(hub.label));
         hub.leaves.forEach(function (leaf) { maxLeafW = Math.max(maxLeafW, textW(leaf.label)); });
       });
-      var right = W - 12;
-      var leafX = right - maxLeafW - 20;
-      var corridor = Math.max(maxHubW + 34, narrow ? 86 : 128);
-      var hubX = leafX - corridor;
-      var coreGap = narrow ? 64 : Math.min(150, Math.max(88, (hubX - labelGutter) * 0.42));
-      var coreX = hubX - coreGap;
-      var minCore = narrow ? 28 : labelGutter + 22;
+      var marginR = narrow ? 22 : Math.max(84, Math.min(120, W * 0.08));
+      var fieldL = narrow ? 26 : labelGutter + 20;
+      var fieldR = W - marginR;
+      var leafLabel = maxLeafW + 26;
+      var span = Math.max(120, fieldR - fieldL - leafLabel);
+      var coreX = fieldL + span * (narrow ? 0.02 : 0.1);
+      var hubX = fieldL + span * (narrow ? 0.42 : 0.48);
+      var leafX = fieldL + span * 0.9;
+      if (leafX + leafLabel > fieldR) leafX = fieldR - leafLabel;
+      var minCore = narrow ? 28 : labelGutter + 28;
       if (coreX < minCore) {
         var shift = minCore - coreX;
         coreX += shift;
         hubX += shift;
         leafX += shift;
-        corridor = leafX - hubX;
       }
-      if (leafX > right - 36) {
-        var pull = leafX - (right - 36);
-        leafX -= pull;
-        hubX -= pull * 0.65;
-        coreX -= pull * 0.35;
-        corridor = leafX - hubX;
+      if (hubX < coreX + (narrow ? 56 : 96)) hubX = coreX + (narrow ? 56 : 96);
+      if (leafX < hubX + (narrow ? 58 : 108)) leafX = hubX + (narrow ? 58 : 108);
+      if (leafX + leafLabel > W - 16) {
+        var back = leafX + leafLabel - (W - 16);
+        leafX -= back;
+        hubX -= back * 0.45;
+        coreX -= back * 0.2;
       }
-      var top = narrow ? labelTop + 26 : Math.max(40, H * 0.1);
-      var bottom = H - (narrow ? 16 : 32);
-      if (bottom - top < 160) top = Math.max(12, bottom - 160);
+      var top = narrow ? labelTop + 24 : Math.max(78, H * 0.16);
+      var bottom = narrow ? H - 26 : H - Math.max(64, H * 0.14);
+      if (bottom - top < 180) top = Math.max(labelTop + 8, bottom - 180);
       var pitch = hubs.length ? (bottom - top) / hubs.length : 80;
-      var leafDy = Math.min(narrow ? 20 : 36, Math.max(14, pitch * 0.32));
+      var leafDy = Math.min(narrow ? 18 : 40, Math.max(narrow ? 13 : 28, pitch * 0.3));
       var hubYs = hubs.map(function (_, hi) { return top + pitch * (hi + 0.5); });
       var coreY = hubYs.length ? hubYs.reduce(function (a, b) { return a + b; }, 0) / hubYs.length : H * 0.5;
       core = { x: coreX, y: coreY };
@@ -348,26 +351,25 @@
         hub.leaves.forEach(function (leaf) { litHub.push(leaf.i); });
         var e1 = {
           x0: coreX, y0: coreY,
-          cx: coreX + (hx - coreX) * 0.62, cy: coreY + (hy - coreY) * 0.08,
+          cx: hx - Math.min(64, (hx - coreX) * 0.42), cy: hy,
           x1: hx, y1: hy,
-          w: 1.55, color: hub.color, t0: 0.12, t1: 0.55, depth: 1, node: hub.i, lit: litHub
+          w: 1.45, color: hub.color, t0: 0.12, t1: 0.55, depth: 1, node: hub.i, lit: litHub
         };
         edges.push(e1);
-        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, ux: 1, uy: 0, pad: 0, shift: 0, maxWidth: Math.max(54, corridor - 40) });
+        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, ux: 0, uy: -1, pad: 0, shift: 0, maxWidth: Math.max(maxHubW, 140) });
         hub.leaves.forEach(function (leaf, j) {
           var n = hub.leaves.length;
           var side = j - (n - 1) / 2;
           var lx = leafX;
           var ly = hy + side * leafDy * 2;
-          var bow = side * 10;
           var e2 = {
             x0: hx, y0: hy,
-            cx: hx + (lx - hx) * 0.5, cy: (hy + ly) / 2 + bow,
+            cx: hx + (lx - hx) * 0.62, cy: hy,
             x1: lx, y1: ly,
-            w: 1.2, color: hub.color, t0: 0.5, t1: 0.92, depth: 2, node: leaf.i, lit: [leaf.i]
+            w: 1.15, color: hub.color, t0: 0.5, t1: 0.92, depth: 2, node: leaf.i, lit: [leaf.i]
           };
           edges.push(e2);
-          tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, ux: 1, uy: 0, pad: 0, shift: 0, maxWidth: maxLeafW + 8 });
+          tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, ux: 1, uy: 0, pad: 0, shift: 0, maxWidth: maxLeafW + 24 });
           paths.push({ list: [e1, e2], color: hub.color, targets: [hub.i, leaf.i] });
         });
         paths.push({ list: [e1], color: hub.color, targets: [hub.i], toTip: true });
@@ -425,7 +427,8 @@
       var boxH = n * 13;
       var along = (t.pad || 0) + 16 + Math.abs(ux) * half + Math.abs(uy) * boxH * 0.5;
       var ox = t.ax != null ? t.ax : t.x, oy = t.ay != null ? t.ay : t.y;
-      var x = Math.max(half + 2, Math.min(W - half - 2, ox + ux * along + (t.shift || 0)));
+      var inset = narrowLayout() ? 18 : 64;
+      var x = Math.max(half + 8, Math.min(W - half - inset, ox + ux * along + (t.shift || 0)));
       var cy = oy + uy * along;
       var top = cy - boxH / 2;
       var ys = [];
