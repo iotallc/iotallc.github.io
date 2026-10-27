@@ -85,20 +85,20 @@
     var skipList = (cv.getAttribute('data-skip') || '').split(',');
     function skipped(label) { return skipList.indexOf(label) >= 0; }
     function token(name) { return css.getPropertyValue(name).trim() || '#C0C0C0'; }
-    // Layered constellation. Hub colors are diagram-only: Mobile is yellow, Investments is green.
-    // Page sections keep their own accents (mobile green, investment gold, skills teal).
+    // Layered constellation. Hubs: Enterprise blue, Windows purple, Mobile yellow, Investments green.
+    // Nav and branch buttons use the same hub colors. Page sections keep their own accents.
     // Leaves are wired only to their hub. Do not cross these pairs.
     var HUBS = [
-      { label: 'Enterprise AI', color: token('--c-ent'), id: 'enterprise', leaves: [
+      { label: 'Enterprise AI', color: token('--hub-ent'), id: 'enterprise', leaves: [
         { label: 'Skills', id: 'skills' }, { label: 'Models', id: 'models' }
       ] },
-      { label: 'Windows', color: token('--c-win'), id: 'windows', leaves: [
+      { label: 'Windows', color: token('--hub-win'), id: 'windows', leaves: [
         { label: 'Exe', id: 'editions' }, { label: 'PowerShell', id: 'editions' }
       ] },
-      { label: 'Mobile', color: token('--c-inv'), id: 'mobile', leaves: [
+      { label: 'Mobile', color: token('--hub-mob'), id: 'mobile', leaves: [
         { label: 'App', id: 'mobile' }, { label: 'Games', id: 'games' }
       ] },
-      { label: 'Investments', color: token('--c-mob'), id: 'investment.html', leaves: [
+      { label: 'Investments', color: token('--hub-inv'), id: 'investment.html', leaves: [
         { label: 'Portfolio', id: 'investment.html' }, { label: 'Research', id: 'investment.html' }
       ] }
     ];
@@ -175,7 +175,7 @@
     function syncReadout() {
       updateReadout(fineHover ? (hoverTarget !== null ? hoverTarget : focusIndex) : null);
     }
-    var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false, labelGutter = 0, labelTop = 12, labelPx = 11, core = { x: 0, y: 0 };
+    var W, H, DPR, edges, tips, paths, pulses, stars, start, raf, running = true, built = false, labelPx = 11, core = { x: 0, y: 0 }, stacked = false;
     var GROW = 2600;
     var hoverTarget = null, focusIndex = null, branchAmp = [], maxAmp = 0, lastNow = 0;
     var fineMq = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -285,110 +285,159 @@
 
     function build() {
       DPR = Math.min(window.devicePixelRatio || 1, 2);
-      var r = cv.getBoundingClientRect(); W = r.width; H = r.height;
-      cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      var R = rand(7);
-      var narrow = W < 820;
-      labelPx = narrow ? 10 : 11;
-      labelGutter = 10;
-      labelTop = 14;
-      var cvBox = cv.getBoundingClientRect();
-      var copyBottom = 0, copyRight = 0;
-      ['.hero h1', '.hero .lead', '.hero-chips', '[data-tree-readout]'].forEach(function (sel) {
-        var el = document.querySelector(sel);
-        if (!el) return;
-        var b = el.getBoundingClientRect();
-        copyBottom = Math.max(copyBottom, b.bottom - cvBox.top);
-        copyRight = Math.max(copyRight, b.right - cvBox.left);
-      });
-      if (narrow) labelTop = Math.max(14, copyBottom + 18);
-      else labelGutter = Math.max(10, copyRight + 28);
+      var wrapEl = document.querySelector('.hero .wrap');
+      function applySize() {
+        var r = cv.getBoundingClientRect();
+        W = Math.max(1, r.width);
+        H = Math.max(1, r.height);
+        cv.width = Math.round(W * DPR);
+        cv.height = Math.round(H * DPR);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        return r;
+      }
+      function measureCopy(box) {
+        var bottom = 0, right = 0;
+        // Measure shrink-wrapped copy, not the full-width button row.
+        ['.hero .eyebrow', '.hero h1', '.hero .lead', '.hero .btns a', '.hero-chips', '[data-tree-readout]'].forEach(function (sel) {
+          Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {
+            var b = el.getBoundingClientRect();
+            bottom = Math.max(bottom, b.bottom - box.top);
+            right = Math.max(right, b.right - box.left);
+          });
+        });
+        return { bottom: bottom, right: right };
+      }
+      var cvBox = applySize();
       var hubs = NODES.filter(function (n) { return n.hub; });
+      var copy = measureCopy(cvBox);
+      var wrapBox = wrapEl ? wrapEl.getBoundingClientRect() : cvBox;
+      var padL = wrapEl ? (parseFloat(getComputedStyle(wrapEl).paddingLeft) || 0) : 16;
+      var padR = wrapEl ? (parseFloat(getComputedStyle(wrapEl).paddingRight) || 0) : 16;
+      var contentR = (wrapBox.right - cvBox.left) - padR;
+      labelPx = W < 860 ? 11 : 12;
       ctx.font = '500 ' + labelPx + 'px "Geist Mono", ui-monospace, monospace';
       function textW(s) { return ctx.measureText(String(s).toUpperCase()).width; }
-      var maxLeafW = 0, maxHubW = 0;
+      var maxLeafW = 0;
       hubs.forEach(function (hub) {
-        maxHubW = Math.max(maxHubW, textW(hub.label));
         hub.leaves.forEach(function (leaf) { maxLeafW = Math.max(maxLeafW, textW(leaf.label)); });
       });
-      var marginR = narrow ? 22 : Math.max(84, Math.min(120, W * 0.08));
-      var fieldL = narrow ? 26 : labelGutter + 20;
-      var fieldR = W - marginR;
-      var leafLabel = maxLeafW + 26;
-      var span = Math.max(120, fieldR - fieldL - leafLabel);
-      var coreX = fieldL + span * (narrow ? 0.02 : 0.1);
-      var hubX = fieldL + span * (narrow ? 0.42 : 0.48);
-      var leafX = fieldL + span * 0.9;
-      if (leafX + leafLabel > fieldR) leafX = fieldR - leafLabel;
-      var minCore = narrow ? 28 : labelGutter + 28;
-      if (coreX < minCore) {
-        var shift = minCore - coreX;
-        coreX += shift;
-        hubX += shift;
-        leafX += shift;
+      var rightLim = Math.min(W - 16, contentR - 2);
+      var besideRoom = rightLim - copy.right - maxLeafW - 16;
+      stacked = W < 860 || besideRoom < 300;
+      if (wrapEl) {
+        if (stacked) {
+          var guard;
+          for (guard = 0; guard < 2; guard++) {
+            var band = H - copy.bottom - 108;
+            var need = Math.max(1, hubs.length) * 148;
+            if (band >= need) break;
+            var pad = parseFloat(getComputedStyle(wrapEl).paddingBottom) || 0;
+            wrapEl.style.paddingBottom = Math.ceil(pad + (need - band)) + 'px';
+            cvBox = applySize();
+            copy = measureCopy(cvBox);
+            wrapBox = wrapEl.getBoundingClientRect();
+            contentR = (wrapBox.right - cvBox.left) - padR;
+            rightLim = Math.min(W - 16, contentR - 2);
+          }
+        } else if (wrapEl.style.paddingBottom) {
+          wrapEl.style.paddingBottom = '';
+          cvBox = applySize();
+          copy = measureCopy(cvBox);
+          wrapBox = wrapEl.getBoundingClientRect();
+          contentR = (wrapBox.right - cvBox.left) - padR;
+          rightLim = Math.min(W - 16, contentR - 2);
+        }
       }
-      if (hubX < coreX + (narrow ? 56 : 96)) hubX = coreX + (narrow ? 56 : 96);
-      if (leafX < hubX + (narrow ? 58 : 108)) leafX = hubX + (narrow ? 58 : 108);
-      if (leafX + leafLabel > W - 16) {
-        var back = leafX + leafLabel - (W - 16);
-        leafX -= back;
-        hubX -= back * 0.45;
-        coreX -= back * 0.2;
+      var iotaW = textW('IOTA');
+      var contentL = (wrapBox.left - cvBox.left) + padL;
+      var labelGap = 14;
+      var coreX, hubX, leafX;
+      if (stacked) {
+        var marginL = Math.max(14, contentL);
+        coreX = marginL + iotaW + 18;
+        leafX = rightLim - maxLeafW - labelGap;
+        if (leafX < coreX + 150) leafX = coreX + 150;
+        hubX = coreX + (leafX - coreX) * 0.46;
+        if (hubX < coreX + 76) hubX = coreX + 76;
+        if (leafX < hubX + 84) leafX = hubX + 84;
+        if (leafX + labelGap + maxLeafW > rightLim) {
+          var over = leafX + labelGap + maxLeafW - rightLim;
+          leafX -= over;
+          hubX -= over * 0.5;
+          coreX = Math.max(marginL + iotaW * 0.35, coreX - over * 0.15);
+        }
+      } else {
+        // Sit the core just past the headline and keep the fan a cluster, not a stretch to the right edge.
+        coreX = Math.max(copy.right, contentL) + 52;
+        var maxLeafX = rightLim - maxLeafW - labelGap;
+        var fanW = Math.min(340, Math.max(200, maxLeafX - coreX));
+        leafX = Math.min(maxLeafX, coreX + fanW);
+        hubX = coreX + (leafX - coreX) * 0.46;
+        if (hubX < coreX + 108) hubX = coreX + 108;
+        if (leafX < hubX + 124) leafX = hubX + 124;
+        if (leafX + labelGap + maxLeafW > rightLim) {
+          var overD = leafX + labelGap + maxLeafW - rightLim;
+          var slack = Math.max(0, coreX - (copy.right + 40));
+          var pull = Math.min(slack, overD);
+          coreX -= pull;
+          hubX -= overD * 0.55;
+          leafX -= overD;
+        }
       }
-      var top = narrow ? labelTop + 24 : Math.max(78, H * 0.16);
-      var bottom = narrow ? H - 26 : H - Math.max(64, H * 0.14);
-      if (bottom - top < 180) top = Math.max(labelTop + 8, bottom - 180);
-      var pitch = hubs.length ? (bottom - top) / hubs.length : 80;
-      var leafDy = Math.min(narrow ? 18 : 40, Math.max(narrow ? 13 : 28, pitch * 0.3));
+      var top = stacked ? copy.bottom + 40 : Math.max(64, H * 0.1);
+      var bottom = stacked ? H - 108 : H - Math.max(64, H * 0.1);
+      if (bottom - top < 160) top = Math.max(stacked ? copy.bottom + 12 : 24, bottom - 160);
+      var pitch = hubs.length ? (bottom - top) / hubs.length : 120;
+      // Keep each leaf outside its hub halo, and keep the next group's leaf label from touching it.
+      var leafSpread = Math.min(stacked ? 46 : 52, Math.max(26, (pitch - 76) / 2));
       var hubYs = hubs.map(function (_, hi) { return top + pitch * (hi + 0.5); });
       var coreY = hubYs.length ? hubYs.reduce(function (a, b) { return a + b; }, 0) / hubYs.length : H * 0.5;
       core = { x: coreX, y: coreY };
       edges = []; tips = []; paths = [];
+      var hubLabelRoom = Math.max(80, (leafX - hubX) * 2 - 36);
       hubs.forEach(function (hub, hi) {
         var hx = hubX, hy = hubYs[hi];
         var litHub = [hub.i];
         hub.leaves.forEach(function (leaf) { litHub.push(leaf.i); });
-        var e1 = {
+        var stem = {
           x0: coreX, y0: coreY,
-          cx: hx - Math.min(64, (hx - coreX) * 0.42), cy: hy,
+          cx: hx - Math.min(72, (hx - coreX) * 0.42), cy: hy,
           x1: hx, y1: hy,
           w: 1.45, color: hub.color, t0: 0.12, t1: 0.55, depth: 1, node: hub.i, lit: litHub
         };
-        edges.push(e1);
-        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, ux: 0, uy: -1, pad: 0, shift: 0, maxWidth: Math.max(maxHubW, 140) });
+        edges.push(stem);
+        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, maxWidth: hubLabelRoom });
         hub.leaves.forEach(function (leaf, j) {
           var n = hub.leaves.length;
-          var side = j - (n - 1) / 2;
+          var side = n > 1 ? j - (n - 1) / 2 : 0;
           var lx = leafX;
-          var ly = hy + side * leafDy * 2;
-          var e2 = {
+          var ly = hy + side * leafSpread * 2;
+          var fork = {
             x0: hx, y0: hy,
             cx: hx + (lx - hx) * 0.62, cy: hy,
             x1: lx, y1: ly,
             w: 1.15, color: hub.color, t0: 0.5, t1: 0.92, depth: 2, node: leaf.i, lit: [leaf.i]
           };
-          edges.push(e2);
-          tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, ux: 1, uy: 0, pad: 0, shift: 0, maxWidth: maxLeafW + 24 });
-          paths.push({ list: [e1, e2], color: hub.color, targets: [hub.i, leaf.i] });
+          edges.push(fork);
+          tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, maxWidth: maxLeafW + 8 });
+          paths.push({ list: [stem, fork], color: hub.color, targets: [hub.i, leaf.i] });
         });
-        paths.push({ list: [e1], color: hub.color, targets: [hub.i], toTip: true });
+        paths.push({ list: [stem], color: hub.color, targets: [hub.i], toTip: true });
       });
-      relaxLabels();
-      // background constellation
+      var R = rand(7);
       stars = [];
-      var n = Math.round(W * H / 14000);
-      for (var s = 0; s < n; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
+      var nStar = Math.round(W * H / 14000);
+      for (var s = 0; s < nStar; s++) stars.push({ x: R() * W, y: R() * H, r: R() * 1.1 + 0.2, a: R() * 0.5 + 0.1, p: R() * 6.28 });
       pulses = [];
       built = true;
       positionHits();
     }
 
-    function q(e, t) { // point on quadratic bezier
+    function q(e, t) {
       var u = 1 - t;
       return { x: u * u * e.x0 + 2 * u * t * e.cx + t * t * e.x1, y: u * u * e.y0 + 2 * u * t * e.cy + t * t * e.y1 };
     }
-    function drawEdge(e, p) { // draw first p (0..1) of edge using split bezier
+    function drawEdge(e, p) {
       if (p <= 0) return;
       var cx = e.x0 + (e.cx - e.x0) * p, cy = e.y0 + (e.cy - e.y0) * p, end = q(e, p);
       var mul = 1, widthMul = 1, glow = 0;
@@ -414,94 +463,25 @@
     }
     function labelLayout(t) {
       ctx.font = '500 ' + labelPx + 'px "Geist Mono", ui-monospace, monospace';
-      ctx.textAlign = 'center';
       var lab = t.label.toUpperCase();
-      var maxW = t.maxWidth || 120;
-      var lines = ctx.measureText(lab).width > maxW && lab.indexOf(' ') !== -1 ? lab.split(' ') : [lab];
-      var half = 0;
-      lines.forEach(function (line) { half = Math.max(half, ctx.measureText(line).width / 2 + 8); });
-      var n = lines.length;
-      var ux = t.ux || 0, uy = t.uy == null ? -1 : t.uy;
-      var ul = Math.sqrt(ux * ux + uy * uy) || 1;
-      ux /= ul; uy /= ul;
-      var boxH = n * 13;
-      var along = (t.pad || 0) + 16 + Math.abs(ux) * half + Math.abs(uy) * boxH * 0.5;
-      var ox = t.ax != null ? t.ax : t.x, oy = t.ay != null ? t.ay : t.y;
-      var inset = narrowLayout() ? 18 : 64;
-      var x = Math.max(half + 8, Math.min(W - half - inset, ox + ux * along + (t.shift || 0)));
-      var cy = oy + uy * along;
-      var top = cy - boxH / 2;
-      var ys = [];
-      for (var i = 0; i < n; i++) ys.push(top + i * 13 + 10);
-      return { lines: lines, x: x, half: half, ys: ys };
-    }
-    function labelBox(t) {
-      var lay = labelLayout(t);
-      var y0 = 1e9, y1 = -1e9;
-      lay.ys.forEach(function (y) { if (y - 11 < y0) y0 = y - 11; if (y + 3 > y1) y1 = y + 3; });
-      return { x0: lay.x - lay.half, x1: lay.x + lay.half, y0: y0, y1: y1 };
-    }
-    function boxesOverlap(a, b) {
-      return a.x0 < b.x1 + 10 && a.x1 > b.x0 - 10 && a.y0 < b.y1 + 8 && a.y1 > b.y0 - 8;
-    }
-    function pointBoxDist(p, box) {
-      var dx = p.x < box.x0 ? box.x0 - p.x : (p.x > box.x1 ? p.x - box.x1 : 0);
-      var dy = p.y < box.y0 ? box.y0 - p.y : (p.y > box.y1 ? p.y - box.y1 : 0);
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-    function labelClearance(t) {
-      var box = labelBox(t);
-      var minD = 1e9;
-      for (var ei = 0; ei < edges.length; ei++) {
-        for (var s = 0; s <= 16; s++) {
-          var d = pointBoxDist(q(edges[ei], s / 16), box);
-          if (d < minD) minD = d;
-        }
+      var maxW = t.maxWidth || 220;
+      var lines = (t.hub && ctx.measureText(lab).width > maxW && lab.indexOf(' ') !== -1) ? lab.split(' ') : [lab];
+      var widths = lines.map(function (line) { return ctx.measureText(line).width; });
+      var maxLine = 0;
+      widths.forEach(function (w) { if (w > maxLine) maxLine = w; });
+      var lineH = labelPx + 4;
+      var align = t.hub ? 'center' : 'left';
+      var x, ys = [], i;
+      if (t.hub) {
+        x = t.x;
+        var base = t.y - 26 - (lines.length - 1) * lineH;
+        for (i = 0; i < lines.length; i++) ys.push(base + i * lineH);
+      } else {
+        x = t.x + 16;
+        var first = t.y + 4 - ((lines.length - 1) * lineH) / 2;
+        for (i = 0; i < lines.length; i++) ys.push(first + i * lineH);
       }
-      for (var ti = 0; ti < tips.length; ti++) {
-        if (tips[ti] === t) continue;
-        var nd = pointBoxDist(tips[ti], { x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1 });
-        if (nd < minD) minD = nd;
-      }
-      if (box.x0 < (narrowLayout() ? 6 : labelGutter) || box.x1 > W - 6 || box.y0 < labelTop || box.y1 > H - 8) minD = -80;
-      return minD;
-    }
-    function labelsFit() {
-      for (var i = 0; i < tips.length; i++) {
-        var box = labelBox(tips[i]);
-        if (box.x0 < 4 || box.x1 > W - 4 || box.y0 < labelTop - 2 || box.y1 > H - 6) return false;
-        if (!narrowLayout() && box.x0 < labelGutter - 2) return false;
-      }
-      return true;
-    }
-    function narrowLayout() { return W < 820; }
-    function relaxLabels() {
-      var pass, i, j, boxes, hit;
-      for (pass = 0; pass < 14; pass++) {
-        boxes = tips.map(labelBox);
-        hit = false;
-        for (i = 0; i < tips.length; i++) {
-          var crowded = labelClearance(tips[i]) < 14;
-          if (!crowded) {
-            for (j = 0; j < tips.length; j++) {
-              if (i !== j && boxesOverlap(boxes[i], boxes[j])) { crowded = true; break; }
-            }
-          }
-          if (crowded && (tips[i].pad || 0) < 64) {
-            tips[i].pad = (tips[i].pad || 0) + 6;
-            hit = true;
-          }
-          for (j = i + 1; j < tips.length; j++) {
-            if (!boxesOverlap(boxes[i], boxes[j])) continue;
-            var ic = (boxes[i].x0 + boxes[i].x1) / 2, jc = (boxes[j].x0 + boxes[j].x1) / 2;
-            var push = ic <= jc ? -7 : 7;
-            tips[i].shift = Math.max(-42, Math.min(42, (tips[i].shift || 0) + push));
-            tips[j].shift = Math.max(-42, Math.min(42, (tips[j].shift || 0) - push));
-            hit = true;
-          }
-        }
-        if (!hit) break;
-      }
+      return { lines: lines, x: x, widths: widths, maxLine: maxLine, half: maxLine / 2, ys: ys, align: align };
     }
     function positionHits() {
       if (!tips) return;
@@ -511,7 +491,7 @@
         tipAnchors.push(created);
       }
       while (tipAnchors.length > tips.length) hits.removeChild(tipAnchors.pop());
-      var showLabels = W >= 340;
+      var showLabels = W >= 300;
       tips.forEach(function (t, i) {
         var a = tipAnchors[i];
         a.className = 'tree-hit';
@@ -523,11 +503,13 @@
         var left = t.x - 18, right = t.x + 18, top = t.y - 18, bottom = t.y + 18;
         if (showLabels) {
           var lay = labelLayout(t);
-          left = Math.min(left, lay.x - lay.half);
-          right = Math.max(right, lay.x + lay.half);
+          var x0 = lay.align === 'left' ? lay.x : lay.x - lay.half;
+          var x1 = x0 + lay.maxLine;
+          left = Math.min(left, x0);
+          right = Math.max(right, x1);
           lay.ys.forEach(function (y) {
-            top = Math.min(top, y - 12);
-            bottom = Math.max(bottom, y + 6);
+            top = Math.min(top, y - labelPx);
+            bottom = Math.max(bottom, y + 5);
           });
         }
         a.style.left = (left - 4) + 'px';
@@ -572,19 +554,22 @@
       // tips: glowing nodes and labels
       var tipP = Math.max(0, Math.min(1, (g - 0.55) / 0.3));
       if (tipP > 0) {
-        var showLabels = W >= 340;
+        var showLabels = W >= 300;
         tips.forEach(function (t) {
           var pulse = reduce ? 0 : Math.sin(now / 900 + t.i) * 0.5 + 0.5;
           var amp = branchAmp[t.i] || 0;
           var glowMul = maxAmp > 0.001 ? (1 - maxAmp * 0.28 + amp * 0.7) : 1;
-          var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 22 + pulse * 6 + amp * 12);
+          var halo = (t.hub ? (stacked ? 16 : 28) : (stacked ? 12 : 20)) + pulse * 4 + amp * 8;
+          var grd = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, halo);
           grd.addColorStop(0, hexA(t.color, Math.min(1, 0.55 * tipP * glowMul))); grd.addColorStop(1, hexA(t.color, 0));
-          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, (t.hub ? 30 : 22) + amp * 8, 0, 6.283); ctx.fill();
+          ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(t.x, t.y, halo, 0, 6.283); ctx.fill();
           ctx.fillStyle = hexA(t.color, Math.min(1, tipP * (maxAmp > 0.001 ? glowMul : 1))); ctx.beginPath(); ctx.arc(t.x, t.y, (t.hub ? 4.4 : 3.2) + amp * 0.8, 0, 6.283); ctx.fill();
           ctx.strokeStyle = hexA(t.color, Math.min(1, 0.5 * tipP * glowMul)); ctx.lineWidth = 1 + amp * 0.6; ctx.beginPath(); ctx.arc(t.x, t.y, 8 + pulse * 2 + amp * 2, 0, 6.283); ctx.stroke();
           if (showLabels) {
             var lay = labelLayout(t);
             var labelA = 0.92 * tipP * (maxAmp > 0.001 ? (1 - maxAmp * 0.3 + amp * 0.4) : 1);
+            ctx.textAlign = lay.align || 'center';
+            ctx.textBaseline = 'alphabetic';
             ctx.lineJoin = 'round';
             ctx.miterLimit = 2;
             ctx.lineWidth = 3;
@@ -605,16 +590,22 @@
       ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(core.x, core.y, 6.5, 0, 6.283); ctx.stroke();
       ctx.fillStyle = 'rgba(232,232,234,' + (0.9 * coreP) + ')';
       ctx.beginPath(); ctx.arc(core.x, core.y, 2.6, 0, 6.283); ctx.fill();
-      if (W >= 340 && coreP > 0.2) {
+      if (W >= 300 && coreP > 0.2) {
         ctx.font = '500 ' + labelPx + 'px "Geist Mono", ui-monospace, monospace';
-        ctx.textAlign = 'center';
         ctx.lineJoin = 'round';
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'rgba(5,5,6,' + (0.9 * coreP) + ')';
         ctx.fillStyle = 'rgba(214,214,216,' + (0.78 * coreP) + ')';
-        var coreLabY = core.y - 14;
-        ctx.strokeText('IOTA', core.x, coreLabY);
-        ctx.fillText('IOTA', core.x, coreLabY);
+        ctx.textBaseline = 'alphabetic';
+        if (stacked) {
+          ctx.textAlign = 'right';
+          ctx.strokeText('IOTA', core.x - 14, core.y + 4);
+          ctx.fillText('IOTA', core.x - 14, core.y + 4);
+        } else {
+          ctx.textAlign = 'center';
+          ctx.strokeText('IOTA', core.x, core.y - 18);
+          ctx.fillText('IOTA', core.x, core.y - 18);
+        }
       }
       // pulses travelling the full graph; hover does not clear the ones already in flight
       if (!reduce && g >= 1) {
@@ -655,7 +646,7 @@
     document.addEventListener('visibilitychange', function () { running = !document.hidden; if (running) play(); });
     build();
     syncReadout();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { positionHits(); play(); }); else play();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { build(); if (reduce) frame(performance.now()); else play(); }); else play();
   }
 
   /* ---------- interactive showcase ---------- */
