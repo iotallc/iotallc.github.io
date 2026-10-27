@@ -85,20 +85,20 @@
     var skipList = (cv.getAttribute('data-skip') || '').split(',');
     function skipped(label) { return skipList.indexOf(label) >= 0; }
     function token(name) { return css.getPropertyValue(name).trim() || '#C0C0C0'; }
-    // Layered constellation. Hub colors are diagram-only: Mobile is yellow, Investments is green.
-    // Page sections keep their own accents (mobile green, investment gold, skills teal).
+    // Layered constellation. Hub colors match the nav: Enterprise blue, Windows purple,
+    // Mobile yellow, Investments green. Page sections keep their own accents.
     // Leaves are wired only to their hub. Do not cross these pairs.
     var HUBS = [
-      { label: 'Enterprise AI', color: token('--c-ent'), id: 'enterprise', leaves: [
+      { label: 'Enterprise AI', color: token('--hub-ent'), id: 'enterprise', leaves: [
         { label: 'Skills', id: 'skills' }, { label: 'Models', id: 'models' }
       ] },
-      { label: 'Windows', color: token('--c-win'), id: 'windows', leaves: [
+      { label: 'Windows', color: token('--hub-win'), id: 'windows', leaves: [
         { label: 'Exe', id: 'editions' }, { label: 'PowerShell', id: 'editions' }
       ] },
-      { label: 'Mobile', color: token('--c-inv'), id: 'mobile', leaves: [
+      { label: 'Mobile', color: token('--hub-mob'), id: 'mobile', leaves: [
         { label: 'App', id: 'mobile' }, { label: 'Games', id: 'games' }
       ] },
-      { label: 'Investments', color: token('--c-mob'), id: 'investment.html', leaves: [
+      { label: 'Investments', color: token('--hub-inv'), id: 'investment.html', leaves: [
         { label: 'Portfolio', id: 'investment.html' }, { label: 'Research', id: 'investment.html' }
       ] }
     ];
@@ -289,7 +289,7 @@
       cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       var R = rand(7);
-      var narrow = W < 820;
+      var narrow = W < 1240;
       labelPx = narrow ? 10 : 11;
       labelGutter = 10;
       labelTop = 14;
@@ -302,77 +302,124 @@
         copyBottom = Math.max(copyBottom, b.bottom - cvBox.top);
         copyRight = Math.max(copyRight, b.right - cvBox.left);
       });
-      if (narrow) labelTop = Math.max(14, copyBottom + 18);
-      else labelGutter = Math.max(10, copyRight + 28);
+      if (narrow) labelTop = Math.max(14, copyBottom + 22);
+      else labelGutter = Math.max(10, copyRight + 40);
       var hubs = NODES.filter(function (n) { return n.hub; });
       ctx.font = '500 ' + labelPx + 'px "Geist Mono", ui-monospace, monospace';
       function textW(s) { return ctx.measureText(String(s).toUpperCase()).width; }
+      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
       var maxLeafW = 0, maxHubW = 0;
       hubs.forEach(function (hub) {
         maxHubW = Math.max(maxHubW, textW(hub.label));
         hub.leaves.forEach(function (leaf) { maxLeafW = Math.max(maxLeafW, textW(leaf.label)); });
       });
-      var marginR = narrow ? 22 : Math.max(84, Math.min(120, W * 0.08));
-      var fieldL = narrow ? 26 : labelGutter + 20;
-      var fieldR = W - marginR;
-      var leafLabel = maxLeafW + 26;
-      var span = Math.max(120, fieldR - fieldL - leafLabel);
-      var coreX = fieldL + span * (narrow ? 0.02 : 0.1);
-      var hubX = fieldL + span * (narrow ? 0.42 : 0.48);
-      var leafX = fieldL + span * 0.9;
-      if (leafX + leafLabel > fieldR) leafX = fieldR - leafLabel;
-      var minCore = narrow ? 28 : labelGutter + 28;
-      if (coreX < minCore) {
-        var shift = minCore - coreX;
-        coreX += shift;
-        hubX += shift;
-        leafX += shift;
+      var iotaW = textW('IOTA');
+      var fieldL, fieldR, fieldT, fieldB;
+      if (narrow) {
+        fieldL = 12;
+        fieldR = W - 12;
+        fieldT = labelTop;
+        fieldB = H - 76;
+      } else {
+        fieldL = labelGutter;
+        fieldR = W - 36;
+        fieldT = Math.max(96, H * 0.14);
+        fieldB = H - Math.max(64, H * 0.1);
       }
-      if (hubX < coreX + (narrow ? 56 : 96)) hubX = coreX + (narrow ? 56 : 96);
-      if (leafX < hubX + (narrow ? 58 : 108)) leafX = hubX + (narrow ? 58 : 108);
-      if (leafX + leafLabel > W - 16) {
-        var back = leafX + leafLabel - (W - 16);
-        leafX -= back;
-        hubX -= back * 0.45;
-        coreX -= back * 0.2;
+      if (fieldB - fieldT < 240) fieldT = Math.max(narrow ? labelTop : 72, fieldB - 240);
+      var fieldW = Math.max(200, fieldR - fieldL);
+      var leafGap = 20;
+      var iotaGap = 18;
+      var stemPad = iotaW + iotaGap;
+      var tail = 12 + leafGap + maxLeafW;
+      var coreToHub = clamp(fieldW * (narrow ? 0.18 : 0.2), narrow ? 70 : 108, narrow ? 120 : 176);
+      var hubToLeaf = clamp(fieldW * (narrow ? 0.22 : 0.26), Math.max(narrow ? 86 : 132, maxHubW * 0.5 + 36), narrow ? 148 : 220);
+      var natural = stemPad + coreToHub + hubToLeaf + tail;
+      if (natural > fieldW) {
+        var flex = coreToHub + hubToLeaf;
+        var minFlex = narrow ? 132 : 200;
+        var shrink = Math.min(Math.max(0, natural - fieldW), Math.max(0, flex - minFlex));
+        if (shrink > 0 && flex > 0) {
+          var keep = (flex - shrink) / flex;
+          coreToHub *= keep;
+          hubToLeaf *= keep;
+        }
+        natural = stemPad + coreToHub + hubToLeaf + tail;
+        if (natural > fieldW) stemPad = Math.max(28, stemPad - (natural - fieldW));
+        natural = stemPad + coreToHub + hubToLeaf + tail;
       }
-      var top = narrow ? labelTop + 24 : Math.max(78, H * 0.16);
-      var bottom = narrow ? H - 26 : H - Math.max(64, H * 0.14);
-      if (bottom - top < 180) top = Math.max(labelTop + 8, bottom - 180);
-      var pitch = hubs.length ? (bottom - top) / hubs.length : 80;
-      var leafDy = Math.min(narrow ? 18 : 40, Math.max(narrow ? 13 : 28, pitch * 0.3));
-      var hubYs = hubs.map(function (_, hi) { return top + pitch * (hi + 0.5); });
+      var extra = Math.max(0, fieldW - natural);
+      // Phone centers the fan. Desktop keeps it beside the headline, inset a little from that edge.
+      var drift = extra <= 8 ? 0 : (narrow ? extra * 0.5 : Math.min(extra * 0.35, 56));
+      var groupL = fieldL + drift;
+      var coreX = groupL + stemPad;
+      var hubX = coreX + coreToHub;
+      var leafX = hubX + hubToLeaf;
+      var rightEdge = leafX + tail;
+      if (rightEdge > fieldR) {
+        var back = rightEdge - fieldR;
+        coreX -= back; hubX -= back; leafX -= back;
+      }
+      if (coreX - stemPad < fieldL) {
+        var fwd = fieldL - (coreX - stemPad);
+        coreX += fwd; hubX += fwd; leafX += fwd;
+      }
+      var leafSpread = narrow ? 32 : 46;
+      var hubClear = 30;
+      var nHub = hubs.length || 1;
+      var pitchNeed = leafSpread * 2 + hubClear + labelPx + 22;
+      var band = Math.max(pitchNeed, fieldB - fieldT);
+      var pitch = Math.min(narrow ? 112 : 168, Math.max(pitchNeed, band / nHub));
+      var used = pitch * nHub;
+      var yStart = fieldT + Math.max(0, band - used) * 0.42;
+      var hubYs = hubs.map(function (_, hi) { return yStart + pitch * (hi + 0.5); });
       var coreY = hubYs.length ? hubYs.reduce(function (a, b) { return a + b; }, 0) / hubYs.length : H * 0.5;
-      core = { x: coreX, y: coreY };
+      var topLabel = hubYs[0] - hubClear - (labelPx + 8);
+      if (topLabel < fieldT) {
+        var drop = fieldT - topLabel;
+        hubYs = hubYs.map(function (y) { return y + drop; });
+        coreY += drop;
+      }
+      core = { x: coreX, y: coreY, gap: iotaGap };
+      var approach = maxHubW / 2 + 18;
       edges = []; tips = []; paths = [];
       hubs.forEach(function (hub, hi) {
         var hx = hubX, hy = hubYs[hi];
         var litHub = [hub.i];
         hub.leaves.forEach(function (leaf) { litHub.push(leaf.i); });
-        var e1 = {
+        var ax = hx - approach;
+        if (ax < coreX + 22) ax = coreX + 22;
+        var eStem = {
           x0: coreX, y0: coreY,
-          cx: hx - Math.min(64, (hx - coreX) * 0.42), cy: hy,
-          x1: hx, y1: hy,
-          w: 1.45, color: hub.color, t0: 0.12, t1: 0.55, depth: 1, node: hub.i, lit: litHub
+          cx: coreX + (ax - coreX) * 0.42, cy: coreY + (hy - coreY) * 0.12,
+          x1: ax, y1: hy,
+          w: 1.45, color: hub.color, t0: 0.12, t1: 0.46, depth: 1, node: hub.i, lit: litHub
         };
-        edges.push(e1);
-        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, ux: 0, uy: -1, pad: 0, shift: 0, maxWidth: Math.max(maxHubW, 140) });
+        var eIn = {
+          x0: ax, y0: hy,
+          cx: (ax + hx) / 2, cy: hy,
+          x1: hx, y1: hy,
+          w: 1.45, color: hub.color, t0: 0.42, t1: 0.56, depth: 1, node: hub.i, lit: litHub
+        };
+        edges.push(eStem); edges.push(eIn);
+        tips.push({ x: hx, y: hy, label: hub.label, color: hub.color, id: hub.id, i: hub.i, hub: true, gap: hubClear, shift: 0, lift: 0 });
+        var fork = [eStem, eIn];
         hub.leaves.forEach(function (leaf, j) {
           var n = hub.leaves.length;
           var side = j - (n - 1) / 2;
           var lx = leafX;
-          var ly = hy + side * leafDy * 2;
+          var ly = hy + side * leafSpread * 2;
           var e2 = {
             x0: hx, y0: hy,
-            cx: hx + (lx - hx) * 0.62, cy: hy,
+            cx: hx + (lx - hx) * 0.7, cy: hy,
             x1: lx, y1: ly,
             w: 1.15, color: hub.color, t0: 0.5, t1: 0.92, depth: 2, node: leaf.i, lit: [leaf.i]
           };
           edges.push(e2);
-          tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, ux: 1, uy: 0, pad: 0, shift: 0, maxWidth: maxLeafW + 24 });
-          paths.push({ list: [e1, e2], color: hub.color, targets: [hub.i, leaf.i] });
+          tips.push({ x: lx, y: ly, label: leaf.label, color: leaf.color, id: leaf.id, i: leaf.i, hub: false, gap: leafGap, shift: 0, lift: 0 });
+          paths.push({ list: fork.concat([e2]), color: hub.color, targets: [hub.i, leaf.i] });
         });
-        paths.push({ list: [e1], color: hub.color, targets: [hub.i], toTip: true });
+        paths.push({ list: fork, color: hub.color, targets: [hub.i], toTip: true });
       });
       relaxLabels();
       // background constellation
@@ -414,32 +461,37 @@
     }
     function labelLayout(t) {
       ctx.font = '500 ' + labelPx + 'px "Geist Mono", ui-monospace, monospace';
-      ctx.textAlign = 'center';
       var lab = t.label.toUpperCase();
-      var maxW = t.maxWidth || 120;
-      var lines = ctx.measureText(lab).width > maxW && lab.indexOf(' ') !== -1 ? lab.split(' ') : [lab];
-      var half = 0;
-      lines.forEach(function (line) { half = Math.max(half, ctx.measureText(line).width / 2 + 8); });
-      var n = lines.length;
-      var ux = t.ux || 0, uy = t.uy == null ? -1 : t.uy;
-      var ul = Math.sqrt(ux * ux + uy * uy) || 1;
-      ux /= ul; uy /= ul;
-      var boxH = n * 13;
-      var along = (t.pad || 0) + 16 + Math.abs(ux) * half + Math.abs(uy) * boxH * 0.5;
-      var ox = t.ax != null ? t.ax : t.x, oy = t.ay != null ? t.ay : t.y;
-      var inset = narrowLayout() ? 18 : 64;
-      var x = Math.max(half + 8, Math.min(W - half - inset, ox + ux * along + (t.shift || 0)));
-      var cy = oy + uy * along;
-      var top = cy - boxH / 2;
-      var ys = [];
-      for (var i = 0; i < n; i++) ys.push(top + i * 13 + 10);
-      return { lines: lines, x: x, half: half, ys: ys };
+      var lines = [lab];
+      var textW = ctx.measureText(lab).width;
+      var lineH = labelPx + 4;
+      var boxH = lines.length * lineH;
+      var shift = t.shift || 0;
+      var lift = t.lift || 0;
+      var align, x, ys, i;
+      if (t.hub) {
+        align = 'center';
+        x = t.x + shift;
+        var bottom = t.y - (t.gap || 30) + lift;
+        var top = bottom - boxH;
+        ys = [];
+        for (i = 0; i < lines.length; i++) ys.push(top + i * lineH + labelPx);
+      } else {
+        align = 'left';
+        x = t.x + Math.max(14, (t.gap || 20) + shift);
+        var topL = t.y + lift - boxH / 2;
+        ys = [];
+        for (i = 0; i < lines.length; i++) ys.push(topL + i * lineH + labelPx * 0.8);
+      }
+      return { lines: lines, x: x, ys: ys, align: align, textW: textW, half: textW / 2 + 4, boxH: boxH };
     }
     function labelBox(t) {
       var lay = labelLayout(t);
+      var x0 = lay.align === 'left' ? lay.x - 2 : lay.x - lay.half;
+      var x1 = lay.align === 'left' ? lay.x + lay.textW + 4 : lay.x + lay.half;
       var y0 = 1e9, y1 = -1e9;
-      lay.ys.forEach(function (y) { if (y - 11 < y0) y0 = y - 11; if (y + 3 > y1) y1 = y + 3; });
-      return { x0: lay.x - lay.half, x1: lay.x + lay.half, y0: y0, y1: y1 };
+      lay.ys.forEach(function (y) { if (y - labelPx < y0) y0 = y - labelPx; if (y + 4 > y1) y1 = y + 4; });
+      return { x0: x0, x1: x1, y0: y0, y1: y1 };
     }
     function boxesOverlap(a, b) {
       return a.x0 < b.x1 + 10 && a.x1 > b.x0 - 10 && a.y0 < b.y1 + 8 && a.y1 > b.y0 - 8;
@@ -463,40 +515,46 @@
         var nd = pointBoxDist(tips[ti], { x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1 });
         if (nd < minD) minD = nd;
       }
-      if (box.x0 < (narrowLayout() ? 6 : labelGutter) || box.x1 > W - 6 || box.y0 < labelTop || box.y1 > H - 8) minD = -80;
+      var edgeL = narrowLayout() ? 6 : labelGutter - 4;
+      if (box.x0 < edgeL || box.x1 > W - 6 || box.y0 < (narrowLayout() ? labelTop : 8) || box.y1 > H - 16) minD = -80;
       return minD;
     }
-    function labelsFit() {
-      for (var i = 0; i < tips.length; i++) {
-        var box = labelBox(tips[i]);
-        if (box.x0 < 4 || box.x1 > W - 4 || box.y0 < labelTop - 2 || box.y1 > H - 6) return false;
-        if (!narrowLayout() && box.x0 < labelGutter - 2) return false;
-      }
-      return true;
-    }
-    function narrowLayout() { return W < 820; }
+    function narrowLayout() { return W < 1240; }
     function relaxLabels() {
-      var pass, i, j, boxes, hit;
-      for (pass = 0; pass < 14; pass++) {
+      var pass, i, j, boxes, hit, a, b, leaf, edgeL;
+      for (pass = 0; pass < 12; pass++) {
         boxes = tips.map(labelBox);
         hit = false;
+        edgeL = narrowLayout() ? 6 : labelGutter - 4;
         for (i = 0; i < tips.length; i++) {
-          var crowded = labelClearance(tips[i]) < 14;
-          if (!crowded) {
-            for (j = 0; j < tips.length; j++) {
-              if (i !== j && boxesOverlap(boxes[i], boxes[j])) { crowded = true; break; }
-            }
+          var box = boxes[i];
+          if (box.x1 > W - 8) { tips[i].shift = (tips[i].shift || 0) - (box.x1 - (W - 8)); hit = true; }
+          if (box.x0 < edgeL) { tips[i].shift = (tips[i].shift || 0) + (edgeL - box.x0); hit = true; }
+          var minY = narrowLayout() ? labelTop : 10;
+          if (box.y0 < minY) { tips[i].lift = (tips[i].lift || 0) + (minY - box.y0); hit = true; }
+          if (box.y1 > H - 20) { tips[i].lift = (tips[i].lift || 0) - (box.y1 - (H - 20)); hit = true; }
+          if (!tips[i].hub && (tips[i].gap || 20) + (tips[i].shift || 0) < 14) {
+            tips[i].shift = 14 - (tips[i].gap || 20);
           }
-          if (crowded && (tips[i].pad || 0) < 64) {
-            tips[i].pad = (tips[i].pad || 0) + 6;
+          var clear = labelClearance(tips[i]);
+          if (clear < 8 && clear > -40) {
+            if (tips[i].hub) tips[i].gap = Math.min(46, (tips[i].gap || 30) + 3);
+            else tips[i].shift = Math.min(24, (tips[i].shift || 0) + 3);
             hit = true;
           }
           for (j = i + 1; j < tips.length; j++) {
             if (!boxesOverlap(boxes[i], boxes[j])) continue;
-            var ic = (boxes[i].x0 + boxes[i].x1) / 2, jc = (boxes[j].x0 + boxes[j].x1) / 2;
-            var push = ic <= jc ? -7 : 7;
-            tips[i].shift = Math.max(-42, Math.min(42, (tips[i].shift || 0) + push));
-            tips[j].shift = Math.max(-42, Math.min(42, (tips[j].shift || 0) - push));
+            a = tips[i]; b = tips[j];
+            if (a.hub && b.hub) {
+              if (a.y <= b.y) a.lift = (a.lift || 0) - 3; else b.lift = (b.lift || 0) - 3;
+            } else if (!a.hub && !b.hub) {
+              if (a.y <= b.y) { a.lift = (a.lift || 0) - 4; b.lift = (b.lift || 0) + 4; }
+              else { a.lift = (a.lift || 0) + 4; b.lift = (b.lift || 0) - 4; }
+            } else {
+              leaf = a.hub ? b : a;
+              leaf.shift = Math.min(28, (leaf.shift || 0) + 5);
+              leaf.lift = (leaf.lift || 0) + (leaf.y < (a.hub ? a.y : b.y) ? -4 : 4);
+            }
             hit = true;
           }
         }
@@ -522,13 +580,11 @@
         a.setAttribute('aria-label', pageLink ? 'Open ' + t.label : 'Scroll to ' + t.label);
         var left = t.x - 18, right = t.x + 18, top = t.y - 18, bottom = t.y + 18;
         if (showLabels) {
-          var lay = labelLayout(t);
-          left = Math.min(left, lay.x - lay.half);
-          right = Math.max(right, lay.x + lay.half);
-          lay.ys.forEach(function (y) {
-            top = Math.min(top, y - 12);
-            bottom = Math.max(bottom, y + 6);
-          });
+          var box = labelBox(t);
+          left = Math.min(left, box.x0);
+          right = Math.max(right, box.x1);
+          top = Math.min(top, box.y0);
+          bottom = Math.max(bottom, box.y1);
         }
         a.style.left = (left - 4) + 'px';
         a.style.top = (top - 4) + 'px';
@@ -588,6 +644,8 @@
             ctx.lineJoin = 'round';
             ctx.miterLimit = 2;
             ctx.lineWidth = 3;
+            ctx.textAlign = lay.align === 'left' ? 'left' : 'center';
+            ctx.textBaseline = 'alphabetic';
             ctx.strokeStyle = 'rgba(5,5,6,' + Math.min(0.92, labelA) + ')';
             ctx.fillStyle = 'rgba(214,214,216,' + Math.min(1, labelA) + ')';
             lay.lines.forEach(function (line, li) {
@@ -607,14 +665,16 @@
       ctx.beginPath(); ctx.arc(core.x, core.y, 2.6, 0, 6.283); ctx.fill();
       if (W >= 340 && coreP > 0.2) {
         ctx.font = '500 ' + labelPx + 'px "Geist Mono", ui-monospace, monospace';
-        ctx.textAlign = 'center';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
         ctx.lineJoin = 'round';
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'rgba(5,5,6,' + (0.9 * coreP) + ')';
-        ctx.fillStyle = 'rgba(214,214,216,' + (0.78 * coreP) + ')';
-        var coreLabY = core.y - 14;
-        ctx.strokeText('IOTA', core.x, coreLabY);
-        ctx.fillText('IOTA', core.x, coreLabY);
+        ctx.fillStyle = 'rgba(214,214,216,' + (0.86 * coreP) + ')';
+        var iotaX = core.x - (core.gap || 18);
+        ctx.strokeText('IOTA', iotaX, core.y);
+        ctx.fillText('IOTA', iotaX, core.y);
+        ctx.textBaseline = 'alphabetic';
       }
       // pulses travelling the full graph; hover does not clear the ones already in flight
       if (!reduce && g >= 1) {
@@ -655,7 +715,7 @@
     document.addEventListener('visibilitychange', function () { running = !document.hidden; if (running) play(); });
     build();
     syncReadout();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { positionHits(); play(); }); else play();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { build(); if (reduce) frame(performance.now()); else play(); }); else play();
   }
 
   /* ---------- interactive showcase ---------- */
