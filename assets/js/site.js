@@ -86,7 +86,7 @@
     function skipped(label) { return skipList.indexOf(label) >= 0; }
     function token(name) { return css.getPropertyValue(name).trim() || '#C0C0C0'; }
     // Layered constellation. Hubs: Enterprise blue, Windows purple, Mobile yellow, Investments green.
-    // Nav and branch buttons use the same hub colors. Page sections keep their own accents.
+    // Nav, branch marks, and page sections use the same hub color. Leaves inherit their hub.
     // Leaves are wired only to their hub. Do not cross these pairs.
     var HUBS = [
       { label: 'Enterprise AI', color: token('--hub-ent'), id: 'enterprise', leaves: [
