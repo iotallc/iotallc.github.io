@@ -5,8 +5,9 @@
 window.IOTA_CONFIG = {
   links: {
     email: "IOTA.LLC.Business.Inquiries@gmail.com",
-    mobileBeta: "https://play.google.com/apps/testing/iotaAi.mobile",
-    talesBeta: "https://play.google.com/apps/testing/com.iotallc.iotatales",
+    mobilePlay: "https://play.google.com/store/apps/details?id=iotaAi.mobile",
+    talesPlay: "https://play.google.com/store/apps/details?id=com.iotallc.iotatales",
+    wordboxPlay: "https://play.google.com/store/apps/details?id=com.iotallc.wordbox",
     // Joseph's LinkedIn profile. Every general LinkedIn link on the site reads this value.
     // The RAG post link in the IOTA Orchestration section is separate and stays https://lnkd.in/p/gVtDwH8E.
     linkedin: "https://www.linkedin.com/in/josephbryant-pw"
