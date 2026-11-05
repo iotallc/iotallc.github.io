@@ -307,8 +307,11 @@ html:not(.js) .showcase{display:none}
 /* games */
 .tales{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start}
 .tales img.icon{width:96px;height:96px;border-radius:16px;border:1px solid var(--border);box-shadow:none}
+.tales .ph-ico{width:96px;height:96px;border-radius:16px;border:1px solid var(--border);display:grid;place-items:center;background:#111;color:var(--hub-mob);font-family:var(--mono);font-size:22px;letter-spacing:.06em}
 .status{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--hub-mob);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase}
 .status::before{content:"";width:6px;height:6px;border-radius:1px;background:var(--hub-mob);box-shadow:none}
+.status.wait{color:var(--muted)}
+.status.wait::before{background:var(--muted)}
 .tales-shot{border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:none;max-width:330px;margin:0 auto}
 .tales-ai{margin-top:18px;padding:16px 0 0;border:0;border-top:1px solid var(--border);border-radius:0;background:none}
 .tales-ai .k{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
@@ -486,6 +489,7 @@ html:not(.js) .rp-hint,html:not(.js) [data-rp-play]{display:none}
 .dl .top{display:flex;gap:16px;align-items:center;margin-bottom:16px}
 .dl .top img{width:56px;height:56px;border-radius:14px;object-fit:contain;background:#111;border:1px solid var(--hair)}
 .dl .top .ph-ico{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:#111;border:1px solid var(--hair);color:var(--accent,var(--hub-win))}
+.dl .top .ph-ico.letters{font-family:var(--mono);font-size:15px;letter-spacing:.06em}
 .dl .st{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 .dl p{color:var(--silver);font-size:15px}
 .dl .btns{margin-top:auto;padding-top:12px}

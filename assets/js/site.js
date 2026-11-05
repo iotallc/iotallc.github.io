@@ -123,9 +123,9 @@
       'Windows': 'A desktop AI app in two editions: Exe and PowerShell.',
       'Exe': 'The EXE edition is faster and can connect to cloud models.',
       'PowerShell': 'The PowerShell edition is strictly offline.',
-      'Mobile': 'IOTA Mobile, a free assistant in closed alpha on Android.',
-      'App': 'The IOTA Mobile app, in closed alpha for invited testers.',
-      'Games': 'Fine-tuned models for safe-for-work mobile games.',
+      'Mobile': 'IOTA - Mobile AI, a free assistant on Google Play for Android.',
+      'App': 'The IOTA Mobile app is available on Google Play.',
+      'Games': 'Iota Tales is on Google Play. Iota - Word Box is in Google Play review.',
       'Investments': 'Sector allocation strategies across market sectors.',
       'Portfolio': 'How a portfolio is weighted across market sectors.',
       'Research': 'How those sector strategies are built.'
