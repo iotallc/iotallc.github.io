@@ -1,0 +1,827 @@
+{
+  "version": 1,
+  "page": "https://iotallc.github.io/infobanks/",
+  "generated": "2026-11-09",
+  "note": "IOTA Mobile info banks. Each part is under 95 MB. Packs that fit in about 900 MB are on this Pages path. The rest are GitHub Release assets for tag infobanks-v1.",
+  "packs": [
+    {
+      "id": "wikipedia-en-top-mini",
+      "name": "Wikipedia EN Top Mini",
+      "description": "Short leads from popular English Wikipedia articles. A general starter. No images.",
+      "category": "general",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wikipedia, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license. https://en.wikipedia.org/wiki/Wikipedia:Text_of_the_Creative_Commons_Attribution-ShareAlike_4.0_International_License",
+      "source_url": "https://download.kiwix.org/zim/wikipedia/wikipedia_en_top_mini_2026-09.zim",
+      "approx_bytes": 296747008,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 825647104,
+      "sha256": "8c872eaeda050211afe3a379324f84a3265daca70fbe95c2b312ed5e160d11b4",
+      "chunks": 237101,
+      "parts": [
+        {
+          "name": "wikipedia-en-top-mini.part000",
+          "size": 99614719,
+          "sha256": "47a888e76078502bfa92d98f2c1666eb2430fe6c3c6559b1629d81924bfda0d0",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part000"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part001",
+          "size": 99614719,
+          "sha256": "78a9e23a8e2a792369c9d230911c6e2ec123758507eba6ac0f3a0502448c1d32",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part001"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part002",
+          "size": 99614719,
+          "sha256": "7f1be9f923b76037ec3afdab29b2c6a6397ca7f4c0651372d899a55425a6f155",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part002"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part003",
+          "size": 99614719,
+          "sha256": "112d88ee7734fd4e4a99a74d9c906b8580c81b8a847083803a6800c0f366bb40",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part003"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part004",
+          "size": 99614719,
+          "sha256": "e146895f436981b628646869c090a251cc57feb7bca1ace769b0caca05b59ec8",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part004"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part005",
+          "size": 99614719,
+          "sha256": "821751c3ecad63f5ff9e8763b52afa16863e3ca6b2e0888333f1055a73d5cf09",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part005"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part006",
+          "size": 99614719,
+          "sha256": "b5aea2aacd1b05f9729701478d8cee994d70f8c02e1776ce2b3ba9efa16cbe0d",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part006"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part007",
+          "size": 99614719,
+          "sha256": "58376fd9ecba17660f5fa7ca177b5a2ac59bc9e3b0979b68a3ac9e9393ab0dd9",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part007"
+        },
+        {
+          "name": "wikipedia-en-top-mini.part008",
+          "size": 28729352,
+          "sha256": "b8396d5b03067d2f81265d619709658eff3df5c019155488e5dcd9e7bd08ccd3",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-top-mini.part008"
+        }
+      ]
+    },
+    {
+      "id": "cia-world-factbook-2025",
+      "name": "CIA World Factbook",
+      "description": "Country profiles from the 2025 CIA World Factbook: geography, people, government, and economy.",
+      "category": "general",
+      "license": "Public domain",
+      "license_url": "https://www.cia.gov/the-world-factbook/about/copyright-and-contributors/",
+      "attribution": "CIA World Factbook, 2025 edition. United States Government work in the public domain. Packaged from the public JSON archive (CC0) at https://github.com/MilkMp/CIA-World-Factbooks-Archive-1990-2025. Cite the CIA World Factbook.",
+      "source_url": "https://github.com/MilkMp/CIA-World-Factbooks-Archive-1990-2025/releases/download/raw-sources-v1/factbook-json-2025.zip",
+      "approx_bytes": 5242880,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "pages",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 11943936,
+      "sha256": "ddf34b62328e55bf938fc1fb953505839063d5b053950c76ea64f2d7762392fe",
+      "chunks": 6501,
+      "parts": [
+        {
+          "name": "cia-world-factbook-2025.part000",
+          "size": 11943936,
+          "sha256": "ddf34b62328e55bf938fc1fb953505839063d5b053950c76ea64f2d7762392fe",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/cia-world-factbook-2025.part000"
+        }
+      ]
+    },
+    {
+      "id": "wiktionary-en-simple",
+      "name": "Wiktionary Simple",
+      "description": "Simple English definitions. Small enough for a phone with little free space.",
+      "category": "general",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wiktionary, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/wiktionary/wiktionary_en-simple_all_nopic_2026-10.zim",
+      "approx_bytes": 31457280,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 287084544,
+      "sha256": "c075c0d53c4df3d6c89381d40b5ae2da2d8a0f1852bfd57e03b29ea7487cfc76",
+      "chunks": 59005,
+      "parts": [
+        {
+          "name": "wiktionary-en-simple.part000",
+          "size": 99614719,
+          "sha256": "95384365e8c97ceb4117bb13d8efe8c930346e7ed41487f2eae5ae725aca85ef",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wiktionary-en-simple.part000"
+        },
+        {
+          "name": "wiktionary-en-simple.part001",
+          "size": 99614719,
+          "sha256": "dffae21c6f762a50659e1a42907432222c850e8a181c03ff33175c0adbe4af76",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wiktionary-en-simple.part001"
+        },
+        {
+          "name": "wiktionary-en-simple.part002",
+          "size": 87855106,
+          "sha256": "51f7e10716651cbd3342286d30946cf8108e3dd10d20b702ab83e02b3028e8ba",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wiktionary-en-simple.part002"
+        }
+      ]
+    },
+    {
+      "id": "wikivoyage-en-nopic",
+      "name": "Wikivoyage",
+      "description": "Travel and place guides from English Wikivoyage, without pictures.",
+      "category": "general",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wikivoyage, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/wikivoyage/wikivoyage_en_all_nopic_2026-09.zim",
+      "approx_bytes": 272629760,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 1287888896,
+      "sha256": "c8981b7882473f371f89ab05dac490a2d386b0d5977bfe8884ee5df52ca22e80",
+      "chunks": 411194,
+      "parts": [
+        {
+          "name": "wikivoyage-en-nopic.part000",
+          "size": 99614719,
+          "sha256": "8082fc4eff268eb567a182da0364757f997506d2be7465c4c47c4c458b43036d",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part000"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part001",
+          "size": 99614719,
+          "sha256": "c2b916565ec8c164e979d710a9f031b86d0236d7245fffbe357c37f3a3cd986b",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part001"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part002",
+          "size": 99614719,
+          "sha256": "f1c5c2e3913a85934ddf0086194a8c30ff9556e9210ecfaeab215350708f28b5",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part002"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part003",
+          "size": 99614719,
+          "sha256": "63fe032450134f8a40396565fe587dd65e07e35217989ec71c66acf4cd6360ca",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part003"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part004",
+          "size": 99614719,
+          "sha256": "d22b8e38c1a9e1b5b5f00fffd30271513635b2718b47a1865455921c93cb762b",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part004"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part005",
+          "size": 99614719,
+          "sha256": "f85466d423ef8b741eb34bdf8efcb0eb04fe21a75812d83301b98724477d97f7",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part005"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part006",
+          "size": 99614719,
+          "sha256": "0693e7c3b443d58a63110c68cceaf7886922cc33ad0d62635c8aef0b48c39dc3",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part006"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part007",
+          "size": 99614719,
+          "sha256": "6b44ad2d64c71a00082637c86f2232498928cb1347fc27180c62b3b821abc3e2",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part007"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part008",
+          "size": 99614719,
+          "sha256": "a2fa003f3933974dc108235cc9c64e42211f52d99af233d5e64fb34bf2648c37",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part008"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part009",
+          "size": 99614719,
+          "sha256": "dc7dbd6e9d34f9d65f3a1332dd2255bba377482615b98f8520c635c2ea53d2d2",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part009"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part010",
+          "size": 99614719,
+          "sha256": "582aff7d483e492d33c0a90c7e29c572ce7c7de6631f6a4eea52487b47244d30",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part010"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part011",
+          "size": 99614719,
+          "sha256": "c4514fbd2cb6017bd9651520012ef20031491e3bd7df5469bbe75921803de6d9",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part011"
+        },
+        {
+          "name": "wikivoyage-en-nopic.part012",
+          "size": 92512268,
+          "sha256": "0abb161f9d08c09c0019b725bc1fd077c562b16fdc56b85f462c599f8eeb21b7",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikivoyage-en-nopic.part012"
+        }
+      ]
+    },
+    {
+      "id": "wikipedia-en-physics-mini",
+      "name": "Wikipedia physics mini",
+      "description": "Short physics articles from English Wikipedia.",
+      "category": "stem",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wikipedia, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/wikipedia/wikipedia_en_physics_mini_2026-10.zim",
+      "approx_bytes": 53477376,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "pages",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 213688320,
+      "sha256": "7d98ae73546fb4cecf76cc532d99901e70796ecb4e506caf98e3ea94927b7a12",
+      "chunks": 54388,
+      "parts": [
+        {
+          "name": "wikipedia-en-physics-mini.part000",
+          "size": 99614719,
+          "sha256": "91cbfdf198ee099fbea642d80980a77692b433e80aa2d9c592ab07e877b82e1d",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/wikipedia-en-physics-mini.part000"
+        },
+        {
+          "name": "wikipedia-en-physics-mini.part001",
+          "size": 99614719,
+          "sha256": "9ed98d85b08f59ca6671f547f62b3b4c66bdbfff1a3401fd31e45fcffa721cad",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/wikipedia-en-physics-mini.part001"
+        },
+        {
+          "name": "wikipedia-en-physics-mini.part002",
+          "size": 14458882,
+          "sha256": "75a8e149bb56abb2e54e90252c40eab7f1e4a96d82c124dae51d2fe0fdfe0f9d",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/wikipedia-en-physics-mini.part002"
+        }
+      ]
+    },
+    {
+      "id": "wikipedia-en-mathematics-mini",
+      "name": "Wikipedia mathematics mini",
+      "description": "Short mathematics articles from English Wikipedia.",
+      "category": "stem",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wikipedia, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/wikipedia/wikipedia_en_mathematics_mini_2026-06.zim",
+      "approx_bytes": 58720256,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "pages",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 92717056,
+      "sha256": "58db8e9cb1cdc1c146e494f803ba76b02bf18b8ae4cd3e0352e2a2b16cfbbb23",
+      "chunks": 39699,
+      "parts": [
+        {
+          "name": "wikipedia-en-mathematics-mini.part000",
+          "size": 92717056,
+          "sha256": "58db8e9cb1cdc1c146e494f803ba76b02bf18b8ae4cd3e0352e2a2b16cfbbb23",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/wikipedia-en-mathematics-mini.part000"
+        }
+      ]
+    },
+    {
+      "id": "wikipedia-en-chemistry-mini",
+      "name": "Wikipedia chemistry mini",
+      "description": "Short chemistry articles from English Wikipedia.",
+      "category": "stem",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wikipedia, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/wikipedia/wikipedia_en_chemistry_mini_2026-10.zim",
+      "approx_bytes": 23068672,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "pages",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 84357120,
+      "sha256": "5f07ac521a564dcba0b37fbef93e25c7e12577dc08c2d0cdfa76433cb682f93d",
+      "chunks": 21347,
+      "parts": [
+        {
+          "name": "wikipedia-en-chemistry-mini.part000",
+          "size": 84357120,
+          "sha256": "5f07ac521a564dcba0b37fbef93e25c7e12577dc08c2d0cdfa76433cb682f93d",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/wikipedia-en-chemistry-mini.part000"
+        }
+      ]
+    },
+    {
+      "id": "engineering-se",
+      "name": "Engineering Stack Exchange",
+      "description": "Practical engineering questions and answers.",
+      "category": "stem",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Questions and answers from Engineering Stack Exchange, available under CC BY-SA. Credit the authors and share adaptations under the same license. https://engineering.stackexchange.com/",
+      "source_url": "https://download.kiwix.org/zim/stack_exchange/engineering.stackexchange.com_en_all_2026-10.zim",
+      "approx_bytes": 258998272,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "pages",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 219205632,
+      "sha256": "c6c6d784888fcd0210e72caca7cc43e7a804f5b116a3334227dc4c45bb3bde33",
+      "chunks": 117707,
+      "parts": [
+        {
+          "name": "engineering-se.part000",
+          "size": 99614719,
+          "sha256": "d0e70e86949c65e84071ddc3dfdb784840e6778358464921f90072072d846c61",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/engineering-se.part000"
+        },
+        {
+          "name": "engineering-se.part001",
+          "size": 99614719,
+          "sha256": "adf8acd0939d9e8dd0b14015361922322dcbd2e7584a12ca84f8fd3e945c0920",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/engineering-se.part001"
+        },
+        {
+          "name": "engineering-se.part002",
+          "size": 19976194,
+          "sha256": "d863256afb03769e486440b12dd160d35ffca6bb97418bbbefee047166a56fff",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/engineering-se.part002"
+        }
+      ]
+    },
+    {
+      "id": "arduino-se",
+      "name": "Arduino Stack Exchange",
+      "description": "Arduino and embedded hobby questions and answers. A larger download.",
+      "category": "stem",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Questions and answers from Arduino Stack Exchange, available under CC BY-SA. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/stack_exchange/arduino.stackexchange.com_en_all_2026-10.zim",
+      "approx_bytes": 260046848,
+      "medical": false,
+      "business": false,
+      "large": true,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 281911296,
+      "sha256": "667419b559441fdc1ecb43cc21f7e7770950a7a82126709a28b076fafdbebcb4",
+      "chunks": 164086,
+      "parts": [
+        {
+          "name": "arduino-se.part000",
+          "size": 99614719,
+          "sha256": "533a079f61d24aa4f8bc3e1209a5af07772744a5387a08d1f32dba2287d99191",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/arduino-se.part000"
+        },
+        {
+          "name": "arduino-se.part001",
+          "size": 99614719,
+          "sha256": "19fea085212ab3dcd7444d23ebd7de66297725a558121bf8ebd51ae1c5d80cbd",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/arduino-se.part001"
+        },
+        {
+          "name": "arduino-se.part002",
+          "size": 82681858,
+          "sha256": "18fae258822ef713eaf89a2960a0175cc1b5d649d558d065f887800ec297f875",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/arduino-se.part002"
+        }
+      ]
+    },
+    {
+      "id": "raspberrypi-se",
+      "name": "Raspberry Pi Stack Exchange",
+      "description": "Raspberry Pi questions and answers. A larger download.",
+      "category": "stem",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Questions and answers from Raspberry Pi Stack Exchange, available under CC BY-SA. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/stack_exchange/raspberrypi.stackexchange.com_en_all_2026-10.zim",
+      "approx_bytes": 298844160,
+      "medical": false,
+      "business": false,
+      "large": true,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 362184704,
+      "sha256": "664b9961332b2ae1ffab052cde53624666688a80a90870becab3ef9a321a9739",
+      "chunks": 223661,
+      "parts": [
+        {
+          "name": "raspberrypi-se.part000",
+          "size": 99614719,
+          "sha256": "979e8273b506098d5a5945d350767af0ff1f810228eb95e018f636f2584f2e43",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/raspberrypi-se.part000"
+        },
+        {
+          "name": "raspberrypi-se.part001",
+          "size": 99614719,
+          "sha256": "7b74e56a53eae7c1a417a4f4e94da18933d991bb2d82770f05d3e941e1d52c7d",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/raspberrypi-se.part001"
+        },
+        {
+          "name": "raspberrypi-se.part002",
+          "size": 99614719,
+          "sha256": "858e9b3db06718a48d48c8ba88aca95c23dc73461d6a9c8ee5bb3144e5de23b8",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/raspberrypi-se.part002"
+        },
+        {
+          "name": "raspberrypi-se.part003",
+          "size": 63340547,
+          "sha256": "a80a999c9b1ed6ee13213cc78e99e01bd55f9bbe1ab699b82d4b034e77fcfd86",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/raspberrypi-se.part003"
+        }
+      ]
+    },
+    {
+      "id": "wikipedia-en-computer-nopic",
+      "name": "Wikipedia computer",
+      "description": "Computing articles from English Wikipedia, without pictures. A larger download.",
+      "category": "stem",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wikipedia, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/wikipedia/wikipedia_en_computer_nopic_2026-09.zim",
+      "approx_bytes": 516947968,
+      "medical": false,
+      "business": false,
+      "large": true,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 1757323264,
+      "sha256": "d6c620c84a26e3eb2e6236b5b12ef28bac0e1fd05cd6331fafa0fe2c270b07dd",
+      "chunks": 613339,
+      "parts": [
+        {
+          "name": "wikipedia-en-computer-nopic.part000",
+          "size": 99614719,
+          "sha256": "5a45ecdb21ecfe8a427b616fcd8dcd84a17c471d57670fc241474768d8b3b631",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part000"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part001",
+          "size": 99614719,
+          "sha256": "2e6bf933f6d80eb909a334c38bbd40141ac5307741c782f04a0b509535bb61be",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part001"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part002",
+          "size": 99614719,
+          "sha256": "7e8c2d8c269bf425dbe5fa3ac7624ad88f1d6efd24c9b8a480d5514d0bcc36a0",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part002"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part003",
+          "size": 99614719,
+          "sha256": "d622c8d964beec5a627fc2a096e15bfafa70dec6354d7671e17406171411c84a",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part003"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part004",
+          "size": 99614719,
+          "sha256": "7a08e0cec3c87a38cf975ae494bf4002c10ad0ffd3d20315c5dfea0d58f929b5",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part004"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part005",
+          "size": 99614719,
+          "sha256": "419a6c26530a91dcb83989b151e090ceb043e66bd3818060fbaf8966ba10e92f",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part005"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part006",
+          "size": 99614719,
+          "sha256": "bbe3e71b3db058c154c370010181b07ba7dddd07a99c1d6040cf6df370a5d413",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part006"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part007",
+          "size": 99614719,
+          "sha256": "c8558cffa2b37e0050039051460f4fa1306566d982a1affded950b2b9e8a28d9",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part007"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part008",
+          "size": 99614719,
+          "sha256": "90c94f707092b5a78bf31272082da38666e0575ac4285cb19821fade36d9cc7f",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part008"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part009",
+          "size": 99614719,
+          "sha256": "6d28e3dc84d9b3cc092e2952dfe3eba7a74697c04db1d80bce97805d8d570f55",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part009"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part010",
+          "size": 99614719,
+          "sha256": "f43a65885e3663a975a850b94ff147d2b1bdbdc1a0ab6382067383f1580df0de",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part010"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part011",
+          "size": 99614719,
+          "sha256": "39c0ebd5a6a14e69070aff937c6604815dbcd634fce64e622faf5cf0528907b9",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part011"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part012",
+          "size": 99614719,
+          "sha256": "b3ad98844e6af71a81dc9d543eb74e4671a7486b361729c6cb06451858ddbaa0",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part012"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part013",
+          "size": 99614719,
+          "sha256": "faf517b9239ccce73dca3099a73db6583e1171524ddfb766bda47b8277b4a951",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part013"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part014",
+          "size": 99614719,
+          "sha256": "5b36b1fe159dbc66a1f486326f3aa74a4f7c42574fa948c07769be91c7e94b9e",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part014"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part015",
+          "size": 99614719,
+          "sha256": "e6f1e450b02220a93b7e3ab3116fd1aad5f3acc5c4dd4e28d5f09b1a11fec293",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part015"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part016",
+          "size": 99614719,
+          "sha256": "b4f31720771dda6f4069dec09d0d86f9c6d9b35c0c63fc64ce3631c5ca1405f8",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part016"
+        },
+        {
+          "name": "wikipedia-en-computer-nopic.part017",
+          "size": 63873041,
+          "sha256": "047d5b566333a0ac0a3cebd44d2f20cb2ae8fa98a5b0cb558cb41a4fd1af9b35",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-computer-nopic.part017"
+        }
+      ]
+    },
+    {
+      "id": "economics-se",
+      "name": "Economics Stack Exchange",
+      "description": "Economics concepts and questions. Informational only. Not financial, tax, or investment advice.",
+      "category": "business",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Questions and answers from Economics Stack Exchange, available under CC BY-SA. Credit the authors and share adaptations under the same license. This pack is informational only.",
+      "source_url": "https://download.kiwix.org/zim/stack_exchange/economics.stackexchange.com_en_all_2026-10.zim",
+      "approx_bytes": 115343360,
+      "medical": false,
+      "business": true,
+      "large": false,
+      "host": "pages",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 209747968,
+      "sha256": "4cf366234e083fe08bddd1246c843605096017012915427c102ea2cb8767ac06",
+      "chunks": 109991,
+      "parts": [
+        {
+          "name": "economics-se.part000",
+          "size": 99614719,
+          "sha256": "ac0cbe0781b897e65c28048b0965b627e9cf6e291311266183efcda5c17653a2",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/economics-se.part000"
+        },
+        {
+          "name": "economics-se.part001",
+          "size": 99614719,
+          "sha256": "a836c09326fc0bb63a9e17e9693c8e608d290be544404442768b92f2dc110644",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/economics-se.part001"
+        },
+        {
+          "name": "economics-se.part002",
+          "size": 10518530,
+          "sha256": "d01439cd67fa828d376f797c7abb9a66af4328ea7f52e445ba300116affc560a",
+          "host": "pages",
+          "url": "https://iotallc.github.io/infobanks/packs/economics-se.part002"
+        }
+      ]
+    },
+    {
+      "id": "wikipedia-en-medicine-mini",
+      "name": "Wikipedia medicine mini",
+      "description": "Short medical and first-aid articles from English Wikipedia. Not medical advice.",
+      "category": "practical",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Text from Wikipedia, available under CC BY-SA 4.0. Credit the authors and share adaptations under the same license. Not a substitute for a clinician.",
+      "source_url": "https://download.kiwix.org/zim/wikipedia/wikipedia_en_medicine_mini_2026-10.zim",
+      "approx_bytes": 174063616,
+      "medical": true,
+      "business": false,
+      "large": false,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 691154944,
+      "sha256": "c25c33be02ae558e0d711420511db7c46b2e4ca57970e5fa1a2559960c048a83",
+      "chunks": 175590,
+      "parts": [
+        {
+          "name": "wikipedia-en-medicine-mini.part000",
+          "size": 99614719,
+          "sha256": "a7a31f15590666976ec47522a62b035d448c80b84ee41bc8678b248cff98a1f0",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-medicine-mini.part000"
+        },
+        {
+          "name": "wikipedia-en-medicine-mini.part001",
+          "size": 99614719,
+          "sha256": "1b937810affc97d17365b6efdccfe5b7fbe680293efb214834f5feff27add663",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-medicine-mini.part001"
+        },
+        {
+          "name": "wikipedia-en-medicine-mini.part002",
+          "size": 99614719,
+          "sha256": "4bbfee571ae4a133eda0878c6d2bf1aff743951615c420571c1f949ebe42994f",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-medicine-mini.part002"
+        },
+        {
+          "name": "wikipedia-en-medicine-mini.part003",
+          "size": 99614719,
+          "sha256": "6ff19f5166ef9e557d60c76547aaa1bde13314300690cd08be25be54453176e7",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-medicine-mini.part003"
+        },
+        {
+          "name": "wikipedia-en-medicine-mini.part004",
+          "size": 99614719,
+          "sha256": "3bb9a7fd6628a6f9779f93289893d22b5d183f98b0f39ce380497ae4cfd93b35",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-medicine-mini.part004"
+        },
+        {
+          "name": "wikipedia-en-medicine-mini.part005",
+          "size": 99614719,
+          "sha256": "6354bd2edc0f1be1cafc3cf8183e815e72771928c8add10eb0702798dce26629",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-medicine-mini.part005"
+        },
+        {
+          "name": "wikipedia-en-medicine-mini.part006",
+          "size": 93466630,
+          "sha256": "a414bf7170653048fe45b03e1fa74356c1641182c36234122a706c6190596e77",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/wikipedia-en-medicine-mini.part006"
+        }
+      ]
+    },
+    {
+      "id": "cooking-se",
+      "name": "Cooking Stack Exchange",
+      "description": "Cooking methods and recipe questions.",
+      "category": "practical",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Questions and answers from Cooking Stack Exchange, available under CC BY-SA. Credit the authors and share adaptations under the same license.",
+      "source_url": "https://download.kiwix.org/zim/stack_exchange/cooking.stackexchange.com_en_all_2026-10.zim",
+      "approx_bytes": 238026752,
+      "medical": false,
+      "business": false,
+      "large": false,
+      "host": "release",
+      "status": "ready",
+      "built_at": "2026-11-09",
+      "size": 305631232,
+      "sha256": "95c7d37d1f3c3e0c7410e68868960601de17f49e60f7487250ed3731b1baa5ae",
+      "chunks": 185349,
+      "parts": [
+        {
+          "name": "cooking-se.part000",
+          "size": 99614719,
+          "sha256": "093453788661226d08be6c5f7281b0d8d077e4c56af20dbc5260f33004ee3596",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/cooking-se.part000"
+        },
+        {
+          "name": "cooking-se.part001",
+          "size": 99614719,
+          "sha256": "f168ead973d97f2eaf7ba04f69f43e2cf54705ae4397a4c88710337014ddc9f4",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/cooking-se.part001"
+        },
+        {
+          "name": "cooking-se.part002",
+          "size": 99614719,
+          "sha256": "f3a1be49f0f34814c313736da0e421cbac446313c313b0421147bc7e7b3378b6",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/cooking-se.part002"
+        },
+        {
+          "name": "cooking-se.part003",
+          "size": 6787075,
+          "sha256": "362c9fd05b9124511837d6010012dfe36edbc093ba64f9ab96276a32d9333ff4",
+          "host": "release",
+          "url": "https://github.com/iotallc/iotallc.github.io/releases/download/infobanks-v1/cooking-se.part003"
+        }
+      ]
+    }
+  ]
+}
