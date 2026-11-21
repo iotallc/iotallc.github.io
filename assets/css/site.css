@@ -612,3 +612,10 @@ html,body{overflow-x:clip}
   .wf-visual{max-width:560px;margin:0 auto}
   .wf-visual-games{margin-bottom:24px}
 }
+
+/* IOTA Mobile: chrome wireframe phone (assets/js/wireframes.js). When the script runs, the static phones stay in the page for screen readers but are visually hidden. */
+.mob-visual{position:relative;min-width:0}
+.wf-visual-mobile{display:none;aspect-ratio:640/680;max-width:580px;margin:0 auto}
+.wf-mobile-on .wf-visual-mobile{display:block}
+.wf-mobile-on .mob-visual .phone-pair{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:980px){.wf-visual-mobile{max-width:520px}}

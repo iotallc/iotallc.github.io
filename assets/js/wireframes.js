@@ -50,6 +50,7 @@
     return { v: v.map(function (x) { return [x[0] * r, x[1] * r, x[2] * r]; }), e: e };
   }
   function cube(r) { var v = []; [-1, 1].forEach(function (x) { [-1, 1].forEach(function (y) { [-1, 1].forEach(function (z) { v.push([x * r, y * r, z * r]); }); }); }); return { v: v, e: byLen(v, 2 * r) }; }
+  function octa(r) { var v = [[r, 0, 0], [-r, 0, 0], [0, r, 0], [0, -r, 0], [0, 0, r], [0, 0, -r]]; return { v: v, e: byLen(v, r * Math.SQRT2) }; }
   function tetra(r) { var v = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]].map(function (x) { return norm(x, r); }); return { v: v, e: [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]] }; }
   function ship() {
     var v = [[0, -1.55, 0]], e = [];
@@ -161,7 +162,7 @@
   var VW = 820, VH = 620;
   var meshes = {
     winOuter: icosa(1), winInner: icosa(0.48), geo: geodesic(1), cb: cube(0.42), cb2: cube(0.22),
-    ship: ship(), lattice: icosa(1), endCube: cube(0.9), endCube2: cube(0.8), endTet: tetra(1.1)
+    ship: ship(), lattice: icosa(1), endCube: cube(0.9), endCube2: cube(0.8), endTet: tetra(1.1), endOcta: octa(1)
   };
   var SCENES = {
     windows: { accent: '#B5A4C9', endShape: meshes.endCube,
@@ -191,10 +192,90 @@
       } }
   };
 
+
+  /* ---------- IOTA Mobile: a chrome wireframe phone showing the real app screenshots, inside the app's bubble ring ---------- */
+  var PW = 0.52, PH = 1.06, PD = 0.055, PR = 0.13, SW = 0.48, SH = 0.96;
+  function phoneMesh() {
+    var v = [], e = [], N = 44, pts = [], k;
+    var cxs = [PW - PR, -(PW - PR), -(PW - PR), PW - PR], cys = [PH - PR, PH - PR, -(PH - PR), -(PH - PR)];
+    for (k = 0; k < N; k++) { var q = Math.floor(k / (N / 4)), f = (k % (N / 4)) / (N / 4 - 1), a = (q + f) * Math.PI / 2; pts.push([cxs[q] + Math.cos(a) * PR, cys[q] + Math.sin(a) * PR]); }
+    [-PD, PD].forEach(function (z) { var s0 = v.length; pts.forEach(function (p) { v.push([p[0], p[1], z]); }); for (var j = 0; j < N; j++) e.push([s0 + j, s0 + (j + 1) % N]); });
+    for (k = 0; k < N; k += (k % 11 === 0 ? 5 : 6)) e.push([k, k + N]);
+    var s1 = v.length, z = -PD - 0.004;
+    [[-SW, -SH], [SW, -SH], [SW, SH], [-SW, SH]].forEach(function (p) { v.push([p[0], p[1], z]); });
+    for (k = 0; k < 4; k++) e.push([s1 + k, s1 + (k + 1) % 4]);
+    var c = v.length;
+    for (k = 0; k < 10; k++) { var an = k / 10 * 6.2832; v.push([Math.cos(an) * 0.025, -PH + 0.055 + Math.sin(an) * 0.025, z]); }
+    for (k = 0; k < 10; k++) e.push([c + k, c + (k + 1) % 10]);
+    var b = v.length; v.push([PW + 0.025, -0.55, 0], [PW + 0.025, -0.3, 0], [PW + 0.025, -0.15, 0], [PW + 0.025, 0, 0]); e.push([b, b + 1], [b + 2, b + 3]);
+    return { v: v, e: e };
+  }
+  // The 14 node net from the IOTA Mobile splash screen.
+  var NP = [[-0.0354, 0.0347], [0.2739, -0.9240], [-0.9542, -0.1735], [0.4271, 0.7334], [0.8975, -0.2473], [-0.6156, 0.6679], [-0.4506, -0.7236], [0.5284, 0.1908], [-0.1104, 0.7457], [-0.5510, 0.0498], [0.4011, -0.4688], [-0.1439, -0.4247], [0.1232, 0.4236], [-0.0436, -0.7490]];
+  var NE = [[0, 12], [0, 11], [1, 13], [1, 10], [2, 9], [2, 6], [3, 12], [3, 8], [4, 10], [4, 7], [5, 8], [5, 9], [6, 13], [6, 11], [7, 12], [3, 7], [8, 12], [0, 9], [10, 13], [11, 13], [0, 5], [0, 2], [0, 4]];
+  var mob = { mesh: null, shots: [], scr: null, sc: null, onload: null };
+  function mobileInit(cv) {
+    mob.mesh = phoneMesh();
+    mob.scr = document.createElement('canvas'); mob.scr.width = 360; mob.scr.height = 720; mob.sc = mob.scr.getContext('2d');
+    (cv.getAttribute('data-shots') || '').split(',').forEach(function (src) {
+      src = src.trim(); if (!src) return;
+      var im = new Image(); im.decoding = 'async'; im.onload = function () { if (mob.onload) mob.onload(); }; im.src = src; mob.shots.push(im);
+    });
+  }
+  function shotOk(im) { return im && im.complete && im.naturalWidth > 0; }
+  // Compose the flat screen: hold one screenshot, then wipe to the next behind a gold scan line.
+  function mobileScreen(t) {
+    var sc = mob.sc, W2 = 360, H2 = 720, n = mob.shots.length || 1, per = 3, ph = (t - 1) / per, i = Math.floor(ph), loc = (ph - i) * per;
+    var A = mob.shots[((i % n) + n) % n], B = mob.shots[(((i + 1) % n) + n) % n];
+    sc.fillStyle = '#0b0b0c'; sc.fillRect(0, 0, W2, H2);
+    if (shotOk(A)) sc.drawImage(A, 0, 0, W2, H2);
+    var p = n > 1 ? ease(clamp((loc - 2.2) / 0.8)) : 0;
+    if (p > 0) {
+      var y = p * (H2 + 60) - 30;
+      if (shotOk(B)) {
+        sc.save(); sc.beginPath(); sc.rect(0, 0, W2, Math.max(0, y)); sc.clip(); sc.drawImage(B, 0, 0, W2, H2); sc.restore();
+        var g = sc.createLinearGradient(0, y - 60, 0, y); g.addColorStop(0, 'rgba(212,184,106,0)'); g.addColorStop(1, 'rgba(212,184,106,.22)'); sc.fillStyle = g; sc.fillRect(0, y - 60, W2, 60);
+      }
+      sc.fillStyle = 'rgba(242,231,196,.95)'; sc.fillRect(0, y - 1.5, W2, 2);
+      var g2 = sc.createLinearGradient(0, y - 10, 0, y + 10); g2.addColorStop(0, 'rgba(212,184,106,0)'); g2.addColorStop(0.5, 'rgba(212,184,106,.55)'); g2.addColorStop(1, 'rgba(212,184,106,0)'); sc.fillStyle = g2; sc.fillRect(0, y - 10, W2, 20);
+    }
+  }
+  // Map the flat screen onto the tilted phone in vertical strips (a cheap perspective). Works under any current transform.
+  function mobileMap(o, alpha, t) {
+    var z = -PD - 0.003, TL = xf([-SW, -SH, z], o), TR = xf([SW, -SH, z], o), BL = xf([-SW, SH, z], o), BR = xf([SW, SH, z], o), N = 20, W2 = 360, H2 = 720, sw = W2 / N;
+    ctx.save(); ctx.globalAlpha = alpha;
+    for (var k = 0; k < N; k++) {
+      var u0 = k / N, u1 = (k + 1) / N, t0x = lerp(TL[0], TR[0], u0), t0y = lerp(TL[1], TR[1], u0), t1x = lerp(TL[0], TR[0], u1), t1y = lerp(TL[1], TR[1], u1), b0x = lerp(BL[0], BR[0], u0), b0y = lerp(BL[1], BR[1], u0);
+      ctx.save(); ctx.transform((t1x - t0x) / sw, (t1y - t0y) / sw, (b0x - t0x) / H2, (b0y - t0y) / H2, t0x, t0y);
+      ctx.drawImage(mob.scr, k * sw, 0, sw, H2, 0, 0, sw + 0.8, H2); ctx.restore();
+    }
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath(); ctx.moveTo(TL[0], TL[1]); ctx.lineTo(TR[0], TR[1]); ctx.lineTo(BR[0], BR[1]); ctx.lineTo(BL[0], BL[1]); ctx.closePath(); ctx.clip();
+    var sx = lerp(TL[0] - 120, TR[0] + 120, (Math.sin(t * 0.5) + 1) / 2), g = ctx.createLinearGradient(sx - 90, TL[1], sx + 90, BL[1]);
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.5, 'rgba(255,255,255,.06)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g; ctx.fillRect(TL[0] - 200, TL[1] - 20, (TR[0] - TL[0]) + 400, (BL[1] - TL[1]) + 40);
+    ctx.restore();
+  }
+  SCENES.mobile = { accent: '#D4B86A', endShape: meshes.endOcta, vw: 640, vh: 680, cy: 320, ringR: 190, br: 270,
+    ends: [['FAST RESPONSES', -120], ['DEEP RESEARCH', -60], ['PRIVATE BY DEFAULT', 60], ['ONLINE ONLY WHEN YOU ASK', 120]],
+    core: function (t, o, a) {
+      var G = '#D4B86A', brth = 1 + 0.012 * Math.sin(t * 2.1), na = 0.55 * seg(t, 0.6, 1.6);
+      var nv = NP.map(function (p, i) { return [o.cx + (p[0] + 0.062 * Math.sin(t * (0.7 + i * 0.05) + i)) * 175 * brth, o.cy + (p[1] + 0.062 * Math.cos(t * (0.6 + i * 0.04) + i * 1.7)) * 175 * brth]; });
+      if (na > 0) {
+        ctx.lineWidth = 0.8 * LWK; ctx.strokeStyle = rgba(G, 0.26 * na);
+        NE.forEach(function (e) { ctx.beginPath(); ctx.moveTo(nv[e[0]][0], nv[e[0]][1]); ctx.lineTo(nv[e[1]][0], nv[e[1]][1]); ctx.stroke(); });
+        nv.forEach(function (p) { glow(p[0], p[1], 9, G, 0.5 * na); ctx.fillStyle = rgba('#F2E7C4', 0.5 * na); ctx.fillRect(p[0] - 1, p[1] - 1, 2, 2); });
+        NE.forEach(function (e, k) { if (k % 3) return; var f = (t * 0.45 + k * 0.37) % 1; glow(lerp(nv[e[0]][0], nv[e[1]][0], f), lerp(nv[e[0]][1], nv[e[1]][1], f), 12, G, Math.sin(f * Math.PI) * na * 1.4); });
+      }
+      var po = { cx: o.cx, cy: o.cy + Math.sin(t * 1.1) * 4, s: 148, yaw: Math.sin(t * 0.55) * 0.36 + M.x * 0.12, pitch: -0.06 + Math.sin(t * 0.37) * 0.07 + M.y * 0.06, roll: Math.sin(t * 0.3) * 0.035 };
+      mobileScreen(t); mobileMap(po, 0.93 * easeOut(seg(t, 1.1, 1.9)), t);
+      chrome(mob.mesh, po, t, G, a);
+    } };
+
   function drawWire(S, st, t) {
-    var cx = VW / 2 + M.x * 8, cy = 290 + M.y * 5, ringR = 118, br = 235, fy = cy + ringR + 70;
+    var cx = st.vw / 2 + M.x * 8, cy = (S.cy || 290) + M.y * 5, ringR = S.ringR || 118, br = S.br || 235, fy = cy + ringR + 70;
     var asm = seg(t, 0.1, 1.5), ringP = easeOut(seg(t, 0.7, 1.7)), bp = easeOut(seg(t, 1.7, 2.6)), pk = seg(t, 2.5, 3.2);
-    stars(t, VW, VH);
+    stars(t, st.vw, st.vh);
     // floor rings and the core's reflection
     for (var k = 0; k < 3; k++) {
       var rx = 150 + k * 70; ctx.strokeStyle = 'rgba(200,202,210,' + (0.07 - 0.018 * k) + ')'; ctx.lineWidth = LWK; ctx.setLineDash([3, 7]);
@@ -313,7 +394,8 @@
   /* ---------- canvas setup and loop ---------- */
   var states = canvases.map(function (cv) {
     var kind = cv.getAttribute('data-wf');
-    var st = { cv: cv, kind: kind, ctx: cv.getContext('2d'), t: 0, visible: false, M: { x: 0, y: 0, tx: 0, ty: 0, real: false }, vw: kind === 'orchestration' ? OW : VW, vh: kind === 'orchestration' ? OH : VH };
+    var st = { cv: cv, kind: kind, ctx: cv.getContext('2d'), t: 0, visible: false, M: { x: 0, y: 0, tx: 0, ty: 0, real: false }, vw: kind === 'orchestration' ? OW : (SCENES[kind] && SCENES[kind].vw) || VW, vh: kind === 'orchestration' ? OH : (SCENES[kind] && SCENES[kind].vh) || VH };
+    if (kind === 'mobile') { mobileInit(cv); var sec = cv.closest ? cv.closest('section') : null; if (sec) sec.classList.add('wf-mobile-on'); }
     if (kind !== 'orchestration') { st.off = document.createElement('canvas'); st.offCtx = st.off.getContext('2d'); }
     cv.addEventListener('pointermove', function (e) { var r = cv.getBoundingClientRect(); st.M.real = true; st.M.tx = ((e.clientX - r.left) / r.width - 0.5) * 2; st.M.ty = ((e.clientY - r.top) / r.height - 0.5) * 2; }, { passive: true });
     cv.addEventListener('pointerleave', function () { st.M.real = false; });
@@ -339,6 +421,7 @@
     drawLabels(st, ends, t);
   }
   states.forEach(size);
+  mob.onload = function () { states.forEach(function (st) { if (st.kind === 'mobile' && st.visible && (reduceMq.matches || document.hidden)) still(st); }); };
   var raf = 0, last = 0;
   function still(st) { draw(st, st.kind === 'orchestration' ? 3.5 : 6); }
   function loop(now) {
