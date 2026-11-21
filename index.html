@@ -140,10 +140,13 @@
 <!-- 01 ENTERPRISE -->
 <section class="section" id="enterprise" style="--accent:var(--hub-ent)" aria-labelledby="ent-title">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow"><span class="dot"></span>01 / Enterprise AI Platforms</p>
-      <h2 id="ent-title">AI platforms <span class="chrome">for companies</span></h2>
-      <p class="lead">We build specialized AI platforms that companies can purchase: assistants, document search, and workflow tools set up around a company's own data and processes. Each platform is available with two hosting models.</p>
+    <div class="wf-split">
+      <div class="section-head reveal">
+        <p class="eyebrow"><span class="dot"></span>01 / Enterprise AI Platforms</p>
+        <h2 id="ent-title">AI platforms <span class="chrome">for companies</span></h2>
+        <p class="lead">We build specialized AI platforms that companies can purchase: assistants, document search, and workflow tools set up around a company's own data and processes. Each platform is available with two hosting models.</p>
+      </div>
+      <div class="wf-visual reveal" aria-hidden="true"><canvas data-wf="enterprise"></canvas></div>
     </div>
     <div class="grid g2">
       <article class="card host reveal">
@@ -173,10 +176,13 @@
 <!-- 02 WINDOWS -->
 <section class="section" id="windows" style="--accent:var(--hub-win)" aria-labelledby="win-title">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow"><span class="dot"></span>02 / IOTA for Windows</p>
-      <h2 id="win-title">A desktop AI app <span class="chrome">for Windows</span></h2>
-      <p class="lead">IOTA for Windows is built for ease of use. Everything is arranged as one core with branches for models, skills, connectors, knowledge, and memory. It runs from a USB kit and comes in two editions: a PowerShell edition that is strictly offline, and an EXE edition that can also connect to cloud models. IOTA for Windows is under continuous improvement, so features on this page may change between versions.</p>
+    <div class="wf-split">
+      <div class="section-head reveal">
+        <p class="eyebrow"><span class="dot"></span>02 / IOTA for Windows</p>
+        <h2 id="win-title">A desktop AI app <span class="chrome">for Windows</span></h2>
+        <p class="lead">IOTA for Windows is built for ease of use. Everything is arranged as one core with branches for models, skills, connectors, knowledge, and memory. It runs from a USB kit and comes in two editions: a PowerShell edition that is strictly offline, and an EXE edition that can also connect to cloud models. IOTA for Windows is under continuous improvement, so features on this page may change between versions.</p>
+      </div>
+      <div class="wf-visual reveal" aria-hidden="true"><canvas data-wf="windows"></canvas></div>
     </div>
     <div class="feat-strip reveal">
       <div><b>Offline from a USB kit</b><span>Plug in the kit and run. No internet needed to chat.</span></div>
@@ -431,6 +437,7 @@
       </div>
     </div>
     <div class="reveal" style="--d:.1s">
+      <div class="wf-visual wf-visual-games" aria-hidden="true"><canvas data-wf="games"></canvas></div>
       <div class="tales-shot"><picture><source srcset="assets/img/tales-card.webp" type="image/webp"><img src="assets/img/tales-card.jpg" alt="Iota Tales screenshot showing a story card with two choices" width="540" height="960" loading="lazy"></picture></div>
     </div>
   </div>
@@ -466,10 +473,13 @@
 <!-- 06 RAG -->
 <section class="section" id="rag" style="--accent:var(--hub-ent)" aria-labelledby="rag-title">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow"><span class="dot"></span>06 / IOTA Orchestration</p>
-      <h2 id="rag-title">Retrieval-augmented generation <span class="chrome">for your documents and data</span></h2>
-      <p class="lead">IOTA Orchestration is our proprietary RAG approach. We set it up on your documents and data and support it in use. It finds the right passages before the model answers, so a smaller model can give grounded answers with less computing power.</p>
+    <div class="wf-split">
+      <div class="section-head reveal">
+        <p class="eyebrow"><span class="dot"></span>06 / IOTA Orchestration</p>
+        <h2 id="rag-title">Retrieval-augmented generation <span class="chrome">for your documents and data</span></h2>
+        <p class="lead">IOTA Orchestration is our proprietary RAG approach. We set it up on your documents and data and support it in use. It finds the right passages before the model answers, so a smaller model can give grounded answers with less computing power.</p>
+      </div>
+      <div class="wf-visual reveal" aria-hidden="true"><canvas data-wf="orchestration"></canvas></div>
     </div>
     <div class="card rag-pipe reveal" data-ragpipe>
       <div class="rp-bar">
@@ -723,5 +733,6 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/site.js" defer></script>
 <script src="assets/js/one-iota.js" defer></script>
+<script src="assets/js/wireframes.js" defer></script>
 </body>
 </html>

@@ -599,3 +599,16 @@ html,body{overflow-x:clip}
   .hero-iota h1{font-size:38px}
   .hero-iota .lead{font-size:16px}
 }
+
+/* section visuals: chrome wireframes (assets/js/wireframes.js). They sit beside the section head, never over text. */
+.wf-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,540px);gap:40px;align-items:center;margin-bottom:32px}
+.wf-split .section-head{margin-bottom:0}
+.wf-visual{position:relative;width:100%;aspect-ratio:820/620}
+.wf-visual canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#rag .wf-visual{aspect-ratio:620/520}
+.wf-visual-games{max-width:520px;margin:0 auto 28px}
+@media (max-width:1020px){
+  .wf-split{grid-template-columns:1fr;gap:20px}
+  .wf-visual{max-width:560px;margin:0 auto}
+  .wf-visual-games{margin-bottom:24px}
+}
