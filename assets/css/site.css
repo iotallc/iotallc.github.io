@@ -559,3 +559,43 @@ html,body{overflow-x:clip}
   .section-head{max-width:760px}
   .hero .lead{max-width:500px}
 }
+
+/* hero: One Iota (assets/js/one-iota.js). Overrides the tree hero rules above. */
+.hero-iota{min-height:min(100svh,960px)}
+.hero-iota #one-iota{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
+.hero-iota .wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:104px;padding-bottom:88px}
+.iota-stage{position:relative;width:min(720px,100%);height:clamp(112px,15vw,196px);pointer-events:none}
+.iota-word-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(80px,13vw,180px);letter-spacing:.1em;line-height:1;background:var(--chrome-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.js .iota-word-fallback{visibility:hidden}
+.js .hero-iota.iota-nocanvas .iota-word-fallback{visibility:visible}
+.iota-hubs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;width:min(860px,100%);margin:64px 0 44px}
+.iota-hub{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.iota-dot{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 0 4px rgba(255,255,255,.03),0 0 18px var(--c);margin-bottom:6px}
+.iota-hub-name{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--highlight);text-decoration:none;padding:2px 6px;border-radius:6px;transition:color .14s var(--ease-out)}
+.iota-hub-name:hover{color:var(--c)}
+.iota-leaves{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 12px}
+.iota-leaves a{font-size:13.5px;color:var(--silver);text-decoration:none;padding:2px 2px}
+.iota-leaves a:hover{color:var(--chrome);text-decoration:underline;text-decoration-color:var(--c)}
+.hero-iota h1{max-width:none;font-size:clamp(38px,4.8vw,68px);margin-bottom:18px}
+.hero-iota .lead{max-width:680px;margin:0 auto}
+.hero-iota .btns{justify-content:center;margin-left:auto;margin-right:auto}
+/* Hidden until the canvas branches reach them. Without JS everything shows. */
+.js .hero-iota .iota-hub > *{opacity:0;visibility:hidden;transition:opacity .8s var(--ease-out) calc(var(--i,0) * .09s),visibility 0s linear 1.2s}
+.js .hero-iota .iota-copy{opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out),visibility 0s linear .9s}
+.js .hero-iota.is-hubs .iota-hub > *{opacity:1;visibility:visible;transition-property:opacity,visibility;transition-delay:calc(var(--i,0) * .09s),0s}
+.js .hero-iota.is-copy .iota-copy{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+@media (prefers-reduced-motion:reduce){.js .hero-iota .iota-hub > *,.js .hero-iota .iota-copy{transition:none}}
+@media (max-width:860px){
+  .hero-iota{min-height:0}
+  .hero-iota .wrap{padding-top:56px;padding-bottom:64px}
+  .hero-iota .scroll-hint{display:none}
+}
+@media (max-width:640px){
+  .iota-stage{height:104px}
+  .iota-hubs{gap:6px;margin:52px 0 36px}
+  .iota-hub-name{font-size:10.5px;letter-spacing:.08em;padding:2px}
+  .iota-leaves{flex-direction:column;gap:0}
+  .iota-leaves a{font-size:12.5px;padding:3px 2px}
+  .hero-iota h1{font-size:38px}
+  .hero-iota .lead{font-size:16px}
+}
