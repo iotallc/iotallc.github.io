@@ -619,3 +619,43 @@ html,body{overflow-x:clip}
 .wf-mobile-on .wf-visual-mobile{display:block}
 .wf-mobile-on .mob-visual .phone-pair{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (max-width:980px){.wf-visual-mobile{max-width:520px}}
+
+/* IOTA for Windows tree: pulses, selected trace, hover lift, core shimmer (assets/js/tree-fx.js) */
+.stage .tfx-pulse{fill:none;stroke:#F2E7C4;stroke-linecap:round;stroke-dasharray:.035 .965;stroke-dashoffset:1;opacity:.55;animation:tfxRun 2.6s linear infinite}
+.stage .tfx-pulse-b{opacity:.35}
+.stage .tfx-pulse.tfx-glow{stroke:#D4B86A;opacity:.16;stroke-dasharray:.05 .95}
+.stage .tfx-pulse.tfx-glow.on{opacity:.3;stroke-dasharray:.08 .92}
+.stage .tfx-pulse.hot{opacity:.9}
+.stage .tfx-pulse.on{stroke:#FFF6DA;opacity:1;animation-duration:1.4s;stroke-dasharray:.06 .94}
+.stage .tfx-trace{fill:none;stroke:#D4B86A;stroke-width:1.6;opacity:0;stroke-dasharray:1;stroke-dashoffset:1;transition:opacity .35s var(--ease-out)}
+.stage .tfx-trace.hot{opacity:.35;stroke-dashoffset:0}
+.stage .tfx-trace.on{opacity:.85;stroke-dashoffset:0;stroke-width:2.2;filter:drop-shadow(0 0 4px rgba(212,184,106,.7));transition:opacity .35s var(--ease-out),stroke-dashoffset .6s var(--ease-out)}
+@keyframes tfxRun{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.stage.tfx-paused .tfx-pulse{animation-play-state:paused}
+.stage.tfx .node{transition:border-color .2s var(--ease-out),background .2s var(--ease-out),transform .2s var(--ease-out),box-shadow .25s var(--ease-out),opacity .2s var(--ease-out)}
+.stage.tfx .node:hover{transform:translate(-50%,calc(-50% - 2px));border-color:rgba(212,184,106,.7);box-shadow:0 6px 18px rgba(0,0,0,.45),0 0 16px rgba(212,184,106,.22)}
+.stage.tfx .node[aria-pressed="true"]{border-color:#D4B86A;box-shadow:0 0 0 1px rgba(212,184,106,.25),0 0 18px rgba(212,184,106,.18)}
+.stage.tfx .node.root{overflow:hidden;animation:tfxBreathe 3.2s ease-in-out infinite}
+.stage.tfx .node.root::after{content:"";position:absolute;inset:-2px;pointer-events:none;background:linear-gradient(102deg,transparent 35%,rgba(255,255,255,.16) 47%,rgba(212,184,106,.12) 52%,transparent 64%);background-size:260% 100%;animation:tfxShine 4.6s ease-in-out infinite}
+@keyframes tfxShine{0%,30%{background-position:120% 0}70%,100%{background-position:-60% 0}}
+@keyframes tfxBreathe{0%,100%{box-shadow:0 0 0 0 rgba(212,184,106,0),0 0 14px rgba(212,184,106,.10)}50%{box-shadow:0 0 0 3px rgba(212,184,106,.08),0 0 24px rgba(212,184,106,.22)}}
+.stage.tfx-paused .node.root,.stage.tfx-paused .node.root::after{animation-play-state:paused}
+
+/* Detail panel: crossfade with a slight upward slide, the heading wipes in, body lines stagger in */
+.panel > *{transition:opacity .2s var(--ease-out),transform .2s var(--ease-out)}
+.panel.out > *{opacity:0;transform:translateY(-6px)}
+.panel .body{animation:none}
+.panel .crumb{animation:tfxUp .4s var(--ease-out) both}
+.panel .body > *{animation:tfxUp .46s var(--ease-out) both;animation-delay:calc(var(--i,0) * 55ms + 90ms)}
+.panel .body > h3{position:relative;animation:tfxWipe .6s cubic-bezier(.22,.9,.3,1) both;animation-delay:60ms}
+.panel .body > h3::after{content:"";position:absolute;left:0;bottom:-6px;height:1px;width:100%;background:linear-gradient(90deg,#D4B86A,rgba(212,184,106,0));transform-origin:left;animation:tfxLine .9s var(--ease-out) both;animation-delay:.2s}
+.panel .nav-row{animation:tfxUp .4s var(--ease-out) both;animation-delay:.3s}
+@keyframes tfxUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes tfxWipe{from{clip-path:inset(0 100% 0 0);opacity:.2}to{clip-path:inset(0 0 0 0);opacity:1}}
+@keyframes tfxLine{from{transform:scaleX(0);opacity:1}60%{opacity:1}to{transform:scaleX(1);opacity:.35}}
+@media (prefers-reduced-motion:reduce){
+  .stage .tfx-pulse{display:none}
+  .stage .tfx-trace,.stage.tfx .node,.panel > *{transition:none}
+  .stage.tfx .node.root,.stage.tfx .node.root::after,.panel .crumb,.panel .body > *,.panel .body > h3,.panel .body > h3::after,.panel .nav-row{animation:none}
+  .stage.tfx .node:hover{transform:translate(-50%,-50%)}
+}

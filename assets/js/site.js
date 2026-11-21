@@ -873,6 +873,7 @@
       panel.innerHTML = '';
       var crumb = document.createElement('p'); crumb.className = 'crumb'; crumb.textContent = 'IOTA for Windows / ' + a.getAttribute('data-label'); panel.appendChild(crumb);
       var div = document.createElement('div'); div.className = 'body'; while (body.firstChild) div.appendChild(body.firstChild); panel.appendChild(div);
+      Array.prototype.forEach.call(div.children, function (c, j) { c.style.setProperty('--i', j); });
       var row = document.createElement('div'); row.className = 'nav-row';
       row.innerHTML = '<button type="button" data-go="' + prev + '">&larr; ' + arts[prev].getAttribute('data-label') + '</button><button type="button" data-go="' + next + '">' + arts[next].getAttribute('data-label') + ' &rarr;</button>';
       panel.appendChild(row);
