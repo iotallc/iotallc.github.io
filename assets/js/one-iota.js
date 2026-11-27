@@ -1,7 +1,8 @@
 /* IOTA site: hero.
    Small points gather straight into the IOTA wordmark and a chrome sweep lights it left to right.
-   Each letter feeds its own branch: I to Enterprise AI, O to Windows, T to Mobile, A to Investments.
-   Sparks peel off the twinkling letters, run down the branches with soft trails, and ring the hub dots.
+   All four branches meet at one point under the wordmark and run out to the hubs.
+   Sparks peel off the twinkling letters, land on that meeting point, then run out along a branch
+   with soft trails, taking on the hub colour and ringing the hub dot when they arrive.
    Hover a hub to route power to it. Click or tap the hero to send a pulse wave and a burst of sparks.
    Near the pointer, points move aside and faint chrome links join nearby points.
    No libraries. Pauses when the hero is off screen or the tab is hidden. Reduced motion shows a still frame. */
@@ -30,9 +31,9 @@
     return { el: el, dot: el.querySelector('.iota-dot'), color: c, rgb: rgbOf(c), x: 0, y: 0, ox: 0, oy: 0, list: [], acc: 0, hit: -9, power: 0 };
   });
 
-  var W = 0, H = 0, dpr = 1, N = 0, S = { x: 0, y: 0, w: 0, h: 0 };
+  var W = 0, H = 0, dpr = 1, N = 0, S = { x: 0, y: 0, w: 0, h: 0 }, O = { x: 0, y: 0 }, oHit = -9;
   var sx, sy, bx, by, ox, oy, vx, vy, dl, sz, br, ph, hb, li;
-  var letterEdges = [], letterFoot = [], letterPts = [[], [], [], []];
+  var letterEdges = [];
   var white = [];
   var t = 0, last = 0, raf = 0, inView = true, built = false;
   var ptr = { x: -9999, y: -9999, on: false };
@@ -116,6 +117,7 @@
     var fresh = want !== N;
     if (fresh) alloc(want);
     S = relRect(stage);
+    O = { x: S.x + S.w / 2, y: S.y + S.h + 10 };
     hubs.forEach(function (h) { var d = relRect(h.dot || h.el); h.x = d.x + d.w / 2; h.y = d.y + d.h / 2; });
 
     // Wordmark targets: IOTA in Geist 700 with wide tracking, fit to the stage.
@@ -130,20 +132,16 @@
       measure();
       if (total > w * 0.98) { fs *= (w * 0.98) / total; measure(); }
       var cx = (w - total) / 2, base = h / 2 + fs * 0.36;
-      letterEdges = []; letterFoot = [];
+      letterEdges = [];
       letters.forEach(function (l, i) {
         x.fillText(l, cx, base);
-        // The foot of each letter, where its branch starts.
-        letterFoot.push({ x: S.x + cx + widths[i] / 2, y: S.y + base + Math.max(4, fs * 0.04) });
         cx += widths[i] + fs * track; letterEdges.push(S.x + cx - fs * track / 2);
       });
     }, W < 700 ? 0.15 : 0.45);
     var R = Math.max(W, H) * 0.65, cxm = S.x + S.w / 2, cym = S.y + S.h / 2;
-    letterPts = [[], [], [], []];
     for (var i = 0; i < N; i++) {
       bx[i] = word[i][0]; by[i] = word[i][1];
       var L = 0; while (L < letterEdges.length - 1 && bx[i] > letterEdges[L]) L++; li[i] = L;
-      if (hb[i] < 0 && letterPts[L]) letterPts[L].push(i);
       if (fresh || !built) {
         var an = rnd() * Math.PI * 2, rad = (0.3 + rnd() * 0.7) * R;
         sx[i] = cxm + Math.cos(an) * rad; sy[i] = cym + Math.sin(an) * rad * 0.62;
@@ -152,11 +150,10 @@
     built = true; sparks = []; flashes = [];
   }
 
-  // Cubic from the foot of letter k down to hub k.
-  function foot(k) { return letterFoot[k] || letterFoot[letterFoot.length - 1] || { x: S.x + S.w / 2, y: S.y + S.h }; }
+  // Cubic from the meeting point O under the wordmark to hub k.
   function curve(k, f) {
-    var a = foot(k), h = hubs[k], x0 = a.x, y0 = a.y, x3 = h.x, y3 = h.y, dy = y3 - y0;
-    var x1 = x0, y1 = y0 + dy * 0.5, x2 = x3, y2 = y0 + dy * 0.42, u = 1 - f;
+    var h = hubs[k], x0 = O.x, y0 = O.y, x3 = h.x, y3 = h.y, dy = y3 - y0;
+    var x1 = x0, y1 = y0 + dy * 0.55, x2 = x3, y2 = y0 + dy * 0.35, u = 1 - f;
     return [u * u * u * x0 + 3 * u * u * f * x1 + 3 * u * f * f * x2 + f * f * f * x3,
             u * u * u * y0 + 3 * u * u * f * y1 + 3 * u * f * f * y2 + f * f * f * y3];
   }
@@ -224,18 +221,24 @@
     }
   }
 
-  // Sparks: peel off a twinkling point on letter k, drop to the letter foot, then run the branch.
+  // Sparks: peel off a twinkling point anywhere on IOTA, arc down to O, then run out along branch k.
   function spawn(k, time, opts) {
     opts = opts || {};
-    var pts = letterPts[k], p = pts && pts.length ? pts[Math.floor(Math.random() * pts.length)] : -1;
-    var a = foot(k), x0 = p >= 0 ? PX[p] : a.x, y0 = p >= 0 ? PY[p] : a.y;
+    var p = white.length ? white[Math.floor(Math.random() * white.length)] : -1;
+    var x0 = p >= 0 ? PX[p] : O.x, y0 = p >= 0 ? PY[p] : S.y + S.h / 2;
     var boost = hot === k ? 2.75 : 1;
-    sparks.push({ k: k, x0: x0, y0: y0, t0: time, dur: (opts.dur || 1.75) / (opts.dur ? 1 : boost), col: opts.col || null, size: opts.size || 1 });
+    sparks.push({ k: k, x0: x0, y0: y0, t0: time, d1: opts.d1 || 0.6, d2: opts.d2 || 1.25 / boost, col: opts.col || null, size: opts.size || 1, passed: false });
     flashes.push({ x: x0, y: y0, t0: time, k: k });
   }
-  function sparkAt(s, f) {
-    if (f < 0.14) { var a = foot(s.k), g = f / 0.14; return [s.x0 + (a.x - s.x0) * g, s.y0 + (a.y - s.y0) * g]; }
-    return curve(s.k, (f - 0.14) / 0.86);
+  // Position at a given age: first the arc into O (arriving straight down, so it flows into the branch), then the branch.
+  function sparkAt(s, age) {
+    if (age < s.d1) {
+      var f = Math.max(0, age / s.d1), e = f * f * (3 - 2 * f), u = 1 - e;
+      var x1 = s.x0, y1 = s.y0 + (O.y - s.y0) * 0.6, x2 = O.x, y2 = O.y - Math.max(24, (O.y - s.y0) * 0.45);
+      return [u * u * u * s.x0 + 3 * u * u * e * x1 + 3 * u * e * e * x2 + e * e * e * O.x,
+              u * u * u * s.y0 + 3 * u * u * e * y1 + 3 * u * e * e * y2 + e * e * e * O.y];
+    }
+    return curve(s.k, Math.min(1, (age - s.d1) / s.d2));
   }
   function step(dt, time) {
     if (time < SPARKS_AT) return;
@@ -247,7 +250,8 @@
     });
     for (var i = sparks.length - 1; i >= 0; i--) {
       var s = sparks[i];
-      if (time - s.t0 >= s.dur) {
+      if (!s.passed && time - s.t0 >= s.d1) { s.passed = true; oHit = time; }
+      if (time - s.t0 >= s.d1 + s.d2) {
         sparks.splice(i, 1);
         var h = hubs[s.k]; h.hit = time;
         if (h.dot && h.dot.animate) h.dot.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.7)' }, { transform: 'scale(1)' }], { duration: 420, easing: 'ease-out' });
@@ -261,13 +265,14 @@
     waves.push({ x: x, y: y, t0: t });
     if (waves.length > 3) waves.shift();
     if (t < SPARKS_AT) return;
-    hubs.forEach(function (h, k) { spawn(k, t, { dur: 0.95, col: SPARK_RGB, size: 1.35 }); });
+    hubs.forEach(function (h, k) { spawn(k, t, { d1: 0.42, d2: 0.62, size: 1.35 }); });
   }
 
-  function sparkColor(s) {
+  // White chrome on the way to O, then easing into the hub colour along the branch.
+  function sparkColor(s, age) {
     if (s.col) return s.col;
-    var h = hubs[s.k];
-    return mix(SPARK_RGB, h.rgb, 0.25 + 0.65 * h.power);
+    var h = hubs[s.k], f = age <= s.d1 ? 0 : Math.min(1, (age - s.d1) / s.d2);
+    return mix(SPARK_RGB, h.rgb, Math.min(1, f * (0.85 + 0.15 * h.power) + 0.25 * h.power * f));
   }
 
   function draw(time, still) {
@@ -281,9 +286,9 @@
       g.addColorStop(0, 'rgba(180,182,188,' + (0.085 * gl) + ')'); g.addColorStop(1, 'rgba(180,182,188,0)');
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     }
-    // Branch lines from each letter foot.
+    // Branch lines from the meeting point O.
     var bp = still ? 1 : easeOut(seg(time, B0, B1)), k, s;
-    if (bp > 0 && letterFoot.length) {
+    if (bp > 0) {
       hubs.forEach(function (h, k2) {
         var pw = still ? 0 : h.power, dim = hot >= 0 && hot !== k2 ? 0.4 : 1;
         ctx.beginPath();
@@ -292,17 +297,25 @@
         ctx.strokeStyle = h.color; ctx.lineWidth = 1 + pw * 0.6; ctx.globalAlpha = (0.38 + 0.5 * pw) * dim; ctx.stroke(); ctx.globalAlpha = 1;
       });
     }
+    // A soft glow where the branches meet, pulsing as sparks pass through.
+    if (bp > 0) {
+      var op = still ? 0 : clamp(1 - (time - oHit) / 0.5), orad = 10 + op * 10;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = (0.28 + 0.55 * op) * bp; ctx.drawImage(sprite(SPARK_RGB), O.x - orad, O.y - orad, orad * 2, orad * 2);
+      if (op > 0) { ctx.globalAlpha = 0.5 * op; ctx.strokeStyle = 'rgba(236,238,242,1)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(O.x, O.y, 4 + (1 - op) * 9, 0, 6.2832); ctx.stroke(); }
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+    }
     positions(time, still);
     var n, idx, tint = hot >= 0 && !still ? hubs[hot] : null;
     ctx.fillStyle = '#E4E5E8';
     for (n = 0; n < white.length; n++) {
       idx = white[n];
-      if (tint && li[idx] === hot && TW[idx] > 0.15) continue;
+      if (tint && TW[idx] > 0.35) continue;
       ctx.globalAlpha = PA[idx]; var z = sz[idx] + TW[idx] * 1.2; ctx.fillRect(PX[idx], PY[idx], z, z);
     }
     if (tint) {
       ctx.fillStyle = tint.color;
-      for (n = 0; n < white.length; n++) { idx = white[n]; if (li[idx] !== hot || TW[idx] <= 0.15) continue; ctx.globalAlpha = Math.min(1, PA[idx] + 0.2); var z2 = sz[idx] + TW[idx] * 1.6; ctx.fillRect(PX[idx], PY[idx], z2, z2); }
+      for (n = 0; n < white.length; n++) { idx = white[n]; if (TW[idx] <= 0.35) continue; ctx.globalAlpha = Math.min(1, PA[idx] + 0.2); var z2 = sz[idx] + TW[idx] * 1.6; ctx.fillRect(PX[idx], PY[idx], z2, z2); }
     }
     var q0 = still ? 1 : seg(time, B0, B0 + 0.4);
     for (k = 0; k < hubs.length; k++) {
@@ -333,18 +346,18 @@
       ctx.globalCompositeOperation = 'lighter';
       // Flash where a spark leaves its letter.
       flashes.forEach(function (fl) {
-        var p = (time - fl.t0) / 0.4, al = (1 - p), r = 7 + p * 10, col = hot === fl.k ? mix(SPARK_RGB, hubs[fl.k].rgb, 0.7) : SPARK_RGB;
+        var p = (time - fl.t0) / 0.4, al = (1 - p), r = 7 + p * 10, col = SPARK_RGB;
         ctx.globalAlpha = al; ctx.drawImage(sprite(col), fl.x - r * 1.6, fl.y - r * 1.6, r * 3.2, r * 3.2);
         ctx.strokeStyle = rgba([255, 255, 255], 0.55 * al); ctx.lineWidth = 0.8; ctx.beginPath();
         ctx.moveTo(fl.x - r, fl.y); ctx.lineTo(fl.x + r, fl.y); ctx.moveTo(fl.x, fl.y - r * 0.8); ctx.lineTo(fl.x, fl.y + r * 0.8); ctx.stroke();
       });
       // Sparks with comet trails.
       sparks.forEach(function (sp) {
-        var f = clamp((time - sp.t0) / sp.dur), col = sparkColor(sp), head = sparkAt(sp, f), prev = head;
+        var age = time - sp.t0, col = sparkColor(sp, age), head = sparkAt(sp, age), prev = head;
         for (var j = 1; j <= 12; j++) {
-          var fj = f - j * 0.013; if (fj <= 0) break;
-          var p2 = sparkAt(sp, fj);
-          ctx.globalAlpha = 0.55 * (1 - j / 13); ctx.strokeStyle = rgba(col, 1); ctx.lineWidth = 2.6 * (1 - j / 14) * sp.size;
+          var aj = age - j * 0.022; if (aj <= 0) break;
+          var p2 = sparkAt(sp, aj);
+          ctx.globalAlpha = 0.55 * (1 - j / 13); ctx.strokeStyle = rgba(sparkColor(sp, aj), 1); ctx.lineWidth = 2.6 * (1 - j / 14) * sp.size;
           ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke(); prev = p2;
         }
         var rr = 11 * sp.size; ctx.globalAlpha = 1; ctx.drawImage(sprite(col), head[0] - rr, head[1] - rr, rr * 2, rr * 2);
